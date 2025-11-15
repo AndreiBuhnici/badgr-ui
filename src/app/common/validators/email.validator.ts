@@ -1,5 +1,5 @@
 import {FormControl} from '@angular/forms';
-import isEmail from 'validator/lib/isEmail';
+import * as isEmail from 'validator/lib/isEmail';
 
 export type ValidationResult = null | {
 	[errorName: string]: boolean;

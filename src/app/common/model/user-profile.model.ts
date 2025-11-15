@@ -69,6 +69,7 @@ export class UserProfile extends ManagedEntity<ApiUserProfile, UserProfileRef> {
 		};
 	}
 	agreeToLatestTerms() {
+		console.log();
 		this.apiModel.agreed_terms_version = this.apiModel.latest_terms_version;
 		return this.save();
 	}

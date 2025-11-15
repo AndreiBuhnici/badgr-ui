@@ -138,6 +138,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 	refreshProfile = () => {
 		this.profileManager.userProfileSet.changed$.subscribe(set => {
+			console.log(set.entities)
 			if (set.entities.length && set.entities[0].agreedTermsVersion !== set.entities[0].latestTermsVersion) {
 				this.commonDialogsService.newTermsDialog.openDialog();
 			}
