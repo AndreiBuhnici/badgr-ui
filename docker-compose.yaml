@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev.ui
+    working_dir: /frontend
+    command: 'npm start'
+    networks:
+      - frontend
+    ports:
+      - "4200:4200"
+
+networks:
+  frontend:
+    driver: bridge
