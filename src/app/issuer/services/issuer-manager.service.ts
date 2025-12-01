@@ -59,7 +59,7 @@ export class IssuerManager {
 	}
 
 	issuerBySlug(issuerSlug: IssuerSlug): Promise<Issuer> {
-		return this.allIssuersOfCurrentUser$
+		return this.allIssuers$
 			.pipe(first())
 			.toPromise()
 			.then(issuers =>
