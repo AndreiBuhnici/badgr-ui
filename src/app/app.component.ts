@@ -43,6 +43,7 @@ import { ImportModalComponent } from "./mozz-transition/components/import-modal/
 export class AppComponent implements OnInit, AfterViewInit {
 	title = "Badgr Angular";
 	loggedIn = false;
+	isAuthorizedIssuer = false;
 	mobileNavOpen = false;
 	isUnsupportedBrowser = false;
 	launchpoints?: ApiExternalToolLaunchpoint[];
@@ -148,17 +149,31 @@ export class AppComponent implements OnInit, AfterViewInit {
 		this.profileManager.userProfileSet.ensureLoaded();
 
 		// for issuers tab
-		this.issuerManager.allIssuers$.subscribe(
-			(issuers) => {
-				this.issuers = issuers.slice().sort(
-					(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-				);
-				this.shouldShowIssuersTab();
-			},
-			error => {
-				this.messageService.reportAndThrowError("Failed to load issuers", error);
-			}
-		);
+		if (this.isAuthorizedIssuer) {
+			this.issuerManager.allIssuersOfCurrentUser$.subscribe(
+				(issuers) => {
+					this.issuers = issuers.slice().sort(
+						(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+					);
+					this.shouldShowIssuersTab();
+				},
+				error => {
+					this.messageService.reportAndThrowError("Failed to load issuers", error);
+				}
+			);
+		} else {
+			this.issuerManager.allIssuers$.subscribe(
+				(issuers) => {
+					this.issuers = issuers.slice().sort(
+						(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+					);
+					this.shouldShowIssuersTab();
+				},
+				error => {
+					this.messageService.reportAndThrowError("Failed to load issuers", error);
+				}
+			);
+		}
 
 	}
 
@@ -197,6 +212,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		this.loggedIn = this.sessionService.isLoggedIn;
+
+		const authToken = this.sessionService.currentAuthToken
+
+		if (authToken !== null && authToken.scope !== null) {
+			this.isAuthorizedIssuer = authToken.scope.includes("rw:issuer")
+		}
 
 		this.sessionService.loggedin$.subscribe(
 			loggedIn => setTimeout(() => {this.loggedIn = loggedIn; this.refreshProfile();})

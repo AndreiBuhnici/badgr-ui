@@ -62,6 +62,43 @@ export class IssuerListComponent extends BaseAuthenticatedRoutableComponent impl
 	) {
 		super(router, route, loginService);
 		title.setTitle(`Issuers - ${this.configService.theme['serviceName'] || "Badgr"}`);
+	}
+
+	loadIssuers = () => {
+		return new Promise((resolve, reject) => {
+			if (this.isAuthorizedIssuer) {
+				this.issuerManager.allIssuersOfCurrentUser$.subscribe(
+					(issuers) => {
+						this.issuers = issuers.slice().sort(
+							(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+						);
+						resolve();
+					},
+					error => {
+						this.messageService.reportAndThrowError("Failed to load issuers", error);
+						resolve();
+					}
+				);
+			} else {
+				this.issuerManager.allIssuers$.subscribe(
+					(issuers) => {
+						this.issuers = issuers.slice().sort(
+							(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+						);
+						resolve();
+					},
+					error => {
+						this.messageService.reportAndThrowError("Failed to load issuers", error);
+						resolve();
+					}
+				);
+			}
+
+		});
+	};
+
+	ngOnInit() {
+		super.ngOnInit();
 
 		// subscribe to issuer and badge class changes
 		this.issuersLoaded = this.loadIssuers();
@@ -84,29 +121,6 @@ export class IssuerListComponent extends BaseAuthenticatedRoutableComponent impl
 			});
 
 		});
-	}
-
-	loadIssuers = () => {
-		return new Promise((resolve, reject) => {
-
-			this.issuerManager.allIssuers$.subscribe(
-				(issuers) => {
-					this.issuers = issuers.slice().sort(
-						(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-					);
-					resolve();
-				},
-				error => {
-					this.messageService.reportAndThrowError("Failed to load issuers", error);
-					resolve();
-				}
-			);
-
-		});
-	};
-
-	ngOnInit() {
-		super.ngOnInit();
 	}
 }
 

@@ -11,7 +11,7 @@
 			</ng-template>
 		</h2>
 		<button class="button topbar-x-button"
-				*ngIf="!features.disableIssuers"
+				*ngIf="!features.disableIssuers && isAuthorizedIssuer"
 				[routerLink]="['/issuer/create']"
 				[disabled-when-requesting]="true"
 		>Create Issuer</button>
@@ -21,10 +21,10 @@
 <div>
 	<ng-template [bgAwaitPromises]="[issuersLoaded]" [showLoader]="true">
 
-		<!-- Empty state: no issuers -->
+		<!-- Empty state: no issuers for authorized institution -->
 		<section
 			class="emptysection l-emptysection"
-			*ngIf="Array.isArray(issuers) && issuers?.length === 0">
+			*ngIf="Array.isArray(issuers) && issuers?.length === 0 && isAuthorizedIssuer">
 			<h2 class="emptysection-x-headline">
 				You have no issuers</h2>
 			<p class="emptysection-x-copy">
@@ -36,6 +36,18 @@
 							[disabled-when-requesting]="true"
 					>Create an Issuer</button>
 			</div>
+			<div class="emptysection-x-imagecontainer">
+				<img alt="Illustration" class="emptysection-x-image"
+					 [src]="noIssuersPlaceholderSrc">
+			</div>
+		</section>
+
+		<!-- Empty state: no issuers exist for everyone -->
+		<section
+			class="emptysection l-emptysection"
+			*ngIf="Array.isArray(issuers) && issuers?.length === 0 && !isAuthorizedIssuer">
+			<h2 class="emptysection-x-headline">
+				There are currently no issuers</h2>
 			<div class="emptysection-x-imagecontainer">
 				<img alt="Illustration" class="emptysection-x-image"
 					 [src]="noIssuersPlaceholderSrc">

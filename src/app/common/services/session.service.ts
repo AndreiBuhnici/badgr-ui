@@ -26,6 +26,8 @@ export const TOKEN_STORAGE_KEY = "LoginService.token";
 
 const EXPIRATION_DATE_STORAGE_KEY = "LoginService.tokenExpirationDate";
 
+const SCOPE_STORAGE_KEY = "LoginService.scope"
+
 const DEFAULT_EXPIRATION_SECONDS = 24 * 60 * 60;
 
 export interface AuthorizationToken {
@@ -102,18 +104,22 @@ export class SessionService {
 	logout(nextObservable = true): void {
 		localStorage.removeItem(TOKEN_STORAGE_KEY);
 		sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+		sessionStorage.removeItem(SCOPE_STORAGE_KEY)
 		if (nextObservable) this.loggedInSubject.next(false);
 	}
 
 	storeToken(token: AuthorizationToken, sessionOnlyStorage = false): void {
 		const expirationDateStr = new Date(Date.now() + (token.expires_in || DEFAULT_EXPIRATION_SECONDS) * 1000).toISOString();
+		const scope = token.scope ? token.scope : "rw:profile r:issuer rw:backpack";
 
 		if (sessionOnlyStorage) {
 			sessionStorage.setItem(TOKEN_STORAGE_KEY, token.access_token);
 			sessionStorage.setItem(EXPIRATION_DATE_STORAGE_KEY, expirationDateStr);
+			sessionStorage.setItem(SCOPE_STORAGE_KEY, scope)
 		} else {
 			localStorage.setItem(TOKEN_STORAGE_KEY, token.access_token);
 			localStorage.setItem(EXPIRATION_DATE_STORAGE_KEY, expirationDateStr);
+			localStorage.setItem(SCOPE_STORAGE_KEY, scope)
 		}
 
 		this.loggedInSubject.next(true);
@@ -121,9 +127,10 @@ export class SessionService {
 
 	get currentAuthToken(): AuthorizationToken | null {
 		const tokenString = sessionStorage.getItem(TOKEN_STORAGE_KEY) || localStorage.getItem(TOKEN_STORAGE_KEY) || null;
+		const scopeString = sessionStorage.getItem(SCOPE_STORAGE_KEY) || localStorage.getItem(SCOPE_STORAGE_KEY) || null;
 
 		return tokenString
-			? { access_token: tokenString }
+			? { access_token: tokenString, scope: scopeString }
 			: null;
 	}
 

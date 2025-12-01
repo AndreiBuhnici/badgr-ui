@@ -9,10 +9,16 @@ import {first, map} from 'rxjs/operators';
 
 @Injectable()
 export class IssuerManager {
-	issuersList = new StandaloneEntitySet<Issuer, ApiIssuer>(
+	issuersListCurrentUser = new StandaloneEntitySet<Issuer, ApiIssuer>(
 		apiModel => new Issuer(this.commonEntityManager),
 		apiModel => apiModel.json.id,
 		() => this.issuerApiService.listIssuers()
+	);
+
+	issuersList = new StandaloneEntitySet<Issuer, ApiIssuer>(
+		apiModel => new Issuer(this.commonEntityManager),
+		apiModel => apiModel.json.id,
+		() => this.issuerApiService.listAllIssuers()
 	);
 
 	constructor(
@@ -25,7 +31,11 @@ export class IssuerManager {
 		initialIssuer: ApiIssuerForCreation
 	): Promise<Issuer> {
 		return this.issuerApiService.createIssuer(initialIssuer)
-			.then(newIssuer => this.issuersList.addOrUpdate(newIssuer));
+			.then(newIssuer => this.issuersListCurrentUser.addOrUpdate(newIssuer));
+	}
+
+	get allIssuersOfCurrentUser$(): Observable<Issuer[]> {
+		return this.issuersListCurrentUser.loaded$.pipe(map(l => l.entities));
 	}
 
 	get allIssuers$(): Observable<Issuer[]> {
@@ -37,7 +47,7 @@ export class IssuerManager {
 		initialIssuer: ApiIssuerForEditing
 	): Promise<Issuer> {
 		return this.issuerApiService.editIssuer(issuerSlug, initialIssuer)
-			.then(newIssuer => this.issuersList.addOrUpdate(newIssuer));
+			.then(newIssuer => this.issuersListCurrentUser.addOrUpdate(newIssuer));
 	}
 
 	deleteIssuer(
@@ -45,11 +55,11 @@ export class IssuerManager {
 		issuerToDelete: Issuer
 	): Promise<boolean> {
 		return this.issuerApiService.deleteIssuer(issuerSlug)
-			.then(response => this.issuersList.remove(issuerToDelete));
+			.then(response => this.issuersListCurrentUser.remove(issuerToDelete));
 	}
 
 	issuerBySlug(issuerSlug: IssuerSlug): Promise<Issuer> {
-		return this.allIssuers$
+		return this.allIssuersOfCurrentUser$
 			.pipe(first())
 			.toPromise()
 			.then(issuers =>

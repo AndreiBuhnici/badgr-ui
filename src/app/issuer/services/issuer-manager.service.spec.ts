@@ -55,7 +55,7 @@ xdescribe('IssuerManager', () => {
 			(issuerManager: IssuerManager, loginService: SessionService, mockBackend: MockBackend) => {
 				return Promise.all([
 					expectAllIssuersRequest(mockBackend),
-					verifyEntitySetWhenLoaded(issuerManager.issuersList, allApiIssuers)
+					verifyEntitySetWhenLoaded(issuerManager.issuersListCurrentUser, allApiIssuers)
 				]);
 			}
 		)
@@ -74,7 +74,7 @@ xdescribe('IssuerManager', () => {
 
 				return Promise.all([
 					expectAllIssuersRequest(mockBackend),
-					verifyEntitySetWhenLoaded(issuerManager.issuersList, allApiIssuers)
+					verifyEntitySetWhenLoaded(issuerManager.issuersListCurrentUser, allApiIssuers)
 						.then(list => {
 							/*list.entities.forEach(issuer => {
 								issuer.badgeClassCount;
@@ -91,8 +91,8 @@ xdescribe('IssuerManager', () => {
 			(issuerManager: IssuerManager, loginService: SessionService, mockBackend: MockBackend) => {
 				return Promise.all([
 					expectAllIssuersRequest(mockBackend),
-					issuerManager.allIssuers$.pipe(first()).toPromise().then(() => {
-						verifyManagedEntitySet(issuerManager.issuersList, allApiIssuers);
+					issuerManager.allIssuersOfCurrentUser$.pipe(first()).toPromise().then(() => {
+						verifyManagedEntitySet(issuerManager.issuersListCurrentUser, allApiIssuers);
 					})
 				]);
 			}
@@ -122,9 +122,9 @@ xdescribe('IssuerManager', () => {
 						newIssuer,
 						201
 					),
-					verifyEntitySetWhenLoaded(issuerManager.issuersList, [ existingIssuer ])
+					verifyEntitySetWhenLoaded(issuerManager.issuersListCurrentUser, [ existingIssuer ])
 						.then(issuersList => issuerManager.createIssuer(newIssuerForCreation))
-						.then(() => verifyManagedEntitySet(issuerManager.issuersList, [ newIssuer, existingIssuer ]))
+						.then(() => verifyManagedEntitySet(issuerManager.issuersListCurrentUser, [ newIssuer, existingIssuer ]))
 				]);
 			}
 		)
@@ -173,7 +173,7 @@ xdescribe('IssuerManager', () => {
 						existingIssuerWithNewUser,
 						201
 					),
-					verifyEntitySetWhenLoaded(issuerManager.issuersList, [ existingIssuer ])
+					verifyEntitySetWhenLoaded(issuerManager.issuersListCurrentUser, [ existingIssuer ])
 						.then(issuersList => issuersList.entities[0].addStaffMember("staff", "new@user.com"))
 						.then(issuer => {
 							expect(issuer.staff.entityForApiEntity(newStaffMember).apiModel).toEqual(newStaffMember);
@@ -222,7 +222,7 @@ xdescribe('IssuerManager', () => {
 						existingIssuerWithModifiedStaff,
 						201
 					),
-					verifyEntitySetWhenLoaded(issuerManager.issuersList, [ existingIssuer ])
+					verifyEntitySetWhenLoaded(issuerManager.issuersListCurrentUser, [ existingIssuer ])
 						.then(issuersList => {
 							const member = issuersList.entities[0].staff.entityForApiEntity(modifiedStaffMember);
 							member.roleSlug = modifiedStaffMember.role;
@@ -270,7 +270,7 @@ xdescribe('IssuerManager', () => {
 						existingIssuerWithoutMember,
 						201
 					),
-					verifyEntitySetWhenLoaded(issuerManager.issuersList, [ existingIssuer ])
+					verifyEntitySetWhenLoaded(issuerManager.issuersListCurrentUser, [ existingIssuer ])
 						.then(issuersList => issuersList.entities[0].staff.entityForApiEntity(staffMemberToRemove).remove())
 						.then(issuer => {
 							expect(issuer.staff.entities.map(s => s.apiModel)).not.toContain(staffMemberToRemove);

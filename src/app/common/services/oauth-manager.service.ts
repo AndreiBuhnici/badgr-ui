@@ -26,7 +26,7 @@ export class OAuthManager {
 	readonly scopeMetadata: ScopeGroupRule[][] = [
 		[
 			{ scopeId: "rw:issuer",       cssName: "permission-issuer",     label: "View and modify your Issuers" },
-			{ scopeId: "r:issuer",        cssName: "permission-issuer",     label: "View your Issuers" },
+			{ scopeId: "r:issuer",        cssName: "permission-issuer",     label: "View Issuers" },
 		],
 		[
 			{ scopeId: "rw:backpack",     cssName: "permission-assertion",  label: "View and modify your Awarded Badges" },

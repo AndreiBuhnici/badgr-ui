@@ -7,6 +7,7 @@ import {SessionService} from '../services/session.service';
  * Base class for all routable components (pages in the applications) that require authentication.
  */
 export class BaseAuthenticatedRoutableComponent extends BaseRoutableComponent implements OnInit {
+	isAuthorizedIssuer = false;
 	constructor(
 		protected router: Router,
 		protected route: ActivatedRoute,
@@ -24,5 +25,7 @@ export class BaseAuthenticatedRoutableComponent extends BaseRoutableComponent im
 
 			throw new Error("Not logged in");
 		}
+
+		this.isAuthorizedIssuer = this.sessionService.currentAuthToken.scope.includes("rw:issuer")
 	}
 }
