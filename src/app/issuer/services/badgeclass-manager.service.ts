@@ -58,6 +58,13 @@ export class BadgeClassManager extends BaseHttpApiService {
 		super(loginService, http, configService, messageService);
 	}
 
+	getBadgesByIssuerSlug(issuerSlug: string): Promise<BadgeClass[]> {
+		return this.badgeClassApi.getBadgesForIssuer(issuerSlug)
+			.then(apiBadges => {
+				return apiBadges.map(apiModel => new BadgeClass(this.commonEntityManager, apiModel));
+			});
+	}
+
 	removeBadgeClass(badge: BadgeClass) {
 		return this.badgeClassApi.deleteBadgeClass(badge.issuerSlug, badge.slug)
 			.then(response => {

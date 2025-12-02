@@ -20,7 +20,7 @@
 					<p class="u-text u-text-small">
 						<strong [truncatedText]="issuer.email" [maxLength]="64"></strong>
 						<br class="u-hidden-minmobilelarge"><span class="u-hidden-maxmobilelarge">
-							— </span>Your Role: {{ issuer?.currentUserStaffMember?.roleInfo?.label }}
+							— </span>Your Role: {{ issuer.currentUserStaffMember?.roleInfo.label ? issuer.currentUserStaffMember?.roleInfo.label : "Viewer" }}
 					</p>
 					<p class="u-margin-top1x u-width-paragraph">
 						{{ issuer.description }}
@@ -30,7 +30,7 @@
 					</div>
 					<p></p>
 				</div>
-				<div class="topbar-x-buttons">
+				<div class="topbar-x-buttons" *ngIf="isAuthorizedIssuer">
 					<div class="l-primarymore">
 						<button class="button" [routerLink]="['./badges/create']">Create Badge</button>
 						<button class="buttonicon buttonicon-secondary" [bgPopupMenuTrigger]="issuerActionsMenu">
@@ -71,7 +71,7 @@
 			</h2>
 			<p class="emptysection-x-copy">
 				No badges associated with this issuer, yet.</p>
-			<div class="emptysection-x-buttons">
+			<div class="emptysection-x-buttons" *ngIf="isAuthorizedIssuer">
 			    <button class="button button-secondary"
 			    		[routerLink]="['badges/create']"
 			    		[disabled-when-requesting]="true"
@@ -95,7 +95,7 @@
 						<th class="datatable-x-cell">Badge</th>
 						<th class="datatable-x-cell">Created</th>
 						<th class="datatable-x-cell">Recipients</th>
-						<th class="datatable-x-cell">
+						<th class="datatable-x-cell" *ngIf="isAuthorizedIssuer">
 							<span class="visuallyhidden">Actions</span></th>
 					</tr>
 				</thead>
@@ -120,7 +120,7 @@
 								<p class="u-text">{{ badge.recipientCount }}</p>
 							</div>
 						</td>
-						<td class="datatable-x-cell">
+						<td class="datatable-x-cell" *ngIf="isAuthorizedIssuer">
 							<div class="l-flex l-flex-aligncenter l-flex-justifyend">
 								<a class="u-text-link-small" [routerLink]="['/issuer/issuers/', issuer.slug, 'badges', badge.slug, 'issue']">Award</a>
 							</div>

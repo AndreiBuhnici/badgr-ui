@@ -30,8 +30,6 @@ export interface ApiIssuer {
 	created_by: string;
 	staff: ApiIssuerStaff[];
 
-	badgeClassCount: number;
-
 	json: ApiIssuerJsonld;
 }
 

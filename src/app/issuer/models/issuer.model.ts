@@ -48,14 +48,6 @@ export class Issuer extends ManagedEntity<ApiIssuer, IssuerRef> {
 
 	get createdBy(): string { return this.apiModel.created_by; }
 
-	get badgeClassCount(): number {
-		const badges = this.commonManager.badgeManager.badgesList;
-
-		return badges.loaded
-			? badges.entities.filter(b => b.issuerSlug === this.slug).length
-			: this.apiModel.badgeClassCount;
-	}
-
 	async update(): Promise<this> {
 		this.applyApiModel(
 			await this.issuerApiService.getIssuer(this.slug),

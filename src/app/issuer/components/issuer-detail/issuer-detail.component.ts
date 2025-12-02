@@ -57,50 +57,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 		super(router, route, loginService);
 
 		title.setTitle(`Issuer Detail - ${this.configService.theme['serviceName'] || 'Badgr'}`);
-
-		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
-
-		this.externalToolsManager.getToolLaunchpoints('issuer_external_launch').then((launchpoints) => {
-			this.launchpoints = launchpoints.filter((lp) => Boolean(lp));
-		});
-
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then(
-			(issuer) => {
-				this.issuer = issuer;
-				this.title.setTitle(
-					`Issuer - ${this.issuer.name} - ${this.configService.theme['serviceName'] || 'Badgr'}`
-				);
-				this.crumbs = [
-					{title: 'Issuers', routerLink: ['/issuer/issuers']},
-					{title: this.issuer.name, routerLink: ['/issuer/issuers/' + this.issuer.slug]},
-				];
-
-				this.badgesLoaded = new Promise((resolve, reject) => {
-					this.badgeClassService.badgesByIssuerUrl$.subscribe(
-						(badgesByIssuer) => {
-							const cmp = (a, b) => (a === b ? 0 : a < b ? -1 : 1);
-							this.badges = (badgesByIssuer[this.issuer.issuerUrl] || [])
-								.sort((a, b) => cmp(b.createdAt, a.createdAt));
-							resolve();
-						},
-						(error) => {
-							this.messageService.reportAndThrowError(
-								`Failed to load badges for ${this.issuer ? this.issuer.name : this.issuerSlug}`,
-								error
-							);
-							resolve();
-						}
-					);
-				});
-			},
-			(error) => {
-				this.messageService.reportLoadingError(`Issuer '${this.issuerSlug}' does not exist.`, error);
-			}
-		);
-
-		this.profileEmailsLoaded = this.profileManager.userProfilePromise
-			.then((profile) => profile.emails.loadedPromise)
-			.then((emails) => (this.profileEmails = emails.entities));
 	}
 
 	delete = ($event: Event) => {
@@ -131,5 +87,43 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 
 	ngOnInit() {
 		super.ngOnInit();
+
+		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
+
+		this.externalToolsManager.getToolLaunchpoints('issuer_external_launch').then((launchpoints) => {
+			this.launchpoints = launchpoints.filter((lp) => Boolean(lp));
+		});
+
+		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then(
+			(issuer) => {
+				this.issuer = issuer;
+				this.title.setTitle(
+					`Issuer - ${this.issuer.name} - ${this.configService.theme['serviceName'] || 'Badgr'}`
+				);
+				this.crumbs = [
+					{title: 'Issuers', routerLink: ['/issuer/issuers']},
+					{title: this.issuer.name, routerLink: ['/issuer/issuers/' + this.issuer.slug]},
+				];
+			
+				this.badgeClassService.getBadgesByIssuerSlug(this.issuerSlug).then(results => {
+					const cmp = (a, b) => (a === b ? 0 : a < b ? -1 : 1);
+					this.badges = (results || [])
+						.sort((a, b) => cmp(b.createdAt, a.createdAt));
+				}).catch(error => {
+					this.messageService.reportAndThrowError(
+						`Failed to load badges for ${this.issuer ? this.issuer.name : this.issuerSlug}`,
+						error
+					);
+				});
+				
+			},
+			(error) => {
+				this.messageService.reportLoadingError(`Issuer '${this.issuerSlug}' does not exist.`, error);
+			}
+		);
+
+		this.profileEmailsLoaded = this.profileManager.userProfilePromise
+			.then((profile) => profile.emails.loadedPromise)
+			.then((emails) => (this.profileEmails = emails.entities));
 	}
 }

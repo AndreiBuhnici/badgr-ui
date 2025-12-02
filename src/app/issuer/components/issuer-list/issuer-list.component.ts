@@ -103,23 +103,23 @@ export class IssuerListComponent extends BaseAuthenticatedRoutableComponent impl
 		// subscribe to issuer and badge class changes
 		this.issuersLoaded = this.loadIssuers();
 
-		this.badgesLoaded = new Promise((resolve, reject) => {
-
-			this.badgeClassService.badgesByIssuerUrl$.subscribe(badges => {
+		this.badgesLoaded = this.issuersLoaded.then(() => {
+			return Promise.all(
+				this.issuers.map(issuer =>
+					this.badgeClassService.getBadgesByIssuerSlug(issuer.slug)
+				)
+			).then(results => {
 				this.issuerToBadgeInfo = {};
-
-				Object.keys(badges).forEach(issuerSlug => {
-					const issuerBadges = badges[ issuerSlug ];
-
-					this.issuerToBadgeInfo[ issuerSlug ] = new IssuerBadgesInfo(
+				this.issuers.forEach((issuer, index) => {
+					const issuerBadges = results[index];
+					this.issuerToBadgeInfo[issuer.slug] = new IssuerBadgesInfo(
 						issuerBadges.reduce((sum, badge) => sum + badge.recipientCount, 0),
 						issuerBadges.sort((a, b) => b.recipientCount - a.recipientCount)
 					);
 				});
-
-				resolve();
+			}).catch(error => {
+				this.messageService.reportAndThrowError("Failed to load badges", error);
 			});
-
 		});
 	}
 }
