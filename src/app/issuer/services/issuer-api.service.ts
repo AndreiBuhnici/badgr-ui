@@ -53,7 +53,7 @@ export class IssuerApiService extends BaseHttpApiService {
 
 	getIssuer(issuerSlug: string) {
 		return this
-			.get<ApiIssuer>(`/v1/issuer/issuers/${issuerSlug}`)
+			.get<ApiIssuer>(`/v1/issuer/issuers/${issuerSlug}/details`)
 			.then(r => r.body);
 	}
 

@@ -27,7 +27,7 @@ export class BadgeClassApiService extends BaseHttpApiService {
 	getBadgesForIssuer(
 		issuerSlug?: IssuerSlug
 	) {
-		return this.get<ApiBadgeClass[]>('/v1/issuer/issuers/' + issuerSlug + '/badges')
+		return this.get<ApiBadgeClass[]>('/v1/issuer/issuers/' + issuerSlug + '/all-badges')
 			.then(r => r.body);
 	}
 
