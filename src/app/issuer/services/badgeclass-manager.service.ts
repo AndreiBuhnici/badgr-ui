@@ -89,11 +89,9 @@ export class BadgeClassManager extends BaseHttpApiService {
 	}
 
 	badgeByIssuerSlugAndSlug(issuerSlug: IssuerSlug, badgeSlug: BadgeClassSlug): Promise<BadgeClass> {
-		return this.allBadges$
-			.pipe(first())
-			.toPromise()
+		return this.getBadgesByIssuerSlug(issuerSlug)
 			.then(badges =>
-				badges.find(b => b.issuerSlug === issuerSlug && b.slug === badgeSlug)
+				badges.find(b => b.slug === badgeSlug)
 				|| this.throwError(`Issuer Slug '${issuerSlug}' has no badge with slug '${badgeSlug}'`)
 			);
 	}
