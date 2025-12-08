@@ -28,6 +28,8 @@ import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module
 import {IssuerStaffComponent} from './components/issuer-staff/issuer-staff.component';
 import {BadgeClassEditFormComponent} from './components/badgeclass-edit-form/badgeclass-edit-form.component';
 import {IssuerStaffCreateDialogComponent} from './components/issuer-staff-create-dialog/issuer-staff-create-dialog.component';
+import {IssuerPermissionGuard} from '../common/guards/issuer-permission.guard';
+import { CanActivate } from '@angular/router/src/utils/preactivation';
 
 const routes = [
 	/* Issuer */
@@ -35,9 +37,14 @@ const routes = [
 		path: "",
 		component: IssuerListComponent
 	},
+	// {
+	// 	path: "all-badges",
+	// 	component: IssuerListComponent
+	// },
 	{
 		path: "create",
-		component: IssuerCreateComponent
+		component: IssuerCreateComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "issuers/:issuerSlug",
@@ -45,15 +52,18 @@ const routes = [
 	},
 	{
 		path: "issuers/:issuerSlug/edit",
-		component: IssuerEditComponent
+		component: IssuerEditComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "issuers/:issuerSlug/staff",
-		component: IssuerStaffComponent
+		component: IssuerStaffComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "issuers/:issuerSlug/badges/create",
-		component: BadgeClassCreateComponent
+		component: BadgeClassCreateComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "issuers/:issuerSlug/badges/:badgeSlug",
@@ -61,15 +71,18 @@ const routes = [
 	},
 	{
 		path: "issuers/:issuerSlug/badges/:badgeSlug/edit",
-		component: BadgeClassEditComponent
+		component: BadgeClassEditComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "issuers/:issuerSlug/badges/:badgeSlug/issue",
-		component: BadgeClassIssueComponent
+		component: BadgeClassIssueComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "issuers/:issuerSlug/badges/:badgeSlug/bulk-import",
-		component: BadgeClassIssueBulkAwardComponent
+		component: BadgeClassIssueBulkAwardComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "**",

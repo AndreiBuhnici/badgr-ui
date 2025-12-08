@@ -94,20 +94,22 @@ export class BadgeClassEditComponent extends BaseAuthenticatedRoutableComponent 
 			)
 		);
 
-		this.issuerLoaded = issuerManager.issuerBySlug(this.issuerSlug).then(
-			issuer => {
-				this.issuer = issuer;
-				this.editBadgeCrumbs = [
-					{title: "Issuers", routerLink: ['/issuer']},
-					{title: issuer.name, routerLink: ['/issuer/issuers/', this.issuerSlug]},
-					{title: 'badges', routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/']},
-					{title: this.badgeClass.name, routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/' + this.badgeSlug]},
-					{title: 'Edit Badge Class'},
-				];
-				return issuer;
-			},
-			error => this.messageService.reportLoadingError(`Cannot find issuer ${this.issuerSlug}`, error)
-		);
+		this.issuerLoaded = this.badgeClassLoaded.then(() => {
+			issuerManager.issuerBySlug(this.issuerSlug).then(
+				issuer => {
+					this.issuer = issuer;
+					this.editBadgeCrumbs = [
+						{title: "Issuers", routerLink: ['/issuer']},
+						{title: issuer.name, routerLink: ['/issuer/issuers/', this.issuerSlug]},
+						{title: 'badges', routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/']},
+						{title: this.badgeClass.name, routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/' + this.badgeSlug]},
+						{title: 'Edit Badge Class'},
+					];
+					return issuer;
+				},
+				error => this.messageService.reportLoadingError(`Cannot find issuer ${this.issuerSlug}`, error)
+			);
+		});
 	}
 
 	badgeClassSaved(promise: Promise<BadgeClass>) {

@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile.dev.ui
     working_dir: /frontend
     command: 'npm start'
+    volumes:
+      - ./src:/frontend/src
     networks:
       - frontend
     ports:
