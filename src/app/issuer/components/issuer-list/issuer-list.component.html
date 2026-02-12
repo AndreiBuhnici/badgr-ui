@@ -98,7 +98,7 @@
 					<div class="l-flex l-flex-aligncenter l-flex-1x">
 						<svg class="icon icon-light4 u-hidden-maxmobilelarge" width="24px" icon="icon_badge"></svg>
 						<p class="u-text-small u-text-nowrap"
-						[innerHTML]="issuerToBadgeInfo[issuer.slug].totalBadgeIssuanceCount | i18nPlural: plural['badges']"></p>
+						[innerHTML]="issuerToBadgeInfo[issuer.slug].badges.length | i18nPlural: plural['badges']"></p>
 					</div>
 					<a class="u-text u-text-small" [routerLink]="['/issuer/issuers/', issuer.slug]">View</a>
 				</div>
