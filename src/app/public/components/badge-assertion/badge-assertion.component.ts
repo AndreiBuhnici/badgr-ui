@@ -5,7 +5,7 @@ import { preloadImageURL } from '../../../common/util/file-util';
 import { PublicApiService } from '../../services/public-api.service';
 import { LoadedRouteParam } from '../../../common/util/loaded-route-param';
 import {
-	PublicApiBadgeAssertionWithBadgeClass,
+	PublicApiBadgeAssertion,
 	PublicApiBadgeClass,
 	PublicApiIssuer
 } from '../../models/public-api.model';
@@ -46,7 +46,7 @@ export class PublicBadgeAssertionComponent {
 	@ViewChild('verifyBadgeDialog')
 	verifyBadgeDialog: VerifyBadgeDialog;
 
-	assertionIdParam: LoadedRouteParam<PublicApiBadgeAssertionWithBadgeClass>;
+	assertionIdParam: LoadedRouteParam<PublicApiBadgeAssertion>;
 
 	assertionId: string;
 
@@ -65,16 +65,16 @@ export class PublicBadgeAssertionComponent {
 		return this.queryParametersService.queryStringValue("action") === "download";
 	}
 
-	get assertion(): PublicApiBadgeAssertionWithBadgeClass {
+	get assertion(): PublicApiBadgeAssertion {
 		return this.assertionIdParam.value;
 	}
 
 	get badgeClass(): PublicApiBadgeClass {
-		return this.assertion.badge;
+		return this.assertion.credentialSubject.achievement;
 	}
 
 	get issuer(): PublicApiIssuer {
-		return this.assertion.badge.issuer;
+		return this.assertion.issuer;
 	}
 
 	get isExpired(): boolean {

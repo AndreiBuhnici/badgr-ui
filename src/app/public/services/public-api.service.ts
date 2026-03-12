@@ -5,9 +5,7 @@ import { AppConfigService } from '../../common/app-config.service';
 import { MessageService } from '../../common/services/message.service';
 import {
 	PublicApiBadgeAssertion,
-	PublicApiBadgeAssertionWithBadgeClass,
 	PublicApiBadgeClass,
-	PublicApiBadgeClassWithIssuer,
 	PublicApiBadgeCollectionWithBadgeClassAndIssuer,
 	PublicApiIssuer
 } from '../models/public-api.model';
@@ -32,15 +30,10 @@ export class PublicApiService extends BaseHttpApiService {
 	) {
 		const url = assertionId.startsWith("http")
 			? assertionId
-			: `/public/assertions/${assertionId}.json?expand=badge&expand=badge.issuer`;
+			: `/public/assertions/${assertionId}.json?expand=issuer`;
 
-		return this.get<PublicApiBadgeAssertionWithBadgeClass>(url, null, false, false)
-			.then(r => r.body)
-			.then(
-				assertion => typeof(assertion.badge) === "string"
-					? this.getBadgeClass(assertion.badge).then(badge => ({... assertion, badge }))
-					: assertion
-			);
+		return this.get<PublicApiBadgeAssertion>(url, null, false, false)
+			.then(r => r.body);
 	}
 
 	verifyBadgeAssertion (
@@ -54,17 +47,19 @@ export class PublicApiService extends BaseHttpApiService {
 
 	getBadgeClass(
 		badgeId: string
-	): Promise<PublicApiBadgeClassWithIssuer> {
+	): Promise<PublicApiBadgeClass> {
 		const url = badgeId.startsWith("http")
 			? badgeId
 			: `/public/badges/${badgeId}?expand=issuer`;
 
-		return this.get<PublicApiBadgeClassWithIssuer>(url, null, false, false)
+		return this.get<PublicApiBadgeClass>(url, null, false, false)
 			.then(r => r.body)
 			.then(
-				badge => typeof(badge.issuer) === "string"
-					? this.getIssuer(badge.issuer).then(issuer => ({... badge, issuer }))
-					: badge
+				badge =>
+					typeof badge.issuer === "string"
+						? this.getIssuer(badge.issuer)
+							.then(issuer => ({ ...badge, issuer }))
+						: Promise.resolve(badge)
 			);
 	}
 

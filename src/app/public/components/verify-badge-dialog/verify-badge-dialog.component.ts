@@ -1,9 +1,6 @@
 import { BaseDialog } from '../../../common/dialogs/base-dialog';
 import { Component, ElementRef, EventEmitter, Output, Renderer2 } from '@angular/core';
-import {
-	PublicApiBadgeAssertion,
-	PublicApiBadgeAssertionWithBadgeClass
-} from '../../models/public-api.model';
+import { PublicApiBadgeAssertion } from '../../models/public-api.model';
 import { QueryParametersService } from '../../../common/services/query-parameters.service';
 import { preloadImageURL } from '../../../common/util/file-util';
 import { PublicApiService } from '../../services/public-api.service';
@@ -78,33 +75,52 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 	expiryState: ExpiryState;
 
-	async openDialog( badgeAssertion: PublicApiBadgeAssertionWithBadgeClass ) {
+	async openDialog( badgeAssertion: PublicApiBadgeAssertion ) {
 		this.showModal();
 
-		// Not one of 'our' badges, needs to be verified
-		if (badgeAssertion.sourceUrl){
-			try {
-				const entityId = badgeAssertion['hostedUrl'].split('/').pop();
-				const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
-					await this.publicApiService.verifyBadgeAssertion(entityId);
+		// // Not one of 'our' badges, needs to be verified
+		// if (badgeAssertion.sourceUrl){
+		// 	try {
+		// 		const entityId = badgeAssertion['hostedUrl'].split('/').pop();
+		// 		const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
+		// 			await this.publicApiService.verifyBadgeAssertion(entityId);
 
-				if (instance){
-					this.badgeAssertion = instance.result instanceof Array ? instance.result[0] : instance.result;
-				}
-				else {
-					this.messageService.reportAndThrowError("Failed to verify your badge");
-				}
+		// 		if (instance){
+		// 			this.badgeAssertion = instance.result instanceof Array ? instance.result[0] : instance.result;
+		// 		}
+		// 		else {
+		// 			this.messageService.reportAndThrowError("Failed to verify your badge");
+		// 		}
 
+		// 	}
+		// 	catch(e) {
+		// 		this.closeDialog();
+		// 		this.messageService.reportAndThrowError("Failed to verify your badge", e);
+		// 	}
+		// }
+
+		// // is one of ours and as such is already verified.
+		// else {
+		// 	this.badgeAssertion = badgeAssertion;
+		// }
+
+		// Even though the badges might be created by us, we want to verify it anyway
+		try {
+			const entityId = badgeAssertion['id']
+			const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
+				await this.publicApiService.verifyBadgeAssertion(entityId);
+
+			if (instance){
+				this.badgeAssertion = instance.result instanceof Array ? instance.result[0] : instance.result;
 			}
-			catch(e) {
-				this.closeDialog();
-				this.messageService.reportAndThrowError("Failed to verify your badge", e);
+			else {
+				this.messageService.reportAndThrowError("Failed to verify your badge");
 			}
+
 		}
-
-		// is one of ours and as such is already verified.
-		else {
-			this.badgeAssertion = badgeAssertion;
+		catch(e) {
+			this.closeDialog();
+			this.messageService.reportAndThrowError("Failed to verify your badge", e);
 		}
 
 		this.verifyBadgeAssertion();
@@ -116,7 +132,9 @@ export class VerifyBadgeDialog extends BaseDialog {
 			this.messageService.reportFatalError("Assertion has been revoked:", this.badgeAssertion.revocationReason);
 			return;
 		}
-		this.verifyEmail();
+		if (this.badgeAssertion.credentialSubject.identifier.identityType === "email") {
+			this.verifyEmail();
+		}
 		this.verifyExpiresOn();
 		this.broadcastVerifiedBadgeAssertion();
 	}
@@ -126,10 +144,10 @@ export class VerifyBadgeDialog extends BaseDialog {
 		if (!this.identityEmail) {
 			this.awardedState = AwardedState.NOT_VERIFIED;
 		}
-		else if (this.badgeAssertion.recipient.hashed) {
+		else if (this.badgeAssertion.credentialSubject.identifier.hashed) {
 			// hashed is true
-			const hashedEmail = 'sha256$'+sha256( `${this.identityEmail}${this.badgeAssertion.recipient.salt}`);
-			this.awardedState = hashedEmail === this.badgeAssertion.recipient.identity
+			const hashedEmail = 'sha256$'+sha256( `${this.identityEmail}${this.badgeAssertion.credentialSubject.identifier.salt}`);
+			this.awardedState = hashedEmail === this.badgeAssertion.credentialSubject.identifier.identityHash
 			                    ? AwardedState.MATCH
 			                    : AwardedState.NO_MATCH;
 		}

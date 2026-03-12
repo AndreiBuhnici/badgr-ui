@@ -1,4 +1,4 @@
-import {PublicApiBadgeAssertionWithBadgeClass} from "../app/public/models/public-api.model";
+import {PublicApiBadgeAssertion} from "../app/public/models/public-api.model";
 import {generateEmbedHtml} from "./generate-embed-html";
 
 const sha256 = require('tiny-sha256') as (message: string) => string;
@@ -43,7 +43,7 @@ export function setupEmbeddedBadges() {
 			xhr.setRequestHeader('accept', 'application/json');
 			xhr.onload = () => {
 				if (xhr.status === 200) {
-					const data = JSON.parse(xhr.responseText) as PublicApiBadgeAssertionWithBadgeClass;
+					const data = JSON.parse(xhr.responseText) as PublicApiBadgeAssertion;
 
 					if (data.revoked) {
 						badge.innerHTML = "This assertion has been revoked. " + (data.revocationReason || "");
@@ -53,17 +53,17 @@ export function setupEmbeddedBadges() {
 					const recipientName = ('extensions:recipientProfile' in data) ? data['extensions:recipientProfile']['name'] : undefined;
 
 					let verified = false;
-					if (data.recipient.type === "url") {
+					if (data.credentialSubject.identifier.identityType === "url") {
 						const currentLocation = window.location.toString();
-						if (data.recipient.hashed) {
-							const parts = data.recipient.identity.split("$", 2);
+						if (data.credentialSubject.identifier.hashed) {
+							const parts = data.credentialSubject.identifier.identityHash.split("$", 2);
 							const expected = parts[1];
-							const hash = messageToSha256HexString(currentLocation + data.recipient.salt);
+							const hash = messageToSha256HexString(currentLocation + data.credentialSubject.identifier.salt);
 							if (hash === expected) {
 								verified = true;
 							}
 						} else {
-							verified = (data.recipient.identity === currentLocation);
+							verified = (data.credentialSubject.identifier.identityHash === currentLocation);
 						}
 					}
 
@@ -74,7 +74,7 @@ export function setupEmbeddedBadges() {
 						includeRecipientName: includeRecipientName && recipientName,
 						includeAwardDate,
 						includeVerifyButton,
-						badgeClassName: data.badge.name,
+						badgeClassName: data.credentialSubject.achievement.name,
 						recipientName,
 						awardDate: format_date(data.issuedOn),
 						verified,

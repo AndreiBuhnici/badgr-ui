@@ -4,7 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {preloadImageURL} from '../../../common/util/file-util';
 import {PublicApiService} from '../../services/public-api.service';
 import {LoadedRouteParam} from '../../../common/util/loaded-route-param';
-import {PublicApiBadgeClassWithIssuer, PublicApiIssuer} from '../../models/public-api.model';
+import {PublicApiBadgeClass, PublicApiIssuer} from '../../models/public-api.model';
 import {EmbedService} from '../../../common/services/embed.service';
 import {addQueryParamsToUrl, stripQueryParamsFromUrl} from '../../../common/util/url-util';
 import {routerLinkForUrl} from '../public/public.component';
@@ -21,7 +21,7 @@ export class PublicBadgeClassComponent {
 	readonly badgeLoadingImageUrl = require('../../../../breakdown/static/images/badge-loading.svg') as string;
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
 
-	badgeIdParam: LoadedRouteParam<PublicApiBadgeClassWithIssuer>;
+	badgeIdParam: LoadedRouteParam<PublicApiBadgeClass>;
 	routerLinkForUrl = routerLinkForUrl;
 
 	constructor(
@@ -42,7 +42,7 @@ export class PublicBadgeClassComponent {
 		);
 	}
 
-	get badgeClass(): PublicApiBadgeClassWithIssuer { return this.badgeIdParam.value; }
+	get badgeClass(): PublicApiBadgeClass { return this.badgeIdParam.value; }
 
 	get issuer(): PublicApiIssuer { return this.badgeClass.issuer; }
 
