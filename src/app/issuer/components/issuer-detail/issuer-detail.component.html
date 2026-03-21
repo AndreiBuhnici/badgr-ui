@@ -13,8 +13,13 @@
 			<div class="topbar-x-wrap">
 				<img class="topbar-x-image" *ngIf="issuer.image" [src]="issuer.image" alt="{{issuer.name}} logo " />
 				<img class="topbar-x-image" *ngIf="!issuer.image" [src]="issuerImagePlaceHolderUrl" alt="Default issuer image">
-				<div class="topbar-x-heading">{{ issuer.name }}
-
+				<div>
+					<a 
+						[routerLink]="['/public/issuers', issuer.slug]"
+						class="topbar-x-heading u-text"
+					>
+						{{ issuer.name }}
+					</a>
 				</div>
 				<div class="topbar-x-subheading">
 					<p class="u-text u-text-small">

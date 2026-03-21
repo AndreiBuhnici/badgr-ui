@@ -68,7 +68,7 @@ export class PublicApiService extends BaseHttpApiService {
 	): Promise<PublicApiIssuer> {
 		const url = issuerId.startsWith("http")
 			? issuerId
-			: `/public/issuers/${issuerId}`;
+			: `/public/issuers/${issuerId}/did.json`;
 
 		return this.get<PublicApiIssuer>(url, null, false, false)
 			.then(r => r.body);

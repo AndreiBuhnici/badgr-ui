@@ -68,4 +68,12 @@ export function stripQueryParamsFromUrl(
 	}
 }
 
+// Using http only for testing (real case should use https)
+export function didWebToUrl(
+	url: string
+) {
+	const urlArray = url.substring(8).split(':');
+	return 'http://' + urlArray.join('/') + '/did';
+}
+
 type ParamValueType = string | number | boolean;
