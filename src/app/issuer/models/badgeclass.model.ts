@@ -75,7 +75,7 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 
 
 	get issuerSlug(): string {
-		return BadgeClass.issuerSlugFromUrl(this.issuerUrl);
+		return BadgeClass.issuerSlugFromUrlOrDid(this.issuerUrl);
 	}
 
 	get alignments() {
@@ -87,11 +87,19 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 
 	// TODO: The API should give us the issuer slug for a badge, and we should not need to parse the URL.
 	static issuerSlugForApiBadge(apiBadge: ApiBadgeClass) {
-		return BadgeClass.issuerSlugFromUrl(apiBadge.issuer);
+		return BadgeClass.issuerSlugFromUrlOrDid(apiBadge.issuer);
 	}
 
-	private static issuerSlugFromUrl(issuerUrl: string) {
-		return (issuerUrl.match(/\/public\/issuers\/([^\/]+)/) || [])[ 1 ] || null;
+	private static issuerSlugFromUrlOrDid(issuerUrl: string): string | null {
+		if (!issuerUrl) return null;
+
+		let match = issuerUrl.match(/\/public\/issuers\/([^\/]+)/);
+		if (match) return match[1];
+
+		match = issuerUrl.match(/:([^:]+)$/);
+		if (match) return match[1];
+
+		return null;
 	}
 	constructor(
 		commonManager: CommonEntityManager,
