@@ -52,7 +52,7 @@ export class PublicIssuerComponent {
 	get issuer(): PublicApiIssuer { return this.issuerIdParam.value.issuer; }
 	get badgeClasses(): PublicApiBadgeClass[] { return this.issuerIdParam.value.badges; }
 
-	private get rawJsonUrl() {
+	get rawJsonUrl() {
 		let issuerId: string = this.issuer.id
 		if (issuerId.startsWith('did:web'))
 			issuerId = didWebToUrl(issuerId);
