@@ -14,7 +14,7 @@ export interface ApiBadgeInstanceJsonld {
 
 	uid: string;
 	evidence_items: ApiBadgeInstanceEvidenceItem[];
-	issuedOn: string;
+	validFrom: string;
 	image: string;
 }
 

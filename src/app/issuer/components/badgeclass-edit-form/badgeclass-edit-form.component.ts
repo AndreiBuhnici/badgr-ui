@@ -152,7 +152,7 @@ export class BadgeClassEditFormComponent extends BaseAuthenticatedRoutableCompon
 			);
 
 			this.tags = new Set();
-			this.badgeClass.tags.forEach(t => this.tags.add(t));
+			this.badgeClass.tag.forEach(t => this.tags.add(t));
 
 			this.tagsEnabled = this.tags.size > 0;
 			this.alignmentsEnabled = this.badgeClass.alignments.length > 0;
@@ -301,7 +301,7 @@ export class BadgeClassEditFormComponent extends BaseAuthenticatedRoutableCompon
 			this.existingBadgeClass.criteria_text = formState.badge_criteria_text;
 			this.existingBadgeClass.criteria_url = formState.badge_criteria_url;
 			this.existingBadgeClass.alignments = this.alignmentsEnabled ? formState.alignments : [];
-			this.existingBadgeClass.tags = this.tagsEnabled ? Array.from(this.tags) : [];
+			this.existingBadgeClass.tag = this.tagsEnabled ? Array.from(this.tags) : [];
 			if (this.expirationEnabled) {
 				this.existingBadgeClass.expiresDuration = expirationState.expires_duration as BadgeClassExpiresDuration;
 				this.existingBadgeClass.expiresAmount = parseInt(expirationState.expires_amount, 10);
@@ -317,7 +317,7 @@ export class BadgeClassEditFormComponent extends BaseAuthenticatedRoutableCompon
 				image: formState.badge_image,
 				criteria_text: formState.badge_criteria_text,
 				criteria_url: formState.badge_criteria_url,
-				tags: this.tagsEnabled ? Array.from(this.tags) : [],
+				tag: this.tagsEnabled ? Array.from(this.tags) : [],
 				alignment: this.alignmentsEnabled ? formState.alignments : [],
 			} as ApiBadgeClassForCreation;
 			if (this.expirationEnabled) {

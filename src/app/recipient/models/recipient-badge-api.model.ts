@@ -70,7 +70,7 @@ export interface ApiRecipientBadgeClass {
 	criteria?: string;
 	criteria_text?: string;
 	criteria_url?: string;
-	tags: string[];
+	tag: string[];
 	issuer: ApiRecipientBadgeIssuer;
 }
 
@@ -80,7 +80,7 @@ export interface ApiRecipientBadgeInstanceJson {
 	uid: string;
 	recipient: ApiRecipientBadgeRecipient;
 	badge: ApiRecipientBadgeClass;
-	issuedOn: string;
+	validFrom: string;
 	image: string;
 	evidence?: string;
 	narrative?: string;

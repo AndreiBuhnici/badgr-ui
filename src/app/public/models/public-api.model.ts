@@ -10,7 +10,7 @@ export interface PublicApiBadgeAssertion {
   type: string[];
   id: string;
   issuer: PublicApiIssuer;
-  issuedOn: string;
+  validFrom: string;
   expires?: string;
   revoked?: boolean;
   revocationReason?: string;
@@ -58,7 +58,7 @@ export interface PublicApiBadgeClass {
     targetFramework?: string;
     targetCode?: string;
   }>;
-  tags: string[];
+  tag: string[];
   sourceUrl?: string;
   hostedUrl?: string;
 }

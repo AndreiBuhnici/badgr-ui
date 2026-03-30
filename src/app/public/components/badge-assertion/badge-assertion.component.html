@@ -11,7 +11,7 @@
 			[badgeTitle]="badgeClass.name"
 			[badgeImage]="assertion.image"
 			[badgeDescription]="badgeClass.description"
-			[badgeIssueDate]="assertion.issuedOn"
+			[badgeIssueDate]="assertion.validFrom"
 			[mostRelevantStatus]=""
 			[issuerTitle]="issuer.name"
 			[verifyUrl]="verifyUrl"
@@ -56,7 +56,7 @@
 				<dl class="oembedbadge-x-info">
 					<dt>Issued On</dt>
 					<dd>
-						<time [date]="assertion.issuedOn" format="mediumDate"></time>
+						<time [date]="assertion.validFrom" format="mediumDate"></time>
 					</dd>
 				</dl>
 				<dl class="oembedbadge-x-info"
@@ -149,7 +149,7 @@
 							</div>
 						</div>
 						<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">Issued on:</dt>
-						<dd class="u-text"><time [date]="assertion.issuedOn" format="mediumDate"></time></dd>
+						<dd class="u-text"><time [date]="assertion.validFrom" format="mediumDate"></time></dd>
 				    	<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2" *ngIf="awardedToDisplayName">Awarded to:</dt>
 				    	<dd class="u-text u-break-all">{{ awardedToDisplayName }}</dd>
 				    	<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2" *ngIf="assertion.expires">
@@ -218,10 +218,10 @@
 				<!-- tags -->
 				<section>
 					<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top4x"
-						*ngIf="badgeClass.tags && badgeClass.tags.length">Tags</h3>
+						*ngIf="badgeClass.tag && badgeClass.tag.length">Tags</h3>
 					<div class="l-tags">
 						<div class="tag"
-							*ngFor="let tag of badgeClass.tags; last as last"
+							*ngFor="let tag of badgeClass.tag; last as last"
 						>{{tag}}</div>
 					</div>
 				</section>
