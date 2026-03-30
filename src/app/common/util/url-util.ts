@@ -73,7 +73,7 @@ export function didWebToUrl(
 	url: string
 ) {
 	const urlArray = url.substring(8).split(':');
-	return 'http://' + urlArray.join('/') + '/did';
+	return 'http://' + decodeURIComponent(urlArray.join('/')) + '/did';
 }
 
 type ParamValueType = string | number | boolean;
