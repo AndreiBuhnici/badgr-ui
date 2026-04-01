@@ -78,32 +78,6 @@ export class VerifyBadgeDialog extends BaseDialog {
 	async openDialog( badgeAssertion: PublicApiBadgeAssertion ) {
 		this.showModal();
 
-		// // Not one of 'our' badges, needs to be verified
-		// if (badgeAssertion.sourceUrl){
-		// 	try {
-		// 		const entityId = badgeAssertion['hostedUrl'].split('/').pop();
-		// 		const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
-		// 			await this.publicApiService.verifyBadgeAssertion(entityId);
-
-		// 		if (instance){
-		// 			this.badgeAssertion = instance.result instanceof Array ? instance.result[0] : instance.result;
-		// 		}
-		// 		else {
-		// 			this.messageService.reportAndThrowError("Failed to verify your badge");
-		// 		}
-
-		// 	}
-		// 	catch(e) {
-		// 		this.closeDialog();
-		// 		this.messageService.reportAndThrowError("Failed to verify your badge", e);
-		// 	}
-		// }
-
-		// // is one of ours and as such is already verified.
-		// else {
-		// 	this.badgeAssertion = badgeAssertion;
-		// }
-
 		// Even though the badges might be created by us, we want to verify it anyway
 		try {
 			const entityId = badgeAssertion['id']
@@ -158,11 +132,11 @@ export class VerifyBadgeDialog extends BaseDialog {
 	}
 
 	private verifyExpiresOn() {
-		if (!this.badgeAssertion.expires) {
+		if (!this.badgeAssertion.validUntil) {
 			this.expiryState = ExpiryState.NEVER_EXPIRES;
 		}
 		else {
-			this.expiryState = new Date() > new Date(this.badgeAssertion.expires)
+			this.expiryState = new Date() > new Date(this.badgeAssertion.validUntil)
 			                   ? ExpiryState.EXPIRED
 			                   : ExpiryState.NOT_EXPIRED;
 		}

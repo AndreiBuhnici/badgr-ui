@@ -40,12 +40,11 @@
 		<div class="l-containerxaxis l-containeryaxis l-grid l-grid-4up">
 
 			<bg-badgecard *ngFor="let badge of collection.badges"
-										[badgeTitle]="badge.badge.name"
-										[badgeImage]="badge.image"
-										[badgeDescription]="badge.badge.description"
+										[badgeTitle]="badge.credentialSubject.achievement.name"
+										[badgeImage]="badge.credentialSubject.achievement.image"
+										[badgeDescription]="badge.credentialSubject.achievement.description"
 										[badgeIssueDate]="badge?.validFrom"
-										[mostRelevantStatus]="badge.badge.mostRelevantStatus"
-										[issuerTitle]="badge.badge.issuer.name"
+										[issuerTitle]="badge.credentialSubject.achievement.creator.name"
 										[public]="true"
 										[publicUrl]="getBadgeUrl(badge)"
 			>

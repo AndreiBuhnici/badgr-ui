@@ -71,7 +71,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 	issuer: Issuer;
 	issueForm = typedFormGroup()
-		.addControl("expires", "", this['expirationValidator'])
+		.addControl("validUntil", "", this['expirationValidator'])
 		.addControl("recipient_type", "email" as RecipientIdentifierType, [ Validators.required ], control => {
 			control.rawControl.valueChanges.subscribe(() => {
 				this.issueForm.controls.recipient_identifier.rawControl.updateValueAndValidity();
@@ -159,7 +159,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				if (badgeClass.expiresDuration && badgeClass.expiresAmount) {
 					this.expirationEnabled = true;
 				}
-				this.issueForm.rawControlMap.expires.setValue(this.defaultExpiration);
+				this.issueForm.rawControlMap.validUntil.setValue(this.defaultExpiration);
 
 				this.title.setTitle(`Award Badge - ${badgeClass.name} - ${this.configService.theme['serviceName'] || "Badgr"}`);
 			});
@@ -204,7 +204,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 			}
 		} : undefined;
 
-		if(this.expirationEnabled && DateValidator.validDate(this.issueForm.controls.expires.rawControl)){
+		if(this.expirationEnabled && DateValidator.validDate(this.issueForm.controls.validUntil.rawControl)){
 			this.dateError = true;
 			return false;
 		} else {
@@ -221,7 +221,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 			this.idError = false;
 		}
 
-		const expires = (this.expirationEnabled && formState.expires) ? new Date(formState.expires).toISOString() : undefined;
+		const validUntil = (this.expirationEnabled && formState.validUntil) ? new Date(formState.validUntil).toISOString() : undefined;
 
 		this.issueBadgeFinished = this.badgeInstanceManager.createBadgeInstance(
 			this.issuerSlug,
@@ -235,7 +235,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				create_notification: formState.notify_earner,
 				evidence_items: this.evidenceEnabled ? cleanedEvidence : [],
 				extensions,
-				expires,
+				validUntil,
 			}
 		).then(() => this.badgeClass.update())
 			.then(() => {

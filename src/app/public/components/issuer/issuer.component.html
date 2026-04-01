@@ -55,8 +55,6 @@
 								[href]="rawJsonUrl"
 								><svg icon="icon_external_link"></svg>View JSON</a>
 								<a class="menuitem" target="_blank"
-								   [href]="issuer.sourceUrl"
-								   *ngIf="issuer.sourceUrl"
 								><svg icon="icon_external_link"></svg>View Original</a>
 							</bg-popup-menu>
 						</div>
@@ -87,7 +85,7 @@
 									     [alt]="badgeClass.name"
 									     width="40">
 									<a class="u-text u-text-breakword"
-									   [routerLink]="routerLinkForUrl(badgeClass.hostedUrl || badgeClass.id)"
+									   [routerLink]="routerLinkForUrl(badgeClass.id)"
 									>{{ badgeClass.name }}</a>
 								</div>
 							</th>

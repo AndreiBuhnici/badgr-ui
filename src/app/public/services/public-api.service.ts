@@ -30,7 +30,7 @@ export class PublicApiService extends BaseHttpApiService {
 	) {
 		const url = assertionId.startsWith("http")
 			? assertionId
-			: `/public/assertions/${assertionId}.json?expand=issuer`;
+			: `/public/assertions/${assertionId}.json`;
 
 		return this.get<PublicApiBadgeAssertion>(url, null, false, false)
 			.then(r => r.body);
@@ -50,14 +50,14 @@ export class PublicApiService extends BaseHttpApiService {
 	): Promise<PublicApiBadgeClass> {
 		const url = badgeId.startsWith("http")
 			? badgeId
-			: `/public/badges/${badgeId}?expand=issuer`;
+			: `/public/badges/${badgeId}`;
 
 		return this.get<PublicApiBadgeClass>(url, null, false, false)
 			.then(r => r.body)
 			.then(
 				badge =>
-					typeof badge.issuer === "string"
-						? this.getIssuer(badge.issuer)
+					typeof badge.creator === "string"
+						? this.getIssuer(badge.creator)
 							.then(issuer => ({ ...badge, issuer }))
 						: Promise.resolve(badge)
 			);
@@ -97,7 +97,7 @@ export class PublicApiService extends BaseHttpApiService {
 	getBadgeCollection(
 		shareHash: string
 	): Promise<PublicApiBadgeCollectionWithBadgeClassAndIssuer> {
-		return this.get<PublicApiBadgeCollectionWithBadgeClassAndIssuer>(`/public/collections/${shareHash}.json?expand=badges.badge&expand=badges.badge.issuer`, null, false, false)
+		return this.get<PublicApiBadgeCollectionWithBadgeClassAndIssuer>(`/public/collections/${shareHash}.json`, null, false, false)
 			.then(r => r.body);
 	}
 }

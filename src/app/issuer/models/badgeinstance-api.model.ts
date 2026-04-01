@@ -35,7 +35,7 @@ export interface ApiBadgeInstanceForCreation {
 	create_notification?: boolean;
 	evidence_items?: ApiBadgeInstanceEvidenceItem[];
 	extensions?: object;
-	expires?: string;
+	validUntil?: string;
 }
 
 export type RecipientIdentifierType = 'email' | 'openBadgeId' | 'telephone' | 'url';
@@ -52,7 +52,7 @@ export interface ApiBadgeInstance {
 	recipient_type?: string;
 	revoked: boolean;
 	revocation_reason?: string;
-	expires?: string;
+	validUntil?: string;
 
 	evidence_items?: ApiBadgeInstanceEvidenceItem[];
 

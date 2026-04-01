@@ -55,22 +55,22 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 	}
 
 	get expiresDuration(): BadgeClassExpiresDuration | undefined {
-		return this.apiModel.expires ? this.apiModel.expires.duration : undefined;
+		return this.apiModel.validUntil ? this.apiModel.validUntil.duration : undefined;
 	}
 	set expiresDuration(duration: BadgeClassExpiresDuration | undefined) {
-		if (!this.apiModel.expires) {
-			this.apiModel.expires = {} as ApiBadgeClassExpiration;
+		if (!this.apiModel.validUntil) {
+			this.apiModel.validUntil = {} as ApiBadgeClassExpiration;
 		}
-		this.apiModel.expires.duration = duration;
+		this.apiModel.validUntil.duration = duration;
 	}
 	get expiresAmount(): number | undefined {
-		return this.apiModel.expires ? this.apiModel.expires.amount : undefined;
+		return this.apiModel.validUntil ? this.apiModel.validUntil.amount : undefined;
 	}
 	set expiresAmount(amount: number | undefined) {
-		if (!this.apiModel.expires) {
-			this.apiModel.expires = {} as ApiBadgeClassExpiration;
+		if (!this.apiModel.validUntil) {
+			this.apiModel.validUntil = {} as ApiBadgeClassExpiration;
 		}
-		this.apiModel.expires.amount = amount;
+		this.apiModel.validUntil.amount = amount;
 	}
 
 
@@ -120,7 +120,7 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		};
 	}
 	clearExpires(): void {
-		this.apiModel.expires = null;
+		this.apiModel.validUntil = null;
 	}
 
 	expirationDateRelative(validFrom?: Date): Date | undefined {

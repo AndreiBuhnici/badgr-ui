@@ -30,7 +30,7 @@ export interface ApiBadgeClassForCreation {
 
 	tag?: string[];
 	alignment?: ApiBadgeClassAlignment[];
-	expires?: ApiBadgeClassExpiration;
+	validUntil?: ApiBadgeClassExpiration;
 }
 
 export interface ApiBadgeClassAlignment {

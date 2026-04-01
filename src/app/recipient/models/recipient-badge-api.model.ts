@@ -84,7 +84,7 @@ export interface ApiRecipientBadgeInstanceJson {
 	image: string;
 	evidence?: string;
 	narrative?: string;
-	expires?: string;
+	validUntil?: string;
 }
 
 export interface ApiRecipientBadgeIssuer {

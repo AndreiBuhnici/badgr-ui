@@ -6,7 +6,6 @@ import {PublicApiService} from '../../services/public-api.service';
 import {LoadedRouteParam} from '../../../common/util/loaded-route-param';
 import {PublicApiBadgeCollectionWithBadgeClassAndIssuer} from '../../models/public-api.model';
 import {EmbedService} from '../../../common/services/embed.service';
-import {routerLinkForUrl} from '../public/public.component';
 import {Title} from '@angular/platform-browser';
 import {AppConfigService} from '../../../common/app-config.service';
 
@@ -19,8 +18,6 @@ export class PublicBadgeCollectionComponent {
 	);
 	readonly badgeLoadingImageUrl = require('../../../../breakdown/static/images/badge-loading.svg') as string;
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
-
-	routerLinkForUrl = routerLinkForUrl;
 
 	collectionHashParam: LoadedRouteParam<PublicApiBadgeCollectionWithBadgeClassAndIssuer>;
 
@@ -43,7 +40,7 @@ export class PublicBadgeCollectionComponent {
 	}
 
 	getBadgeUrl(badge) {
-		return badge.hostedUrl ? badge.hostedUrl : badge.id;
+		return badge.id;
 	}
 
 	isExpired(date: string): boolean {

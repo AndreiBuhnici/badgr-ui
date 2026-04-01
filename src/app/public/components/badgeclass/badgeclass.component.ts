@@ -6,7 +6,7 @@ import {PublicApiService} from '../../services/public-api.service';
 import {LoadedRouteParam} from '../../../common/util/loaded-route-param';
 import {PublicApiBadgeClass, PublicApiIssuer} from '../../models/public-api.model';
 import {EmbedService} from '../../../common/services/embed.service';
-import {addQueryParamsToUrl, stripQueryParamsFromUrl} from '../../../common/util/url-util';
+import {addQueryParamsToUrl, stripQueryParamsFromUrl, didWebToUrl} from '../../../common/util/url-util';
 import {routerLinkForUrl} from '../public/public.component';
 import {AppConfigService} from '../../../common/app-config.service';
 import {Title} from '@angular/platform-browser';
@@ -23,6 +23,7 @@ export class PublicBadgeClassComponent {
 
 	badgeIdParam: LoadedRouteParam<PublicApiBadgeClass>;
 	routerLinkForUrl = routerLinkForUrl;
+	didWebToUrl = didWebToUrl;
 
 	constructor(
 		private injector: Injector,
@@ -44,7 +45,7 @@ export class PublicBadgeClassComponent {
 
 	get badgeClass(): PublicApiBadgeClass { return this.badgeIdParam.value; }
 
-	get issuer(): PublicApiIssuer { return this.badgeClass.issuer; }
+	get issuer(): PublicApiIssuer { return this.badgeClass.creator; }
 
 	private get rawJsonUrl() {
 		return stripQueryParamsFromUrl(this.badgeClass.id) + ".json";

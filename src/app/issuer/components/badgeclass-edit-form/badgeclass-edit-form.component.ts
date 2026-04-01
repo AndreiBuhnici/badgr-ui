@@ -321,7 +321,7 @@ export class BadgeClassEditFormComponent extends BaseAuthenticatedRoutableCompon
 				alignment: this.alignmentsEnabled ? formState.alignments : [],
 			} as ApiBadgeClassForCreation;
 			if (this.expirationEnabled) {
-				badgeClassData.expires = {
+				badgeClassData.validUntil = {
 					duration: expirationState.expires_duration as BadgeClassExpiresDuration,
 					amount: parseInt(expirationState.expires_amount, 10)
 				};

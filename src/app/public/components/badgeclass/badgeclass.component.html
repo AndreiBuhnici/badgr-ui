@@ -41,8 +41,7 @@
 						<a [href]="v2JsonUrl"
 						   class="button button-primaryghost"
 						>v2.0 JSON</a>
-						<a [href]="badgeClass.sourceUrl"
-						   *ngIf="badgeClass.sourceUrl"
+						<a
 						   class="button button-primaryghost"
 						>View Original</a>
 					</section>
@@ -74,7 +73,7 @@
 								<dt class="u-text-small-bold">Issued by:</dt>
 								<dd class="u-text">
 	                				<a class="u-break-word"
-	                					[routerLink]="routerLinkForUrl(issuer.hostedUrl || issuer.id)"
+	                					[href]="didWebToUrl(issuer.id)"
 	                				>{{ issuer.name }}</a>
 	            				</dd>
 							</div>
