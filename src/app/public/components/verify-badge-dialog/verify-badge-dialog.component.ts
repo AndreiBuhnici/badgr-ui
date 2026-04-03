@@ -74,7 +74,7 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 		// Even though the badges might be created by us, we want to verify it anyway
 		try {
-			const entityId = badgeAssertion['id']
+			const entityId = badgeAssertion['id'].split('/').pop();
 			const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
 				await this.publicApiService.verifyBadgeAssertion(entityId);
 
