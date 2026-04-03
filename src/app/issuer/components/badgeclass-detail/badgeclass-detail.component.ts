@@ -223,7 +223,7 @@ export class BadgeClassDetailComponent extends BaseAuthenticatedRoutableComponen
 			imageUrl: badge.imagePreview,
 			badgeClassName: this.badgeClass.name,
 			badgeClassDescription: this.badgeClass.description,
-			issueDate: badge.issuedOn,
+			issueDate: badge.validFrom,
 			recipientName: badge.getExtension('extensions:recipientProfile', {'name': undefined}).name,
 			recipientIdentifier: badge.recipientIdentifier,
 			recipientType: badge.recipientType

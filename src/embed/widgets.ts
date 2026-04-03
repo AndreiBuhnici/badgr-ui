@@ -69,14 +69,14 @@ export function setupEmbeddedBadges() {
 
 					const blockquote = generateEmbedHtml({
 						shareUrl: badgeUrl,
-						imageUrl: data.image,
+						imageUrl: data.credentialSubject.achievement.image,
 						includeBadgeClassName: includeBadgeName,
 						includeRecipientName: includeRecipientName && recipientName,
 						includeAwardDate,
 						includeVerifyButton,
 						badgeClassName: data.credentialSubject.achievement.name,
 						recipientName,
-						awardDate: format_date(data.issuedOn),
+						awardDate: format_date(data.validFrom),
 						verified,
 						includeScript: false,
 						staticPrefix,

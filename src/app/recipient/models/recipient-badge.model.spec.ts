@@ -44,7 +44,7 @@ export function verifyRecipientBadge(
 	expect(badge.type).toEqual(apiBadge.json.type);
 	expect(badge.recipientEmail).toEqual(apiBadge.recipient_identifier);
 	expect(badge.badgeClass).toEqual(apiBadge.json.badge);
-	expect(badge.issueDate).toEqual(new Date(apiBadge.json.issuedOn));
+	expect(badge.issueDate).toEqual(new Date(apiBadge.json.validFrom));
 	expect(badge.image).toEqual(apiBadge.image);
 }
 
@@ -69,7 +69,7 @@ export function buildTestRecipientBadges() {
 				"criteria": "http://localhost:8000/public/badges/issuer2-is-awesome/criteria",
 				"criteria_url": "http://localhost:8000/public/badges/issuer2-is-awesome/criteria",
 				"criteria_text": "Some Criteria",
-				tags: ['qwerty', 'boberty', 'BanannaFanna'],
+				tag: ['qwerty', 'boberty', 'BanannaFanna'],
 				"alignment": [],
 				"issuer": {
 					"id": "http://localhost:8000/public/issuers/issuer-2",
@@ -80,7 +80,7 @@ export function buildTestRecipientBadges() {
 					"email": "yona-badgr-issuer-2@mailinator.com"
 				}
 			},
-			"issuedOn": "2016-09-22T17:00:33.645506",
+			"validFrom": "2016-09-22T17:00:33.645506",
 			"image": "http://localhost:8000/media/uploads/badges/local_badgeinstance_e44d1289-6365-453a-89b1-38c2bd6cbec4.png"
 		},
 		"image": "http://localhost:8000/media/uploads/badges/local_badgeinstance_e44d1289-6365-453a-89b1-38c2bd6cbec4.png",
@@ -110,7 +110,7 @@ export function buildTestRecipientBadges() {
 				"criteria": "http://localhost:8000/public/badges/science-ribbon/criteria",
 				"criteria_url": "http://localhost:8000/public/badges/science-ribbon/criteria",
 				"criteria_text": "Some Criteria",
-				tags: ['qwerty', 'boberty', 'BanannaFanna'],
+				tag: ['qwerty', 'boberty', 'BanannaFanna'],
 				"alignment": [],
 				"issuer": {
 					"id": "http://localhost:8000/public/issuers/big-image-issuer",
@@ -122,7 +122,7 @@ export function buildTestRecipientBadges() {
 					"email": "yona-badgr-issuer1@mailinator.com"
 				}
 			},
-			"issuedOn": "2016-09-22T19:06:09.264757",
+			"validFrom": "2016-09-22T19:06:09.264757",
 			"image": "http://localhost:8000/media/uploads/badges/local_badgeinstance_5ca42b9c-0f15-453b-943a-377984a93663.png"
 		},
 		"image": "http://localhost:8000/public/issuers/big-image-issuer/image",
@@ -156,7 +156,7 @@ export function buildTestRecipientBadges() {
 				"criteria": "http://nowhere.com",
 				"criteria_url": "http://nowhere.com",
 				"criteria_text": "Some Criteria",
-				tags: ['qwerty', 'boberty', 'BanannaFanna'],
+				tag: ['qwerty', 'boberty', 'BanannaFanna'],
 				"alignment": [],
 				"issuer": {
 					"id": "http://localhost:8000/public/issuers/big-image-issuer",
@@ -168,7 +168,7 @@ export function buildTestRecipientBadges() {
 					"email": "yona-badgr-issuer1@mailinator.com"
 				}
 			},
-			"issuedOn": "2016-09-22T15:56:41.838280",
+			"validFrom": "2016-09-22T15:56:41.838280",
 			"image": "http://localhost:8000/media/uploads/badges/local_badgeinstance_7c1973cd-c220-4c4b-8fa2-5ac798ebb7b4.png",
 			"evidence": "http://nowhere.com"
 		},

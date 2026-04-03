@@ -27,15 +27,6 @@ declare function require(path: string): string;
 			<div class="badgecard-x-date">
 				<time [date]="badgeIssueDate" format="mediumDate"></time>
 			</div>
-
-			<!-- Show Verify or Share Button unless public -->
-			<button class="badgecard-x-sharelink" *ngIf="!verifyUrl && !public && (mostRelevantStatus !== 'pending')"
-					(click)="shareClicked.emit($event)">
-				Share
-			</button>
-			<a class="badgecard-x-sharelink" *ngIf="verifyUrl" [href]="verifyUrl">
-				Verify
-			</a>
 		</div>
 	`
 })
@@ -50,7 +41,6 @@ export class BgBadgecard {
 	@Input() badgeIssueDate: string;
 	@Input() issuerTitle: string;
 	@Input() mostRelevantStatus: "expired" | "new" | "pending" | undefined;
-	@Input() verifyUrl: string;
 	@Input() public = false;
 	@Output() shareClicked = new EventEmitter<MouseEvent>();
 }

@@ -13,13 +13,13 @@ export class RecipientBadgeInstance extends ManagedEntity<ApiRecipientBadgeInsta
 	get type(): string { return this.apiModel.json.type; }
 	get recipientEmail(): string { return this.apiModel.recipient_identifier; }
 	get badgeClass(): ApiRecipientBadgeClass { return this.apiModel.json.badge; }
-	get issueDate(): Date { return this._issueDate ? this._issueDate : (this._issueDate = new Date(this.apiModel.json.issuedOn)); }
+	get issueDate(): Date { return this._issueDate ? this._issueDate : (this._issueDate = new Date(this.apiModel.json.validFrom)); }
 	get image(): string { return this.apiModel.image; }
 	get imagePreview(): string { return this.apiModel.imagePreview.id; }
 	get narrative(): string { return this.apiModel.narrative; }
 	get evidence_items(): Array<unknown> { return this.apiModel.evidence_items; }
 
-	get expiresDate(): Date { return this._expiresDate ? this._expiresDate : (this._expiresDate = this.apiModel.json.expires && new Date(this.apiModel.json.expires) || null); }
+	get expiresDate(): Date { return this._expiresDate ? this._expiresDate : (this._expiresDate = this.apiModel.json.validUntil && new Date(this.apiModel.json.validUntil) || null); }
 
 	get shareUrl(): string { return this.apiModel.shareUrl; }
 

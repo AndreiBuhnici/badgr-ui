@@ -47,30 +47,30 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		this.apiModel.criteria_url = criteriaUrl;
 	}
 
-	get tags(): string[] {
-		return this.apiModel.tags;
+	get tag(): string[] {
+		return this.apiModel.tag;
 	}
-	set tags(tags: string[]) {
-		this.apiModel.tags = tags;
+	set tag(tags: string[]) {
+		this.apiModel.tag = tags;
 	}
 
 	get expiresDuration(): BadgeClassExpiresDuration | undefined {
-		return this.apiModel.expires ? this.apiModel.expires.duration : undefined;
+		return this.apiModel.validUntil ? this.apiModel.validUntil.duration : undefined;
 	}
 	set expiresDuration(duration: BadgeClassExpiresDuration | undefined) {
-		if (!this.apiModel.expires) {
-			this.apiModel.expires = {} as ApiBadgeClassExpiration;
+		if (!this.apiModel.validUntil) {
+			this.apiModel.validUntil = {} as ApiBadgeClassExpiration;
 		}
-		this.apiModel.expires.duration = duration;
+		this.apiModel.validUntil.duration = duration;
 	}
 	get expiresAmount(): number | undefined {
-		return this.apiModel.expires ? this.apiModel.expires.amount : undefined;
+		return this.apiModel.validUntil ? this.apiModel.validUntil.amount : undefined;
 	}
 	set expiresAmount(amount: number | undefined) {
-		if (!this.apiModel.expires) {
-			this.apiModel.expires = {} as ApiBadgeClassExpiration;
+		if (!this.apiModel.validUntil) {
+			this.apiModel.validUntil = {} as ApiBadgeClassExpiration;
 		}
-		this.apiModel.expires.amount = amount;
+		this.apiModel.validUntil.amount = amount;
 	}
 
 
@@ -120,12 +120,12 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		};
 	}
 	clearExpires(): void {
-		this.apiModel.expires = null;
+		this.apiModel.validUntil = null;
 	}
 
-	expirationDateRelative(issuedOn?: Date): Date | undefined {
+	expirationDateRelative(validFrom?: Date): Date | undefined {
 		if (this.expiresAmount) {
-			const ret = issuedOn || new Date();
+			const ret = validFrom || new Date();
 			switch (this.expiresDuration) {
 				case 'days': ret.setDate(ret.getDate() + this.expiresAmount); break;
 				case 'months': ret.setMonth(ret.getMonth() + this.expiresAmount); break;

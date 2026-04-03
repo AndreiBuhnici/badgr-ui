@@ -10,7 +10,6 @@ export interface BadgrConfig {
 	help: HelpConfig;
 	features: FeaturesConfig;
 	googleAnalytics: GoogleAnalyticsConfig;
-	assertionVerifyUrl: string;
 	theme: BadgrTheme;
 }
 

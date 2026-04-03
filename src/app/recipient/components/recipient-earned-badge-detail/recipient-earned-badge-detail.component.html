@@ -27,9 +27,6 @@
 			        <span class="visuallyhidden">More</span>
 			    </button>
 				<bg-popup-menu #moreMenu>
-					<a class="menuitem"
-						[href]="verifyUrl"
-						><svg icon="icon_checkmark"></svg>Verify</a>
 					<!--<a class="menuitem"
 						[href]="v2JsonUrl"
 						>Download JSON</a>
@@ -74,7 +71,7 @@
 						<div>
 							<dt class="u-text-small-bold u-text-dark2">Issued by:</dt>
 							<dd class="u-text">
-									<a class="u-break-word" [href]="badge.badgeClass.issuer.id">{{ badge.badgeClass.issuer.name }}</a>
+									<a class="u-break-word" [href]="didWebToUrl(badge.badgeClass.issuer.id)">{{ badge.badgeClass.issuer.name }}</a>
 							</dd>
 						</div>
 			    	</div>
@@ -149,11 +146,11 @@
 
 			<!-- tags -->
 			<section
-				*ngIf="badge.badgeClass.tags.length > 0">
+				*ngIf="badge.badgeClass.tag.length > 0">
 			<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">Tags</h3>
 			<div class="l-tags">
 				<div class="tag"
-					*ngFor="let tag of badge.badgeClass.tags; last as last"
+					*ngFor="let tag of badge.badgeClass.tag; last as last"
 				>{{tag}}</div>
 			</div>
 			</section>

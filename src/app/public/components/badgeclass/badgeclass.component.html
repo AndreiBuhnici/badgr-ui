@@ -41,8 +41,7 @@
 						<a [href]="v2JsonUrl"
 						   class="button button-primaryghost"
 						>v2.0 JSON</a>
-						<a [href]="badgeClass.sourceUrl"
-						   *ngIf="badgeClass.sourceUrl"
+						<a
 						   class="button button-primaryghost"
 						>View Original</a>
 					</section>
@@ -74,7 +73,7 @@
 								<dt class="u-text-small-bold">Issued by:</dt>
 								<dd class="u-text">
 	                				<a class="u-break-word"
-	                					[routerLink]="routerLinkForUrl(issuer.hostedUrl || issuer.id)"
+	                					[href]="didWebToUrl(issuer.id)"
 	                				>{{ issuer.name }}</a>
 	            				</dd>
 							</div>
@@ -142,10 +141,10 @@
 				<!-- tags -->
 				<section>
 					<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top4x"
-						*ngIf="badgeClass.tags && badgeClass.tags.length">Tags</h3>
+						*ngIf="badgeClass.tag && badgeClass.tag.length">Tags</h3>
 					<div class="l-tags">
 						<div class="tag"
-							*ngFor="let tag of badgeClass.tags; last as last"
+							*ngFor="let tag of badgeClass.tag; last as last"
 						>{{ tag }}</div>
 					</div>
 				</section>

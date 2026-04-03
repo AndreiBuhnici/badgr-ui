@@ -9,12 +9,11 @@ export interface PublicApiBadgeAssertion {
   "@context": string[];
   type: string[];
   id: string;
-  issuer: PublicApiIssuer;
-  issuedOn: string;
-  expires?: string;
+  issuer: string;
+  validFrom: string;
+  validUntil?: string;
   revoked?: boolean;
   revocationReason?: string;
-  image?: string;
   credentialSubject: {
     type: string;
     achievement: PublicApiBadgeClass;
@@ -34,8 +33,6 @@ export interface PublicApiBadgeAssertion {
     proofPurpose: string;
     proofValue: string;
   };
-  sourceUrl?: string;
-  hostedUrl?: string;
 }
 
 export interface PublicApiBadgeClass {
@@ -44,7 +41,7 @@ export interface PublicApiBadgeClass {
   id: string;
   name: string;
   description: string;
-  issuer?: PublicApiIssuer;
+  creator?: PublicApiIssuer;
   image?: string;
   criteria: {
     narrative?: string;
@@ -58,9 +55,7 @@ export interface PublicApiBadgeClass {
     targetFramework?: string;
     targetCode?: string;
   }>;
-  tags: string[];
-  sourceUrl?: string;
-  hostedUrl?: string;
+  tag: string[];
 }
 
 export interface PublicApiIssuer {

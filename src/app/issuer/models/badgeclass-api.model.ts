@@ -28,9 +28,9 @@ export interface ApiBadgeClassForCreation {
 	criteria_url: string;
 	criteria_text: string;
 
-	tags?: string[];
+	tag?: string[];
 	alignment?: ApiBadgeClassAlignment[];
-	expires?: ApiBadgeClassExpiration;
+	validUntil?: ApiBadgeClassExpiration;
 }
 
 export interface ApiBadgeClassAlignment {

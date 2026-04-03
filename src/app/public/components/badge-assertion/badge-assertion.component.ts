@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { preloadImageURL } from '../../../common/util/file-util';
 import { PublicApiService } from '../../services/public-api.service';
 import { LoadedRouteParam } from '../../../common/util/loaded-route-param';
+import { didWebToUrl } from '../../../common/util/url-util';
+
 import {
 	PublicApiBadgeAssertion,
 	PublicApiBadgeClass,
@@ -52,6 +54,10 @@ export class PublicBadgeAssertionComponent {
 
 	awardedToDisplayName: string;
 
+	issuerData: PublicApiIssuer | null = null;
+
+	didWebToUrl = didWebToUrl;
+
 	routerLinkForUrl = routerLinkForUrl;
 
 	tense = {
@@ -73,12 +79,12 @@ export class PublicBadgeAssertionComponent {
 		return this.assertion.credentialSubject.achievement;
 	}
 
-	get issuer(): PublicApiIssuer {
-		return this.assertion.issuer;
+	get issuer(): PublicApiIssuer | null {
+		return this.issuerData;
 	}
 
 	get isExpired(): boolean {
-		return !this.assertion.expires || new Date(this.assertion.expires) < new Date();
+		return !this.assertion.validUntil || new Date(this.assertion.validUntil) < new Date();
 	}
 
 	private get rawUrl() {
@@ -91,18 +97,6 @@ export class PublicBadgeAssertionComponent {
 
 	get rawBakedUrl() {
 		return `${this.rawUrl}/baked`;
-	}
-
-	get verifyUrl() {
-		let url = `${this.configService.assertionVerifyUrl}?url=${this.rawJsonUrl}`;
-
-		for (const IDENTITY_TYPE of ['identity__email', 'identity__url', 'identity__telephone']) {
-			const identity = this.queryParametersService.queryStringValue(IDENTITY_TYPE);
-			if (identity) {
-				url = `${url}&${IDENTITY_TYPE}=${identity}`;
-			}
-		}
-		return url;
 	}
 
 	onVerifiedBadgeAssertion(ba){
@@ -137,6 +131,20 @@ export class PublicBadgeAssertionComponent {
 		return "";
 	}
 
+	loadIssuer(did: string) {
+		const service: PublicApiService = this.injector.get(PublicApiService);
+
+		const url = didWebToUrl(did);
+
+		service.get<PublicApiIssuer>(url, null, false, false)
+			.then(r => {
+				this.issuerData = r.body;
+			})
+			.catch(err => {
+				console.error("Failed to resolve DID", err);
+			});
+		}
+
 	private createLoadedRouteParam() {
 		return new LoadedRouteParam(
 			this.injector.get(ActivatedRoute),
@@ -145,6 +153,8 @@ export class PublicBadgeAssertionComponent {
 				this.assertionId = paramValue;
 				const service: PublicApiService = this.injector.get(PublicApiService);
 				return service.getBadgeAssertion(paramValue).then(assertion => {
+					this.loadIssuer(assertion.issuer);
+
 					if (assertion.revoked) {
 						if (assertion.revocationReason) {
 							this.messageService.reportFatalError("Assertion has been revoked:", assertion.revocationReason);

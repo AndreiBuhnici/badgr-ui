@@ -91,7 +91,7 @@
 									></svg>
 									<div>
 										<dt class="u-text-small-bold u-text-dark2">Issued On</dt>
-										<dd class="u-margin-bottom2x"><time [date]="badgeAssertion?.issuedOn" format="mediumDate"></time></dd>
+										<dd class="u-margin-bottom2x"><time [date]="badgeAssertion?.validFrom" format="mediumDate"></time></dd>
 									</div>
 								</div>
 
@@ -108,7 +108,7 @@
 											<ng-container *ngSwitchCase="EXPIRY_STATES.EXPIRED"> Expired</ng-container>
 											<ng-container *ngSwitchCase="EXPIRY_STATES.NEVER_EXPIRES"> Does not expire</ng-container>
 											<ng-container *ngSwitchCase="EXPIRY_STATES.NOT_EXPIRED">
-												<time [date]="badgeAssertion?.expires"
+												<time [date]="badgeAssertion?.validUntil"
 															format="medium Date"
 												></time>
 											</ng-container>
@@ -120,17 +120,6 @@
 					</div>
 				</div>
 			</div>
-
-			<div class="l-stack l-stack-justifybetween u-margin-top3x">
-				<a class="u-text-outlink"
-				   [href]="verifyUrl"
-				>
-					Independently Verify Badge
-					<svg icon="icon_external_link"></svg>
-				</a>
-				<button class="button" (click)="closeDialog()">Done</button>
-			</div>
-
 		</div>
 	</div>
 </dialog>

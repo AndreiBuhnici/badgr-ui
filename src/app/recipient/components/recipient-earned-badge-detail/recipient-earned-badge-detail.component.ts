@@ -13,7 +13,7 @@ import {RecipientBadgeManager} from '../../services/recipient-badge-manager.serv
 import {RecipientBadgeCollectionSelectionDialogComponent} from '../recipient-badge-collection-selection-dialog/recipient-badge-collection-selection-dialog.component';
 import {preloadImageURL} from '../../../common/util/file-util';
 import {ShareSocialDialogOptions} from '../../../common/dialogs/share-social-dialog/share-social-dialog.component';
-import {addQueryParamsToUrl} from '../../../common/util/url-util';
+import {addQueryParamsToUrl, didWebToUrl} from '../../../common/util/url-util';
 import {compareDate} from '../../../common/util/date-compare';
 import {EventsService} from '../../../common/services/events.service';
 import {AppConfigService} from '../../../common/app-config.service';
@@ -49,6 +49,8 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 			'=1' : 'Expires',
 		},
 	};
+
+	didWebToUrl = didWebToUrl
 
 	crumbs: LinkEntry[];
 
@@ -119,18 +121,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 
 	get rawBakedUrl() {
 		return `${this.configService.apiConfig.baseUrl}/public/assertions/${this.badgeSlug}/baked`;
-	}
-
-	get verifyUrl() {
-		let url = `${this.configService.assertionVerifyUrl}?url=${this.rawJsonUrl}`;
-
-		for (const IDENTITY_TYPE of ['identity__email', 'identity__url', 'identity__telephone']) {
-			const identity = this.queryParametersService.queryStringValue(IDENTITY_TYPE);
-			if (identity) {
-				url = `${url}&${IDENTITY_TYPE}=${identity}`;
-			}
-		}
-		return url;
 	}
 
 	get isExpired() {
