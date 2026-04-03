@@ -48,12 +48,6 @@ export class VerifyBadgeDialog extends BaseDialog {
 		return this.awardedState !== AwardedState.NO_MATCH && this.expiryState !== ExpiryState.EXPIRED;
 	}
 
-	get verifyUrl() {
-		return this.identityEmail
-		       ? `https://badgecheck.io/?url=${this.badgeAssertion.id}&identity__email=${this.identityEmail}`
-		       : `https://badgecheck.io/?url=${this.badgeAssertion.id}`;
-	}
-
 	private get isRevoked() {
 		return this.badgeAssertion && this.badgeAssertion.revoked;
 	}

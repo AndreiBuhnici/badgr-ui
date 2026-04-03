@@ -99,18 +99,6 @@ export class PublicBadgeAssertionComponent {
 		return `${this.rawUrl}/baked`;
 	}
 
-	get verifyUrl() {
-		let url = `${this.configService.assertionVerifyUrl}?url=${this.rawJsonUrl}`;
-
-		for (const IDENTITY_TYPE of ['identity__email', 'identity__url', 'identity__telephone']) {
-			const identity = this.queryParametersService.queryStringValue(IDENTITY_TYPE);
-			if (identity) {
-				url = `${url}&${IDENTITY_TYPE}=${identity}`;
-			}
-		}
-		return url;
-	}
-
 	onVerifiedBadgeAssertion(ba){
 		this.assertionIdParam = this.createLoadedRouteParam();
 	}

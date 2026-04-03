@@ -27,10 +27,6 @@ export class AppConfigService {
 		return this.config.googleAnalytics;
 	}
 
-	get assertionVerifyUrl(): string {
-		return this.config.assertionVerifyUrl;
-	}
-
 	get theme(): BadgrTheme {
 		return this.config.theme;
 	}
@@ -135,7 +131,6 @@ export const defaultConfig: BadgrConfig = {
 	googleAnalytics: {
 		trackingId: null
 	},
-	assertionVerifyUrl: "https://badgecheck.io/",
 	theme: {
 		serviceName: "Badgr",
 		welcomeMessage: `### Welcome!`,
