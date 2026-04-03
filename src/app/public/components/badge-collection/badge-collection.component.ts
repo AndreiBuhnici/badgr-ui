@@ -40,15 +40,7 @@ export class PublicBadgeCollectionComponent {
 	}
 
 	getBadgeUrl(badge) {
-		const baseUrl = this.configService.apiConfig.baseUrl;
-
-		if (!badge.id.startsWith('urn:uuid')) {
-			throw new Error("Not using format urn:uuid:*");
-		}
-
-		const splitUrnId = badge.id.split(':');
-		const id = splitUrnId[splitUrnId.length - 1];
-		return `${baseUrl}/public/assertions/${id}`;
+		return badge.id;
 	}
 
 	isExpired(date: string): boolean {
