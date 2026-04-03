@@ -123,18 +123,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 		return `${this.configService.apiConfig.baseUrl}/public/assertions/${this.badgeSlug}/baked`;
 	}
 
-	get verifyUrl() {
-		let url = `${this.configService.assertionVerifyUrl}?url=${this.rawJsonUrl}`;
-
-		for (const IDENTITY_TYPE of ['identity__email', 'identity__url', 'identity__telephone']) {
-			const identity = this.queryParametersService.queryStringValue(IDENTITY_TYPE);
-			if (identity) {
-				url = `${url}&${IDENTITY_TYPE}=${identity}`;
-			}
-		}
-		return url;
-	}
-
 	get isExpired() {
 		return (this.badge && this.badge.expiresDate && this.badge.expiresDate < new Date());
 	}
