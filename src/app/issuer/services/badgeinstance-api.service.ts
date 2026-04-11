@@ -92,6 +92,22 @@ export class BadgeInstanceApiService extends BaseHttpApiService {
 		return this.delete(
 			`/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/assertions/${badgeInstanceSlug}`,
 			{
+				"action": "revoke",
+				"revocation_reason": revocationReason
+			}
+		);
+	}
+
+	deleteBadgeInstance(
+		issuerSlug: string,
+		badgeSlug: string,
+		badgeInstanceSlug: string,
+		revocationReason: string
+	) {
+		return this.delete(
+			`/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/assertions/${badgeInstanceSlug}`,
+			{
+				"action": "delete",
 				"revocation_reason": revocationReason
 			}
 		);

@@ -32,9 +32,9 @@ export class IssuerManager {
 	): Promise<Issuer> {
 		return this.issuerApiService.createIssuer(initialIssuer)
 			.then(newIssuer => {
-				this.issuersListCurrentUser.addOrUpdate(newIssuer)
+				const issuer = this.issuersListCurrentUser.addOrUpdate(newIssuer)
 				this.issuersList.addOrUpdate(newIssuer);
-				return newIssuer;
+				return issuer;
 			});
 	}
 
@@ -52,9 +52,9 @@ export class IssuerManager {
 	): Promise<Issuer> {
 		return this.issuerApiService.editIssuer(issuerSlug, initialIssuer)
 			.then(newIssuer => {
-				this.issuersListCurrentUser.addOrUpdate(newIssuer);
+				const issuer = this.issuersListCurrentUser.addOrUpdate(newIssuer);
 				this.issuersList.addOrUpdate(newIssuer);
-				return newIssuer;
+				return issuer;
 			});
 	}
 

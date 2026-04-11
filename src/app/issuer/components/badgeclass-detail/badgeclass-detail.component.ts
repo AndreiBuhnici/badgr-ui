@@ -161,18 +161,42 @@ export class BadgeClassDetailComponent extends BaseAuthenticatedRoutableComponen
 		this.confirmDialog.openResolveRejectDialog({
 			dialogTitle: "Warning",
 			dialogBody: `Are you sure you want to revoke <strong>${this.badgeClass.name}</strong> from <strong>${instance.recipientIdentifier}</strong>?`,
-			resolveButtonLabel: "Revoke Badge",
+			resolveButtonLabel: "Revoke Badge Instance",
 			rejectButtonLabel: "Cancel"
 		}).then(
 			() => {
 				instance.revokeBadgeInstance("Manually revoked by Issuer").then(
 					(result) => {
-						this.messageService.reportMinorSuccess(`Revoked badge to ${instance.recipientIdentifier}`);
+						this.messageService.reportMinorSuccess(`Revoked badge instance to ${instance.recipientIdentifier}`);
 						this.badgeClass.update();
 						this.updateResults();
 					},
 					(error) =>
-						this.messageService.reportAndThrowError(`Failed to revoke badge to ${instance.recipientIdentifier}`)
+						this.messageService.reportAndThrowError(`Failed to revoke badge instance to ${instance.recipientIdentifier}`)
+				);
+			},
+			() => void 0 // Cancel
+		);
+	}
+
+	deleteInstance(
+		instance: BadgeInstance
+	) {
+		this.confirmDialog.openResolveRejectDialog({
+			dialogTitle: "Warning",
+			dialogBody: `Are you sure you want to delete <strong>${this.badgeClass.name}</strong> from <strong>${instance.recipientIdentifier}</strong>?`,
+			resolveButtonLabel: "Delete Badge Instance",
+			rejectButtonLabel: "Cancel"
+		}).then(
+			() => {
+				instance.deleteBadgeInstance("Manually deleted by Issuer").then(
+					(result) => {
+						this.messageService.reportMinorSuccess(`Deleted badge instance to ${instance.recipientIdentifier}`);
+						this.badgeClass.update();
+						this.updateResults();
+					},
+					(error) =>
+						this.messageService.reportAndThrowError(`Failed to delete badge instance to ${instance.recipientIdentifier}`)
 				);
 			},
 			() => void 0 // Cancel
