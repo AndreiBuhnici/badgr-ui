@@ -88,7 +88,9 @@ export class VerifyBadgeDialog extends BaseDialog {
 		}
 		catch(e) {
 			this.closeDialog();
-			this.messageService.reportAndThrowError("Failed to verify your badge", e);
+			const parsed = JSON.parse(e.message);
+			const validationErrors = parsed.validationErrors || [];
+			this.messageService.reportAndThrowError(`Failed to verify your badge: ${validationErrors}`, e);
 		}
 
 		this.verifyBadgeAssertion();
