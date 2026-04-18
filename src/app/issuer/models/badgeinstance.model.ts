@@ -153,6 +153,18 @@ export class BadgeInstance extends ManagedEntity<ApiBadgeInstance, BadgeInstance
 		});
 	}
 
+	deleteBadgeInstance(deletionReason: string): Promise<BadgeClassInstances> {
+		return this.badgeInstanceManager.badgeInstanceApiService.deleteBadgeInstance(
+			this.issuerSlug,
+			this.badgeClassSlug,
+			this.slug,
+			deletionReason
+		).then(() => {
+			this.badgeClassInstances.remove(this);
+			return this.badgeClassInstances;
+		});
+	}
+
 	hasExtension(extensionName: string) {
 		return (this.apiModel.extensions && extensionName in this.apiModel.extensions);
 	}

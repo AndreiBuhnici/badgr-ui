@@ -26,9 +26,18 @@
 				        <span class="visuallyhidden">More</span>
 				    </button>
 					<bg-popup-menu #moreMenu>
-						<button class="menuitem" type="button"
-					    	[routerLink]="['/issuer/issuers', issuerSlug, 'badges', badgeClass.slug, 'edit']"
-				        ><svg icon="icon_edit"></svg>Edit</button>
+						<button class="menuitem"
+							type="button"
+							[routerLink]="['/issuer/issuers', issuerSlug, 'badges', badgeClass.slug, 'edit']"
+							[disabled]="activeRecipientCount > 0"
+							[title]="activeRecipientCount > 0 
+								? 'Revoke all badge instances to enable editing' 
+								: 'Edit badge'"
+							[style.opacity]="activeRecipientCount > 0 ? '0.5' : '1'">
+							
+							<svg icon="icon_edit"></svg>
+							Edit
+						</button>
 						<button class="menuitem"
 						(click)="deleteBadge()"
 						[disabled-when-requesting]="true"
@@ -212,6 +221,9 @@
 						<button type="button" class="menuitem"
 										(click)="revokeInstance(popInstance)"
 						><svg icon="icon_remove"></svg>Revoke</button>
+						<button type="button" class="menuitem"
+										(click)="deleteInstance(popInstance)"
+						><svg icon="icon_remove"></svg>Delete (for testing)</button>
 						<ng-container *ngIf="launchpoints">
 							<button class="menuitem" type="button"
 									*ngFor="let lp of launchpoints"
@@ -230,6 +242,9 @@
 						<button type="button" class="menuitem"
 										(click)="revokeInstance(popInstance)"
 						><svg icon="icon_remove"></svg>Revoke</button>
+						<button type="button" class="menuitem"
+										(click)="deleteInstance(popInstance)"
+						><svg icon="icon_remove"></svg>Delete (for testing)</button>
 						<ng-container *ngIf="launchpoints">
 							<button class="menuitem" type="button"
 									*ngFor="let lp of launchpoints"

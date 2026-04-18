@@ -95,6 +95,10 @@ export class PublicBadgeAssertionComponent {
 		return `${this.rawUrl}.json`;
 	}
 
+	private get rawJsonUrlEDC() {
+		return `${this.rawUrl}.json?format=edc`;
+	}
+
 	get rawBakedUrl() {
 		return `${this.rawUrl}/baked`;
 	}

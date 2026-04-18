@@ -31,7 +31,11 @@ export class IssuerManager {
 		initialIssuer: ApiIssuerForCreation
 	): Promise<Issuer> {
 		return this.issuerApiService.createIssuer(initialIssuer)
-			.then(newIssuer => this.issuersListCurrentUser.addOrUpdate(newIssuer));
+			.then(newIssuer => {
+				const issuer = this.issuersListCurrentUser.addOrUpdate(newIssuer)
+				this.issuersList.addOrUpdate(newIssuer);
+				return issuer;
+			});
 	}
 
 	get allIssuersOfCurrentUser$(): Observable<Issuer[]> {
@@ -47,7 +51,11 @@ export class IssuerManager {
 		initialIssuer: ApiIssuerForEditing
 	): Promise<Issuer> {
 		return this.issuerApiService.editIssuer(issuerSlug, initialIssuer)
-			.then(newIssuer => this.issuersListCurrentUser.addOrUpdate(newIssuer));
+			.then(newIssuer => {
+				const issuer = this.issuersListCurrentUser.addOrUpdate(newIssuer);
+				this.issuersList.addOrUpdate(newIssuer);
+				return issuer;
+			});
 	}
 
 	deleteIssuer(
