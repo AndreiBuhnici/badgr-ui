@@ -53,11 +53,15 @@ export class PublicIssuerComponent {
 	get badgeClasses(): PublicApiBadgeClass[] { return this.issuerIdParam.value.badges; }
 
 	get rawJsonUrl() {
-		let issuerId: string = this.issuer.id
-		if (issuerId.startsWith('did:web'))
-			issuerId = didWebToUrl(issuerId);
+		let did: string = this.issuer.id;
 
-		return stripQueryParamsFromUrl(issuerId) + ".json";
+		if (this.issuer.alsoKnownAs)
+			did = this.issuer.alsoKnownAs[0];
+
+		if (!did.startsWith('did:web'))
+			throw new Error('Not a did');
+
+		return stripQueryParamsFromUrl(didWebToUrl(did)) + ".json";
 	}
 
 }

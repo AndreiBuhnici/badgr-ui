@@ -6,6 +6,13 @@
  * @param params A map of param key-value(s) pairs to add.
  * @returns The modified URL
  */
+
+let GLOBAL_API_BASE_URL: string | null = null;
+
+export function setApiBaseUrl(url: string) {
+    GLOBAL_API_BASE_URL = url;
+}
+
 export function addQueryParamsToUrl(
 	url: string,
 	params: {[key: string]: ParamValueType | ParamValueType[]}
@@ -68,12 +75,19 @@ export function stripQueryParamsFromUrl(
 	}
 }
 
-// Using http only for testing (real case should use https)
-export function didWebToUrl(
-	url: string
-) {
-	const urlArray = url.substring(8).split(':');
-	return 'http://' + decodeURIComponent(urlArray.join('/')) + '/did';
+export function didWebToUrl(did: string) {
+	const urlArray = did.substring(8).split(':').map(decodeURIComponent);
+
+	let protocol = 'https://';
+	// Using http only for testing (real case should use https)
+	// For now we considered connection between frontend and backend is through http
+	if (GLOBAL_API_BASE_URL && GLOBAL_API_BASE_URL.includes(urlArray[0]))
+		protocol = 'http://'
+
+	if (urlArray.length > 1)
+		return protocol + urlArray.join('/') + '/did';
+
+	return protocol + urlArray[0] + '/.well-known/did.json'
 }
 
 type ParamValueType = string | number | boolean;

@@ -27,6 +27,7 @@ import { Issuer } from "./issuer/models/issuer.model";
 import { IssuerManager } from "./issuer/services/issuer-manager.service";
 import { Angulartics2GoogleAnalytics } from "angulartics2/ga";
 import { ImportModalComponent } from "./mozz-transition/components/import-modal/import-modal.component";
+import { setApiBaseUrl } from './common/util/url-util';
 
 // Shim in support for the :scope attribute
 // See https://github.com/lazd/scopedQuerySelectorShim and
@@ -223,6 +224,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 			loggedIn => setTimeout(() => {this.loggedIn = loggedIn; this.refreshProfile();})
 		);
 		this.shouldShowIssuersTab();
+
+		setApiBaseUrl(this.apiBaseUrl);
 	}
 
 	ngAfterViewInit() {

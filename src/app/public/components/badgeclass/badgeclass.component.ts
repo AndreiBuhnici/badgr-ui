@@ -7,7 +7,6 @@ import {LoadedRouteParam} from '../../../common/util/loaded-route-param';
 import {PublicApiBadgeClass, PublicApiIssuer} from '../../models/public-api.model';
 import {EmbedService} from '../../../common/services/embed.service';
 import {addQueryParamsToUrl, stripQueryParamsFromUrl, didWebToUrl} from '../../../common/util/url-util';
-import {routerLinkForUrl} from '../public/public.component';
 import {AppConfigService} from '../../../common/app-config.service';
 import {Title} from '@angular/platform-browser';
 
@@ -21,8 +20,9 @@ export class PublicBadgeClassComponent {
 	readonly badgeLoadingImageUrl = require('../../../../breakdown/static/images/badge-loading.svg') as string;
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
 
+	private issuerData: PublicApiIssuer;
+
 	badgeIdParam: LoadedRouteParam<PublicApiBadgeClass>;
-	routerLinkForUrl = routerLinkForUrl;
 	didWebToUrl = didWebToUrl;
 
 	constructor(
@@ -38,14 +38,21 @@ export class PublicBadgeClassComponent {
 			"badgeId",
 			paramValue => {
 				const service: PublicApiService = injector.get(PublicApiService);
-				return service.getBadgeClass(paramValue);
+				return service.getBadgeClass(paramValue).then(badgeClass => {
+					service.getIssuerByDid(badgeClass.creator.id)
+						.then(issuer => {
+							this.issuerData = issuer;
+						});
+					
+					return badgeClass;
+				});
 			}
 		);
 	}
 
 	get badgeClass(): PublicApiBadgeClass { return this.badgeIdParam.value; }
 
-	get issuer(): PublicApiIssuer { return this.badgeClass.creator; }
+	get issuer(): PublicApiIssuer { return this.issuerData; }
 
 	private get rawJsonUrl() {
 		return stripQueryParamsFromUrl(this.badgeClass.id) + ".json";

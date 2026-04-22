@@ -14,6 +14,7 @@ import {UserProfileEmail} from '../../../common/model/user-profile.model';
 import {FormFieldSelectOption} from '../../../common/components/formfield-select';
 import {AppConfigService} from '../../../common/app-config.service';
 import {typedFormGroup} from '../../../common/util/typed-forms';
+import {PublicApiService} from '../../../public/services/public-api.service';
 
 @Component({
 	selector: 'issuer-create',
@@ -42,10 +43,12 @@ export class IssuerCreateComponent extends BaseAuthenticatedRoutableComponent im
 			Validators.required,
 			UrlValidator.validUrl
 		])
-		.addControl('issuer_image', '');
+		.addControl('issuer_image', '')
+		.addControl('issuer_predefined_did', '');
 
 	emails: UserProfileEmail[];
 	emailsOptions: FormFieldSelectOption[];
+	didOptions: FormFieldSelectOption[];
 	addIssuerFinished: Promise<unknown>;
 	emailsLoaded: Promise<unknown>;
 
@@ -58,7 +61,8 @@ export class IssuerCreateComponent extends BaseAuthenticatedRoutableComponent im
 		protected formBuilder: FormBuilder,
 		protected title: Title,
 		protected messageService: MessageService,
-		protected issuerManager: IssuerManager
+		protected issuerManager: IssuerManager,
+		protected publicApiService: PublicApiService 
 	) {
 		super(router, route, loginService);
 		title.setTitle(`Create Issuer - ${this.configService.theme['serviceName'] || 'Badgr'}`);
@@ -66,6 +70,13 @@ export class IssuerCreateComponent extends BaseAuthenticatedRoutableComponent im
 		if(this.configService.theme.dataProcessorTermsLink) {
 			this.issuerForm.addControl('agreedTerms', '', Validators.requiredTrue);
 		}
+
+		this.publicApiService.getPredefinedDids().then(dids => {
+			this.didOptions = dids.list.map(did => ({
+				label: did,
+				value: did
+			}));
+		});
 
 		this.emailsLoaded = this.profileManager.userProfilePromise
 			.then(profile => profile.emails.loadedPromise)
@@ -100,6 +111,10 @@ export class IssuerCreateComponent extends BaseAuthenticatedRoutableComponent im
 
 		if (formState.issuer_image && String(formState.issuer_image).length > 0) {
 			issuer.image = formState.issuer_image;
+		}
+
+		if (formState.issuer_predefined_did && String(formState.issuer_predefined_did).length > 0) {
+			issuer.predefined_did = formState.issuer_predefined_did;
 		}
 
 		this.addIssuerFinished = this.issuerManager.createIssuer(issuer)

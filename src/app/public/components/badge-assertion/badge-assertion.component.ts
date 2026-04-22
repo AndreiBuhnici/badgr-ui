@@ -45,6 +45,8 @@ export class PublicBadgeAssertionComponent {
 
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
 
+	private issuerData: PublicApiIssuer;
+
 	@ViewChild('verifyBadgeDialog')
 	verifyBadgeDialog: VerifyBadgeDialog;
 
@@ -52,9 +54,7 @@ export class PublicBadgeAssertionComponent {
 
 	assertionId: string;
 
-	awardedToDisplayName: string;
-
-	issuerData: PublicApiIssuer | null = null;
+	awardedToDisplayName: string;	
 
 	didWebToUrl = didWebToUrl;
 
@@ -79,7 +79,7 @@ export class PublicBadgeAssertionComponent {
 		return this.assertion.credentialSubject.achievement;
 	}
 
-	get issuer(): PublicApiIssuer | null {
+	get issuer(): PublicApiIssuer {
 		return this.issuerData;
 	}
 
@@ -99,7 +99,7 @@ export class PublicBadgeAssertionComponent {
 		return `${this.rawUrl}/baked`;
 	}
 
-	onVerifiedBadgeAssertion(ba){
+	onVerifiedBadgeAssertion(){
 		this.assertionIdParam = this.createLoadedRouteParam();
 	}
 
@@ -134,16 +134,11 @@ export class PublicBadgeAssertionComponent {
 	loadIssuer(did: string) {
 		const service: PublicApiService = this.injector.get(PublicApiService);
 
-		const url = didWebToUrl(did);
-
-		service.get<PublicApiIssuer>(url, null, false, false)
-			.then(r => {
-				this.issuerData = r.body;
+		service.getIssuerByDid(did)
+			.then(issuer => {
+				this.issuerData = issuer;
 			})
-			.catch(err => {
-				console.error("Failed to resolve DID", err);
-			});
-		}
+	}
 
 	private createLoadedRouteParam() {
 		return new LoadedRouteParam(

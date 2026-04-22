@@ -60,6 +60,7 @@ export interface ApiIssuerForCreation {
 	image?: string;
 	email: string;
 	url: string;
+	predefined_did?: string;
 }
 
 export interface ApiIssuerForEditing {

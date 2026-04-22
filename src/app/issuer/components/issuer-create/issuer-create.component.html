@@ -24,6 +24,13 @@
 		                    [control]="issuerForm.rawControlMap.issuer_image"
 		></bg-formfield-image>
 
+		<bg-formfield-select class="u-margin-bottom2x"
+		                     [control]="issuerForm.rawControlMap.issuer_predefined_did"
+		                     [label]="'Predefined DID (Optional)'"
+		                     [placeholder]="'None'"
+		                     [options]="didOptions"
+		></bg-formfield-select>
+
 		<bg-formfield-text class="u-margin-yaxis2x"
 		                   [control]="issuerForm.rawControlMap.issuer_name"
 		                   [label]="'Name'"

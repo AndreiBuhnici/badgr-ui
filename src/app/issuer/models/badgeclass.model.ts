@@ -85,11 +85,6 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		this.apiModel.alignment = alignments;
 	}
 
-	// TODO: The API should give us the issuer slug for a badge, and we should not need to parse the URL.
-	static issuerSlugForApiBadge(apiBadge: ApiBadgeClass) {
-		return BadgeClass.issuerSlugFromUrlOrDid(apiBadge.issuer);
-	}
-
 	private static issuerSlugFromUrlOrDid(issuerUrl: string): string | null {
 		if (!issuerUrl) return null;
 

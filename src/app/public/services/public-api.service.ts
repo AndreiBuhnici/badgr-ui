@@ -25,6 +25,11 @@ export class PublicApiService extends BaseHttpApiService {
 		super(loginService, http, configService, messageService);
 	}
 
+	getPredefinedDids() {
+		return this.get<String[]>("/public/predefinedDids.json", null, false, false)
+			.then(r => r.body);
+	}
+
 	getBadgeAssertion(
 		assertionId: string
 	) {
@@ -71,6 +76,13 @@ export class PublicApiService extends BaseHttpApiService {
 			: `/public/issuers/${issuerId}/did.json`;
 
 		return this.get<PublicApiIssuer>(url, null, false, false)
+			.then(r => r.body);
+	}
+
+	getIssuerByDid(
+		issuerDid: string
+	): Promise<PublicApiIssuer> {
+		return this.get<PublicApiIssuer>(`/public/issuers/getByDid?did=${encodeURIComponent(issuerDid)}`, null, false, false)
 			.then(r => r.body);
 	}
 

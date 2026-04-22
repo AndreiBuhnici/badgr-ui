@@ -13,7 +13,6 @@ import {RecipientBadgeManager} from '../../services/recipient-badge-manager.serv
 import {RecipientBadgeCollectionSelectionDialogComponent} from '../recipient-badge-collection-selection-dialog/recipient-badge-collection-selection-dialog.component';
 import {preloadImageURL} from '../../../common/util/file-util';
 import {ShareSocialDialogOptions} from '../../../common/dialogs/share-social-dialog/share-social-dialog.component';
-import {addQueryParamsToUrl, didWebToUrl} from '../../../common/util/url-util';
 import {compareDate} from '../../../common/util/date-compare';
 import {EventsService} from '../../../common/services/events.service';
 import {AppConfigService} from '../../../common/app-config.service';
@@ -49,8 +48,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 			'=1' : 'Expires',
 		},
 	};
-
-	didWebToUrl = didWebToUrl
 
 	crumbs: LinkEntry[];
 

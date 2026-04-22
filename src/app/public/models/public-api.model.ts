@@ -41,11 +41,11 @@ export interface PublicApiBadgeClass {
   id: string;
   name: string;
   description: string;
-  creator?: PublicApiIssuer;
-  image?: string;
+  creator: PublicApiIssuer;
+  image: string;
   criteria: {
     narrative?: string;
-	id?: string;
+	  id?: string;
   } | string;
   alignment: Array<{
     frameworkName?: string;
@@ -76,6 +76,7 @@ export interface PublicApiIssuer {
     controller: string;
     publicKeyMultibase: string;
   }>;
+  alsoKnownAs?: string[];
 }
 
 export interface PublicApiBadgeCollectionWithBadgeClassAndIssuer {

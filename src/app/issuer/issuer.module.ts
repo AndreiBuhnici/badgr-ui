@@ -30,6 +30,7 @@ import {BadgeClassEditFormComponent} from './components/badgeclass-edit-form/bad
 import {IssuerStaffCreateDialogComponent} from './components/issuer-staff-create-dialog/issuer-staff-create-dialog.component';
 import {IssuerPermissionGuard} from '../common/guards/issuer-permission.guard';
 import { CanActivate } from '@angular/router/src/utils/preactivation';
+import { PublicApiService } from '../public/services/public-api.service';
 
 const routes = [
 	/* Issuer */
@@ -131,6 +132,7 @@ const routes = [
 		BadgeInstanceManager,
 		IssuerApiService,
 		IssuerManager,
+		PublicApiService
 	]
 })
 export class IssuerModule {}
