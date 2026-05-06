@@ -33,7 +33,10 @@
 					<div class="u-margin-top1x">
 						<a href="{{issuer.websiteUrl}}" class="u-text-outlink">Visit Website<svg icon="icon_external_link"></svg></a>
 					</div>
-					<p></p>
+					<div class="topbar-x-subheading" *ngIf="!isAuthorizedIssuer && issuer.currentUserStaffMember">
+						<p class="u-margin-top1x u-width-paragraph">You have staff roles for this issuer, but you do not have the right permissions!</p>
+						<p class="u-margin-top1x u-width-paragraph">Please contact an administrator.</p>
+					</div>
 				</div>
 				<div class="topbar-x-buttons" *ngIf="isAuthorizedIssuer">
 					<div class="l-primarymore">
