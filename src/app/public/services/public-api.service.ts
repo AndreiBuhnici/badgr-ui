@@ -26,7 +26,7 @@ export class PublicApiService extends BaseHttpApiService {
 	}
 
 	getPredefinedDids() {
-		return this.get<String[]>("/public/predefinedDids.json", null, false, false)
+		return this.get<{ list: string[] }>("/public/predefinedDids.json", null, false, false)
 			.then(r => r.body);
 	}
 
