@@ -44,7 +44,7 @@ export class PublicApiService extends BaseHttpApiService {
 	verifyBadgeAssertion (
 		entityId: string
 	):Promise<ApiV2Wrapper<PublicApiBadgeAssertion>> {
-		const payload = { entity_id: entityId};
+		const payload = { entity_id: entityId };
 		return this
 			.post<ApiV2Wrapper<PublicApiBadgeAssertion>>('/public/verify?json_format=plain', payload, null,  new HttpHeaders(), false, false)
 			.then(r => r.body);
