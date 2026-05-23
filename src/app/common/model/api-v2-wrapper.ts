@@ -1,13 +1,15 @@
 export interface ApiV2Wrapper<T> {
-	result: T[] | T;
-	status: ApiV2Status;
-	validationErrors?: string[];
-	fieldErrors?: object;
-	nonFieldErrors?: string[];
-	warnings?: object;
-}
+	result: T;
+	signatureValid: boolean;
 
-export interface ApiV2Status {
-	success: boolean;
-	description: string;
+	revoked: boolean;
+	revocationReason?: string;
+
+	registryRevocationSynced?: boolean;
+	registryRevocationError?: string;
+
+	credentialBlockchainDataValid: boolean;
+
+	signatureErrors?: string[];
+	credentialErrors?: string[];
 }

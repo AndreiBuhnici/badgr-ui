@@ -103,7 +103,7 @@ export class PublicBadgeAssertionComponent {
 		return `${this.rawUrl}/baked`;
 	}
 
-	onVerifiedBadgeAssertion(ba){
+	onVerifiedBadgeAssertion(){
 		this.assertionIdParam = this.createLoadedRouteParam();
 	}
 
@@ -159,13 +159,7 @@ export class PublicBadgeAssertionComponent {
 				return service.getBadgeAssertion(paramValue).then(assertion => {
 					this.loadIssuer(assertion.issuer);
 
-					if (assertion.revoked) {
-						if (assertion.revocationReason) {
-							this.messageService.reportFatalError("Assertion has been revoked:", assertion.revocationReason);
-						} else {
-							this.messageService.reportFatalError("Assertion has been revoked.", "");
-						}
-					} else if (this.showDownload) {
+					if (this.showDownload) {
 						this.openSaveDialog(assertion);
 					}
 					if (assertion["extensions:recipientProfile"] && assertion["extensions:recipientProfile"].name) {

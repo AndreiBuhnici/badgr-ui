@@ -62,8 +62,8 @@
 							</h1>
 							<p class="u-text u-text-small u-width-small u-animate-step6">
 								{{isBadgeVerified
-									? 'This badge has been verified by Badgr and its information is valid.'
-									: 'This badge has not been verified by Badgr.'
+									? 'This badge has been verified by the platform and all checks passed.'
+									: 'This badge has been verified by the platform and some checks are failing.'
 								}}
 							</p>
 							<dl class="u-text u-margin-top2x">
@@ -86,7 +86,56 @@
 								</div>
 
 								<div class="l-flex l-flex-1x">
-									<svg class="u-animate-step2 icon icon-success l-flex-x-shrink0"
+									<svg class="u-animate-step2 icon l-flex-x-shrink0"
+									     [ngClass]="signatureValid ? 'icon-success' : 'icon-notice' "
+									     [icon]="   signatureValid ? 'icon_checkmark_circle' : 'icon_error' "
+									></svg>
+									<div>
+										<dt class="u-text-small-bold u-text-dark2">Cryptographic signature</dt>
+										<dd class="u-margin-bottom2x"
+										    [ngSwitch]="signatureValid"
+										>
+											<ng-container *ngSwitchCase="true"> Signature is valid </ng-container>
+											<ng-container *ngSwitchCase="false"> Signature does not match: {{ signatureErrors.length ? signatureErrors.join(', ') : 'Unknown error' }} </ng-container>
+										</dd>
+									</div>
+								</div>
+
+								<div class="l-flex l-flex-1x">
+									<svg class="u-animate-step3 icon l-flex-x-shrink0"
+									     [ngClass]="credentialBlockchainDataValid ? 'icon-success' : 'icon-notice' "
+									     [icon]="   credentialBlockchainDataValid ? 'icon_checkmark_circle' : 'icon_error' "
+									></svg>
+									<div>
+										<dt class="u-text-small-bold u-text-dark2">Credential data integrity</dt>
+										<dd class="u-margin-bottom2x"
+										    [ngSwitch]="credentialBlockchainDataValid"
+										>
+											<ng-container *ngSwitchCase="true"> Local data and blockchain data match </ng-container>
+											<ng-container *ngSwitchCase="false"> Local data and blockchain data do not match: {{ credentialErrors.length ? credentialErrors.join(', ') : 'Unknown error' }} </ng-container>
+										</dd>
+									</div>
+								</div>
+
+								<div class="l-flex l-flex-1x">
+									<svg class="u-animate-step4 icon l-flex-x-shrink0"
+									     [ngClass]="revokedState === REVOKED_STATES.NOT_REVOKED ? 'icon-success' : 'icon-notice' "
+									     [icon]="   revokedState === REVOKED_STATES.NOT_REVOKED ? 'icon_checkmark_circle' : 'icon_error' "
+									></svg>
+									<div>
+										<dt class="u-text-small-bold u-text-dark2">Status</dt>
+										<dd class="u-margin-bottom2x"
+										    [ngSwitch]="revokedState"
+										>
+											<ng-container *ngSwitchCase="REVOKED_STATES.NOT_REVOKED"> Credential is active </ng-container>
+											<ng-container *ngSwitchCase="REVOKED_STATES.REVOKED"> This badge was revoked: {{ revocationReason }} </ng-container>
+											<ng-container *ngSwitchCase="REVOKED_STATES.NOT_SYNCED"> Credential revocation is pending blockchain synchronization. Reason: {{ registryRevocationError }} </ng-container>
+										</dd>
+									</div>
+								</div>
+
+								<div class="l-flex l-flex-1x">
+									<svg class="u-animate-step5 icon icon-success l-flex-x-shrink0"
 									     icon="icon_checkmark_circle"
 									></svg>
 									<div>
@@ -96,7 +145,7 @@
 								</div>
 
 								<div class="l-flex l-flex-1x">
-									<svg class="u-animate-step3 icon l-flex-x-shrink0"
+									<svg class="u-animate-step6 icon l-flex-x-shrink0"
 											 [ngClass]="expiryState !== EXPIRY_STATES.EXPIRED ? 'icon-success' : 'icon-notice' "
 											 [icon]="expiryState !== EXPIRY_STATES.EXPIRED ? 'icon_checkmark_circle' : 'icon_error' "
 									></svg>

@@ -5,7 +5,7 @@ import { QueryParametersService } from '../../../common/services/query-parameter
 import { preloadImageURL } from '../../../common/util/file-util';
 import { PublicApiService } from '../../services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
-import {ApiV2Wrapper} from "../../../common/model/api-v2-wrapper";
+import { ApiV2Wrapper } from "../../../common/model/api-v2-wrapper";
 // import { RecipientBadgeManager } from '../../../recipient/services/recipient-badge-manager.service';
 
 const sha256 = require('tiny-sha256') as (email: string) => string;
@@ -20,6 +20,12 @@ export enum ExpiryState {
 	'EXPIRED' = 'expired',
 	'NOT_EXPIRED' = 'notExpired',
 	'NEVER_EXPIRES' ='neverExpires'
+}
+
+export enum RevokedState {
+	'REVOKED' = 'revoked',
+	'NOT_REVOKED' = 'notRevoked',
+	'NOT_SYNCED' = 'notSynced'
 }
 
 @Component({
@@ -45,14 +51,28 @@ export class VerifyBadgeDialog extends BaseDialog {
 	}
 
 	get isBadgeVerified() {
-		return this.awardedState !== AwardedState.NO_MATCH && this.expiryState !== ExpiryState.EXPIRED;
+		return this.signatureValid && this.credentialBlockchainDataValid 
+		&& this.awardedState !== AwardedState.NO_MATCH && this.expiryState !== ExpiryState.EXPIRED 
+		&& this.revokedState == RevokedState.NOT_REVOKED;
 	}
 
-	private get isRevoked() {
-		return this.badgeAssertion && this.badgeAssertion.revoked;
-	}
+	badgeAssertion: PublicApiBadgeAssertion | null = null;
 
-	badgeAssertion: PublicApiBadgeAssertion = null;
+	signatureValid: boolean | null = null;
+
+	credentialBlockchainDataValid: boolean | null = null;
+
+	signatureErrors?: string[];
+
+	credentialErrors?: string[];
+
+	revoked: boolean | null = null;
+
+	revocationReason?: string;
+
+	registryRevocationSynced?: boolean;
+
+	registryRevocationError?: string;
 
 	readonly issuerImagePlaceholderUrl = preloadImageURL(require('../../../../breakdown/static/images/placeholderavatar-issuer.svg') as string);
 
@@ -65,26 +85,46 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 	readonly EXPIRY_STATES = ExpiryState;
 
+	readonly REVOKED_STATES = RevokedState;
+
 	awardedState: AwardedState;
 
 	expiryState: ExpiryState;
 
+	revokedState: RevokedState;
+
 	async openDialog( badgeAssertion: PublicApiBadgeAssertion ) {
 		this.showModal();
 
-		// Even though the badges might be created by us, we want to verify it anyway
 		try {
 			const entityId = badgeAssertion['id'].split('/').pop();
 			const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
 				await this.publicApiService.verifyBadgeAssertion(entityId);
 
-			if (instance){
-				this.badgeAssertion = instance.result instanceof Array ? instance.result[0] : instance.result;
+			if (instance) {
+				this.badgeAssertion = instance.result;
+				this.signatureValid = instance.signatureValid;
+				this.credentialBlockchainDataValid = instance.credentialBlockchainDataValid;
+				this.signatureErrors = instance.signatureErrors
+					? instance.signatureErrors
+					: [];
+				this.credentialErrors = instance.credentialErrors
+					? instance.credentialErrors
+					: [];
+				this.revoked = instance.revoked;
+				this.revocationReason = instance.revocationReason
+					? instance.revocationReason
+					: null;
+				this.registryRevocationSynced = instance.registryRevocationSynced
+					? instance.registryRevocationSynced
+					: null;
+				this.registryRevocationError = instance.registryRevocationError
+					? instance.registryRevocationError
+					: null;
 			}
 			else {
 				this.messageService.reportAndThrowError("Failed to verify your badge");
 			}
-
 		}
 		catch(e) {
 			this.closeDialog();
@@ -97,11 +137,8 @@ export class VerifyBadgeDialog extends BaseDialog {
 	}
 
 	private verifyBadgeAssertion(){
+		this.verifyRevocation();
 
-		if (this.isRevoked){
-			this.messageService.reportFatalError("Assertion has been revoked:", this.badgeAssertion.revocationReason);
-			return;
-		}
 		if (this.badgeAssertion.credentialSubject.identifier.identityType === "email") {
 			this.verifyEmail();
 		}
@@ -109,6 +146,23 @@ export class VerifyBadgeDialog extends BaseDialog {
 		this.broadcastVerifiedBadgeAssertion();
 	}
 
+	private verifyRevocation() {
+		if (this.revoked) {
+			if (!this.revocationReason) {
+				this.revocationReason = "No reason provided";
+			}
+			if (this.registryRevocationSynced) {
+				this.revokedState = RevokedState.REVOKED;
+			} else {
+				this.revokedState = RevokedState.NOT_SYNCED;
+				if (!this.registryRevocationError) {
+					this.registryRevocationError = "Unknown error";
+				}
+			}
+		} else {
+			this.revokedState = RevokedState.NOT_REVOKED;
+		}
+	}
 
 	private verifyEmail() {
 		if (!this.identityEmail) {

@@ -45,11 +45,6 @@ export function setupEmbeddedBadges() {
 				if (xhr.status === 200) {
 					const data = JSON.parse(xhr.responseText) as PublicApiBadgeAssertion;
 
-					if (data.revoked) {
-						badge.innerHTML = "This assertion has been revoked. " + (data.revocationReason || "");
-						return;
-					}
-
 					const recipientName = ('extensions:recipientProfile' in data) ? data['extensions:recipientProfile']['name'] : undefined;
 
 					let verified = false;
