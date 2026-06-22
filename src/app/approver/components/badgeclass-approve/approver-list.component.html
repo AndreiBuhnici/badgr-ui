@@ -1,0 +1,87 @@
+<form-message></form-message>
+
+<header class="topbar">
+	<div class="l-containerxaxis topbar-x-wrap">
+		<h2 class="topbar-x-heading">
+			Pending Credential Approvals
+			<span class="topbar-x-internalheading">
+				{{ approvals.length }} request(s) to review
+			</span>
+		</h2>
+	</div>
+</header>
+
+<div class="l-containerxaxis">
+
+	<section
+		class="emptysection l-emptysection"
+		*ngIf="!loading && approvals.length === 0">
+
+		<h2 class="emptysection-x-headline">
+			You have no requests to review.
+		</h2>
+
+	</section>
+
+	<section *ngIf="approvals.length > 0">
+		<table class="datatable datatable-roundheaders datatable-onlyfirstcolumn">
+			<thead class="datatable-x-head">
+				<tr class="datatable-x-header">
+					<th class="datatable-x-cell" scope="col">Recipient</th>
+					<th class="datatable-x-cell" scope="col">Issuer</th>
+					<th class="datatable-x-cell" scope="col">Created</th>
+					<th class="datatable-x-cell" scope="col">Status</th>
+					<th class="datatable-x-cell" scope="col"></th>
+				</tr>
+			</thead>
+			<tbody class="datatable-x-body">
+				<tr class="datatable-x-row"
+					*ngFor="let instance of approvals">
+					<th class="datatable-x-cell u-text-body" scope="row">
+						<div class="l-flex l-flex-2x l-flex-aligncenter">
+							<span>
+								{{ instance.recipient?.plaintextIdentity }}
+							</span>
+						</div>
+					</th>
+					<td class="datatable-x-cell u-text-smalllineheight3x">
+						{{ instance.issuerName }}
+					</td>
+					<td class="datatable-x-cell u-text-smalllineheight3x">
+						<time
+							[date]="instance.createdAt"
+							format="mediumDate">
+						</time>
+					</td>
+					<td class="datatable-x-cell u-text-smalllineheight3x">
+						{{ instance.approval_status }}
+					</td>
+					<td class="datatable-x-cell">
+						<div
+							class="l-flex l-flex-justifyend l-flex-aligncenter l-flex-2x">
+							<button
+								class="button"
+								[disabled]="processingEntityId === instance.entityId"
+								(click)="approve(instance)">
+								Approve
+							</button>
+							<button
+								class="button button-secondary"
+								[disabled]="processingEntityId === instance.entityId"
+								(click)="reject(instance)">
+								Reject
+							</button>
+							<a
+								*ngIf="instance.openBadgeId"
+								class="u-text-link-small"
+								target="_blank"
+								[href]="instance.openBadgeId">
+								View
+							</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</div>

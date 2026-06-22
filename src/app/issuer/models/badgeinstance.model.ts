@@ -119,6 +119,12 @@ export class BadgeInstance extends ManagedEntity<ApiBadgeInstance, BadgeInstance
 
 	get badgeClassUrl(): BadgeClassUrl { return this.apiModel.badge_class; }
 
+	get approvalStatus(): string { return this.apiModel.approval_status; }
+
+	get reviewedBy(): string { return this.apiModel.reviewed_by; }
+
+	get reviewedAt(): string { return this.apiModel.reviewed_at; }
+
 	get badgeClassSlug(): string { return this.badgeClassInstances.badgeClassSlug; }
 
 	get recipientIdentifier(): string { return this.apiModel.recipient_identifier; }

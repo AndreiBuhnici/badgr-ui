@@ -44,9 +44,7 @@ export class RecipientBadgeManager {
 
 
 		return this.recipientBadgeApiService
-			.addRecipientBadge(payload)
-			.then(newBadge => this.recipientBadgeList.addOrUpdate(newBadge))
-			;
+			.addRecipientBadge(payload);
 	}
 
 	deleteRecipientBadge(badge: RecipientBadgeInstance) {

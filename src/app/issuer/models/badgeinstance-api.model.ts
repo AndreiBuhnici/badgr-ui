@@ -62,6 +62,11 @@ export interface ApiBadgeInstance {
 	created_at: string;
 	created_by: string;
 
+	approval_status: string;
+	reviewed_by: string;
+	reviewed_at: string;
+	
+
 	json: ApiBadgeInstanceJsonld;
 	extensions?: object;
 

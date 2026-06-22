@@ -34,6 +34,8 @@
 					 [routerLink]="['/recipient/badge-collections']">Collections</a>
 					<a role="menuitem" *ngIf="showIssuersTab" [class.navitem-light]="!theme.useColorNavbar"
 					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']">Issuers</a>
+					<a role="menuitem" *ngIf="isApprover" [class.navitem-light]="!theme.useColorNavbar"
+					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/approver']">Approval requests</a>
 					<button role="menuitem" aria-haspopup="true" [class.navitem-light]="!theme.useColorNavbar" class="navitem u-cursor-pointer"
 					 *ngIf="launchpoints?.length" routerLinkActive="navitem-is-active" [bgPopupMenuTrigger]="appsMenu">
 						Apps

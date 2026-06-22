@@ -21,6 +21,7 @@ import {AppConfigService} from './common/app-config.service';
 import {initializeTheme} from '../theming/theme-setup';
 import {timeoutPromise} from './common/util/promise-util';
 import { MozzTransitionModule } from "./mozz-transition/mozz-transition.module";
+import { ApprovePermissionGuard } from './common/guards/approve-permission.guard';
 
 // Force AuthModule and ProfileModule to get included in the main module. We don't want them lazy loaded because
 // they basically always need to be present. We have have functions that return them, but use strings in the Routes
@@ -68,6 +69,11 @@ const ROUTE_CONFIG: Routes = [
 	{
 		path: 'public',
 		loadChildren: './public/public.module#PublicModule'
+	},
+	{
+		path: 'approver',
+		loadChildren: './approver/approver.module#ApproverModule',
+		canActivate: [ApprovePermissionGuard]
 	},
 	// Legacy Auth Redirects
 	{

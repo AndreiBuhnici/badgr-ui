@@ -45,6 +45,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 	title = "Badgr Angular";
 	loggedIn = false;
 	isAuthorizedIssuer = false;
+	isApprover = false;
 	mobileNavOpen = false;
 	isUnsupportedBrowser = false;
 	launchpoints?: ApiExternalToolLaunchpoint[];
@@ -149,6 +150,16 @@ export class AppComponent implements OnInit, AfterViewInit {
 		// Load the profile
 		this.profileManager.userProfileSet.ensureLoaded();
 
+		const authToken = this.sessionService.currentAuthToken;
+
+		if (authToken !== null && authToken.scope !== null) {
+			this.isAuthorizedIssuer = authToken.scope.includes("rw:issuer");
+		}
+
+		if (authToken !== null && authToken.scope !== null) {
+			this.isApprover = authToken.scope.includes("rw:approve");
+		}
+
 		// for issuers tab
 		if (this.isAuthorizedIssuer) {
 			this.issuerManager.allIssuersOfCurrentUser$.subscribe(
@@ -175,7 +186,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 				}
 			);
 		}
-
 	}
 
 	dismissUnsupportedBrowserMessage() {
@@ -213,12 +223,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		this.loggedIn = this.sessionService.isLoggedIn;
-
-		const authToken = this.sessionService.currentAuthToken
-
-		if (authToken !== null && authToken.scope !== null) {
-			this.isAuthorizedIssuer = authToken.scope.includes("rw:issuer")
-		}
 
 		this.sessionService.loggedin$.subscribe(
 			loggedIn => setTimeout(() => {this.loggedIn = loggedIn; this.refreshProfile();})
