@@ -8,13 +8,11 @@
 	<!-- 1.0 Embedded View -->
 	<div *ngIf="embedService.isEmbedded && embedService.isEmbedVersion(1)">
 		<bg-badgecard
-			[badgeTitle]="badgeClass.name"
-			[badgeImage]="badgeClass.image"
-			[badgeDescription]="badgeClass.description"
-			[badgeIssueDate]="assertion.validFrom"
-			[mostRelevantStatus]=""
-			[issuerTitle]="issuer.name"
-		>
+			[title]="badgeClass.name"
+			[image]="badgeClass.image"
+			[description]="badgeClass.description"
+			[date]="assertion.validFrom"
+			[publicUrl]="publicUrl">
 		</bg-badgecard>
 	</div>
 

@@ -8,7 +8,6 @@ import {PublicBadgeAssertionComponent} from './components/badge-assertion/badge-
 import {PublicApiService} from './services/public-api.service';
 import {PublicBadgeClassComponent} from './components/badgeclass/badgeclass.component';
 import {PublicIssuerComponent} from './components/issuer/issuer.component';
-import {PublicBadgeCollectionComponent} from './components/badge-collection/badge-collection.component';
 import {BadgrRouteData} from '../common/services/navigation.service';
 import { VerifyBadgeDialog } from './components/verify-badge-dialog/verify-badge-dialog.component';
 
@@ -46,14 +45,6 @@ export const routes: Routes = [
 	},
 
 	{
-		path: 'collections/:collectionShareHash',
-		component: PublicBadgeCollectionComponent,
-		data: {
-			publiclyAccessible: true,
-		} as BadgrRouteData
-	},
-
-	{
 		path: '**',
 		component: PublicComponent,
 		data: {
@@ -74,7 +65,6 @@ export const routes: Routes = [
 		PublicBadgeAssertionComponent,
 		PublicBadgeClassComponent,
 		PublicIssuerComponent,
-		PublicBadgeCollectionComponent,
 		VerifyBadgeDialog
 	],
 	exports: [],

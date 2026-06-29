@@ -238,8 +238,6 @@ export class ListBackedEntitySet<
 
 /**
  * Manages a set of entities that are embedded in another entity, are are stored in full in that entity.
- *
- * See RecipientBadgeCollection.entries for an example of the usage.
  */
 export class EmbeddedEntitySet<
 	OwnerType extends AnyManagedEntity,

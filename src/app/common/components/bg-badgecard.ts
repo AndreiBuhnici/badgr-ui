@@ -1,46 +1,121 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 declare function require(path: string): string;
 
 @Component({
-	selector: 'bg-badgecard',
-	host: {'class': 'badgecard'},
-	template: `
-		<div class="badgecard-x-status badgestatus badgestatus-{{mostRelevantStatus}}" *ngIf="mostRelevantStatus">
-			{{mostRelevantStatus}}
-		</div>
+    selector: 'bg-badgecard',
+    host: {
+        class: 'badgecard'
+    },
+    template: `
+        <div
+            class="badgecard-x-status badgestatus badgestatus-{{status}}"
+            *ngIf="status">
 
-		<div class="badgecard-x-body">
-			<div class="badgecard-x-image">
-				<img class="badgeimage badgeimage-{{mostRelevantStatus}}"
-					[loaded-src]="badgeImage"
-					[loading-src]="badgeLoadingImageUrl"
-					[error-src]="badgeFailedImageUrl"
-					width="80" />
-			</div>
-			<a *ngIf="badgeSlug" class="badgecard-x-title u-text-breakword" [routerLink]="['../earned-badge', badgeSlug]">{{ badgeTitle }}</a>
-			<a *ngIf="publicUrl" class="badgecard-x-title" [href]="publicUrl">{{ badgeTitle }}</a>
-			<div class="badgecard-x-issuer">{{ issuerTitle }}</div>
-			<p class="badgecard-x-desc" [truncatedText]="badgeDescription" [maxLength]="100"></p>
-		</div>
-		<div class="badgecard-x-footer">
-			<div class="badgecard-x-date">
-				<time [date]="badgeIssueDate" format="mediumDate"></time>
-			</div>
-		</div>
-	`
+            {{ status }}
+
+        </div>
+
+        <div class="badgecard-x-body">
+
+            <div
+                class="badgecard-x-image"
+                *ngIf="image">
+
+                <img
+                    class="badgeimage"
+                    [loaded-src]="image"
+                    [loading-src]="loadingImage"
+                    [error-src]="errorImage"
+                    width="80" />
+
+            </div>
+
+            <a
+				*ngIf="routerLink"
+				class="badgecard-x-title u-text-breakword"
+				[routerLink]="routerLink">
+
+				{{ title }}
+
+			</a>
+
+            <a
+                *ngIf="publicUrl"
+                class="badgecard-x-title u-text-breakword"
+                [href]="publicUrl">
+
+                {{ title }}
+
+            </a>
+
+            <p
+                class="badgecard-x-desc"
+                [truncatedText]="description"
+                [maxLength]="120">
+
+            </p>
+
+        </div>
+
+        <div class="badgecard-x-footer">
+
+            <div class="badgecard-x-date">
+
+                <time
+                    [date]="date"
+                    format="mediumDate">
+                </time>
+
+            </div>
+
+            <button
+                *ngIf="showAction"
+                class="buttonicon buttonicon-clear"
+                (click)="actionClicked.emit($event)">
+
+                <svg icon="icon_more"></svg>
+
+            </button>
+
+        </div>
+    `
 })
 export class BgBadgecard {
-	readonly badgeLoadingImageUrl = require('../../../breakdown/static/images/badge-loading.svg');
-	readonly badgeFailedImageUrl = require('../../../breakdown/static/images/badge-failed.svg');
-	@Input() badgeSlug: string;
-	@Input() publicUrl: string;
-	@Input() badgeImage: string;
-	@Input() badgeTitle: string;
-	@Input() badgeDescription: string;
-	@Input() badgeIssueDate: string;
-	@Input() issuerTitle: string;
-	@Input() mostRelevantStatus: "expired" | "new" | "pending" | undefined;
-	@Input() public = false;
-	@Output() shareClicked = new EventEmitter<MouseEvent>();
+
+    readonly loadingImage =
+        require('../../../breakdown/static/images/badge-loading.svg');
+
+    readonly errorImage =
+        require('../../../breakdown/static/images/badge-failed.svg');
+
+    @Input()
+    entityId: string;
+
+    @Input()
+    title: string;
+
+    @Input()
+    description: string;
+
+    @Input()
+    image?: string;
+
+    @Input()
+    date: string;
+
+    @Input()
+    status?: string;
+
+    @Input()
+	routerLink: any[];
+
+    @Input()
+    publicUrl: string;
+
+    @Input()
+    showAction = false;
+
+    @Output()
+    actionClicked = new EventEmitter<MouseEvent>();
 }

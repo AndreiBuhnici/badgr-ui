@@ -13,7 +13,6 @@ import { preloadImageURL } from '../../../common/util/file-util';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
 import { ApiExternalToolLaunchpoint } from 'app/externaltools/models/externaltools-api.model';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
-import { typedFormGroup } from '../../../common/util/typed-forms';
 
 @Component({
 	selector: 'issuer-detail',
@@ -44,8 +43,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	crumbs: LinkEntry[];
 
 
-	filterForm = typedFormGroup()
-		.addControl("userId", "");
+	filterUserId = "";
 
 	constructor(
 		loginService: SessionService,
@@ -129,7 +127,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	}
 
 	private reloadCredentials(): Promise<void> {
-		const userId = this.filterForm.value.userId.trim();
+		const userId = this.filterUserId.trim();
 
 		console.log(userId);
 
@@ -148,11 +146,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	}
 
 	applyFilter() {
-		this.reloadCredentials();
-	}
-
-	clearFilter() {
-		this.filterForm.rawControlMap.userId.setValue("");
 		this.reloadCredentials();
 	}
 }

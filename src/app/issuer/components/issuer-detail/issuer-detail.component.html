@@ -32,59 +32,37 @@
 				<div class="topbar-x-buttons" *ngIf="isAuthorizedIssuer || isAdmin">
 					<div class="l-primarymore">
 						<button class="button" [routerLink]="['credentials/create']">Create Credential</button>
-						<button class="buttonicon buttonicon-secondary" [bgPopupMenuTrigger]="issuerActionsMenu">
-							<svg icon="icon_more"></svg>
-							<span class="visuallyhidden">More</span>
-						</button>
 					</div>
-					<bg-popup-menu #issuerActionsMenu>
-						<a class="menuitem" [routerLink]="['./edit']">
-							<svg icon="icon_edit"></svg>
-							Edit
-						</a>
-						<a class="menuitem" (click)="delete($event)" href="#">
-							<svg icon="icon_remove"></svg>
-							Delete
-						</a>
-					</bg-popup-menu>
 				</div>
 			</div>
 		</div>
 	</header>
 
 	<div *bgAwaitPromises="[issuerLoaded]">
-		<section class="l-containerxaxis l-containeryaxis">
+		<div class="l-containerxaxis u-margin-top3x u-margin-bottom3x">
 
-			<div class="forminput">
+			<div class="forminput l-actionbar-x-search">
 
-				<label class="forminput-x-label">
-					Filter by Recipient ID
-				</label>
+				<div class="forminput-x-inputs">
 
-				<bg-formfield-text
-					[control]="filterForm.rawControlMap.userId"
-					ariaLabel="Recipient ID">
-				</bg-formfield-text>
+					<input
+						type="text"
+						name="recipientFilter"
+						id="recipientFilter"
+						placeholder="Filter by Recipient ID"
+						[(ngModel)]="filterUserId"
+						(ngModelChange)="applyFilter()">
 
-			</div>
+					<svg
+						class="forminput-x-icon"
+						icon="icon_search">
+					</svg>
 
-			<div class="l-flex l-flex-aligncenter u-margin-top2x">
-
-				<button
-					class="button"
-					(click)="applyFilter()">
-					Search
-				</button>
-
-				<button
-					class="button button-secondary u-margin-left1x"
-					(click)="clearFilter()">
-					Clear
-				</button>
+				</div>
 
 			</div>
 
-		</section>
+		</div>
 		
 		<section class="emptysection l-emptysection"
 				*ngIf="!(academicCertificates?.length || degreeCertificates?.length || experienceCertificates?.length)">

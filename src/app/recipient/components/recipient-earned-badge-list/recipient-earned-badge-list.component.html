@@ -1,190 +1,509 @@
-<main importLauncher>
+<main>
+
 	<form-message></form-message>
 
 	<div class="topbar">
-		<!--<div class="l-containerxaxis">
-			<div class="topbar-x-breadcrumbs">
-				<bg-breadcrumbs [linkentries]="crumbs">
-				</bg-breadcrumbs>
-			</div>
-		</div>-->
+
 		<div class="l-containerxaxis topbar-x-wrap">
+
 			<h2 class="topbar-x-heading">
-				Backpack
-				<span class="topbar-x-internalheading"
-					*ngIf="!! allBadges"
-				>{{ allBadges.length }} {{ allBadges.length == 1 ? "Badge" : "Badges" }}</span>
+
+				My Credentials
+
+				<span
+					class="topbar-x-internalheading"
+					*ngIf="hasCredentials()">
+
+					{{
+						filteredAcademicCertificates.length +
+						filteredDegreeCertificates.length +
+						filteredExperienceCertificates.length
+					}}
+
+					{{
+						(
+							filteredAcademicCertificates.length +
+							filteredDegreeCertificates.length +
+							filteredExperienceCertificates.length
+						) === 1
+							? 'Credential'
+							: 'Credentials'
+					}}
+
+				</span>
+
 			</h2>
-			<button class="button topbar-x-button"
-				(click)="addBadge()"
-				[disabled-when-requesting]="true"
-			>Add Badge</button>
+
 		</div>
+
 	</div>
 
-	<ng-template [bgAwaitPromises]="[ badgesLoaded ]">
-		<ng-container *ngIf="mozillaFeatureEnabled">
-			<div
-				*ngIf="!mozillaTransitionOver"
-				#mozzBanner
-				class="l-containerxaxis l-containeryaxis">
-				<div class="notification notification-is-active notification-info">
-					<div class="notification-x-icon">
-						<svg icon="icon_info"></svg>
-					</div>
-					<div class="notification-x-text">
-						<h2>Coming from Mozilla?</h2>
-						<p>Let's finish <button (click)="launchImport($event)" class="u-display-inline u-text-link">adding</button> your badges.</p>
-					</div>
-					<button
-						(click)="hideMozz($event)" class="notification-x-close buttonicon buttonicon-clear">
-						<svg icon="icon_close">
-						</svg>
-						<span class="visuallyhidden">Close Notification</span>
-					</button>
-				</div>
-			</div>
-		</ng-container>
+	<ng-template [bgAwaitPromises]="[badgesLoaded]">
 
-		<!-- No badges, empty state! -->
-		<section class="emptysection l-emptysection"
-				 *ngIf="allBadges.length == 0">
+		<!-- Empty State -->
+
+		<section
+			class="emptysection l-emptysection"
+			*ngIf="!hasCredentials()">
+
 			<h2 class="emptysection-x-headline">
-				You have no badges</h2>
+
+				You have no credentials
+
+			</h2>
+
 			<p class="emptysection-x-copy">
-				Collect and share digital badges stored in your backpack.
+
+				Your academic, degree and experience credentials will appear here.
+
 			</p>
+
 			<div class="emptysection-x-imagecontainer">
-				<img alt="Illustration of backpack with badges" class="emptysection-x-image"
-					 [src]="noBadgesImageUrl">
+
+				<img
+					alt="Illustration"
+					class="emptysection-x-image"
+					[src]="noBadgesImageUrl">
+
 			</div>
+
 		</section>
 
-		<!-- Badge Search, group and grid/list toggle -->
-		<div class="l-containerxaxis l-containeryaxis" *ngIf="allBadges.length > 0">
+		<!-- Search / Display Controls -->
+
+		<div
+			class="l-containerxaxis l-containeryaxis"
+			*ngIf="hasCredentials()">
+
 			<div class="l-actionbar u-margin-bottom3x">
+
 				<div class="forminput l-actionbar-x-search">
+
 					<div class="forminput-x-inputs">
-						<input type="text" name="forminput" id="forminput" placeholder="Search badges" [(ngModel)]="searchQuery">
-						<svg class="forminput-x-icon" icon="icon_search"></svg>
+
+						<input
+							type="text"
+							name="credentialSearch"
+							id="credentialSearch"
+							placeholder="Search credentials"
+							[(ngModel)]="searchQuery">
+
+						<svg
+							class="forminput-x-icon"
+							icon="icon_search">
+						</svg>
+
 					</div>
+
 				</div>
-				<div class="l-actionbar-x-groupby">
-					<label class="checkbox checkbox-small">
-						<input name="groupby" type="checkbox"
-							[(ngModel)]="groupByIssuer">
-						<span class="checkbox-x-text"
-						>Group by Issuer</span>
-					</label>
-				</div>
-				<div class="viewtoggle l-actionbar-x-viewtoggle"
-					[class.viewtoggle-is-listview]="badgesDisplay=='list'">
+
+				<div
+					class="viewtoggle l-actionbar-x-viewtoggle"
+					[class.viewtoggle-is-listview]="badgesDisplay == 'list'">
+
 					<label class="viewtoggle-x-grid">
-						<span class="visuallyhidden">grid</span>
-						<input checked="checked" name="radiobutton" id="radiobutton1" type="radio" value="grid"
+
+						<span class="visuallyhidden">
+							Grid
+						</span>
+
+						<input
+							type="radio"
+							name="credentialView"
+							value="grid"
 							[(ngModel)]="badgesDisplay">
+
 						<svg icon="icon_grid"></svg>
+
 					</label>
+
 					<label class="viewtoggle-x-list">
-						<span class="visuallyhidden">list</span>
-						<input type="radio" name="radiobutton" id="radiobutton2" value="list"
+
+						<span class="visuallyhidden">
+							List
+						</span>
+
+						<input
+							type="radio"
+							name="credentialView"
+							value="list"
 							[(ngModel)]="badgesDisplay">
+
 						<svg icon="icon_list"></svg>
+
 					</label>
+
 				</div>
+
 			</div>
 
 			<!-- Grid View -->
+
 			<ng-template [ngIf]="badgesDisplay == 'grid'">
-				<!-- ------------------ UNGROUPED ------------------  -->
-				<ng-template [ngIf]="! groupByIssuer">
+
+				<!-- Academic Certificates -->
+
+				<div *ngIf="filteredAcademicCertificates.length">
+
+					<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top2x u-text-dark1">
+
+						Academic Certificates
+
+						<span class="u-text-small-semibold-caps u-text-dark4 u-margin-left2x">
+
+							{{ filteredAcademicCertificates.length }}
+
+							{{ filteredAcademicCertificates.length == 1 ? 'Credential' : 'Credentials' }}
+
+						</span>
+
+					</h3>
+
 					<div class="l-grid l-grid-large">
-						<!-- TODO: Fix the badgecard link for sharing and routing -->
+
 						<bg-badgecard
-							*ngFor="let badgeResult of badgeResults"
-							[badgeTitle]="badgeResult.badge.badgeClass.name"
-							[badgeImage]="badgeResult.badge.image"
-							[badgeDescription]="badgeResult.badge.badgeClass.description"
-							[badgeIssueDate]="badgeResult?.badge?.issueDate"
-							[mostRelevantStatus]="badgeResult.badge.mostRelevantStatus"
-							[issuerTitle]="badgeResult.badge.badgeClass.issuer.name"
-							[badgeSlug]="badgeResult.badge.slug"
-							(shareClicked)="shareBadge(badgeResult.badge)"
-						></bg-badgecard>
+							*ngFor="let credential of filteredAcademicCertificates"
+
+							[entityId]="credential.credentialId"
+
+							[routerLink]="['../earned-badge', credential.credentialId]"
+
+							[title]="credential.achievementName"
+
+							[description]="credential.achievementDescription"
+
+							[image]="credential.achievementImage"
+
+							[date]="credential.validFrom"
+
+							[status]="credential.signature ? 'Signed' : undefined">
+
+						</bg-badgecard>
+
 					</div>
-				</ng-template>
-				<!-- ------------------ GROUP BY ISSUER ------------------  -->
-				<ng-template [ngIf]="groupByIssuer">
-					<div *ngFor="let issuerGroup of issuerResults">
-						<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top6x u-text-dark1">{{ issuerGroup.issuer.name }} <span class="u-text-small-semibold-caps u-text-dark4 u-margin-left2x">{{ issuerGroup.badges.length }} {{
-									issuerGroup.badges.length == 1 ? "Badge" : "Badges" }}</span></h3>
-						<div class="l-grid l-grid-large">
-							<bg-badgecard
-								*ngFor="let badge of issuerGroup.badges"
-								[badgeTitle]="badge.badgeClass.name"
-								[badgeImage]="badge.image"
-								[badgeDescription]="badge.badgeClass.description"
-								[badgeIssueDate]="badge.issueDate"
-								[mostRelevantStatus]="badge.mostRelevantStatus"
-								[issuerTitle]="badge.badgeClass.issuer.name"
-								[badgeSlug]="badge.slug"
-								(shareClicked)="shareBadge(badge)"
-							></bg-badgecard>
-						</div>
+
+				</div>
+
+				<!-- Degree Certificates -->
+
+				<div *ngIf="filteredDegreeCertificates.length">
+
+					<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top6x u-text-dark1">
+
+						Degree Certificates
+
+						<span class="u-text-small-semibold-caps u-text-dark4 u-margin-left2x">
+
+							{{ filteredDegreeCertificates.length }}
+
+							{{ filteredDegreeCertificates.length == 1 ? 'Credential' : 'Credentials' }}
+
+						</span>
+
+					</h3>
+
+					<div class="l-grid l-grid-large">
+
+						<bg-badgecard
+							*ngFor="let credential of filteredDegreeCertificates"
+
+							[entityId]="credential.credentialId"
+
+							[routerLink]="['../earned-badge', credential.credentialId]"
+
+							[title]="credential.achievementName"
+
+							[description]="credential.achievementDescription"
+
+							[image]="credential.achievementImage"
+
+							[date]="credential.validFrom"
+
+							[status]="credential.signature ? 'Signed' : undefined">
+
+						</bg-badgecard>
+
 					</div>
-				</ng-template>
+
+				</div>
+
+				<!-- Experience Certificates -->
+
+				<div *ngIf="filteredExperienceCertificates.length">
+
+					<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top6x u-text-dark1">
+
+						Experience Certificates
+
+						<span class="u-text-small-semibold-caps u-text-dark4 u-margin-left2x">
+
+							{{ filteredExperienceCertificates.length }}
+
+							{{ filteredExperienceCertificates.length == 1 ? 'Credential' : 'Credentials' }}
+
+						</span>
+
+					</h3>
+
+					<div class="l-grid l-grid-large">
+
+						<bg-badgecard
+							*ngFor="let credential of filteredExperienceCertificates"
+
+							[entityId]="credential.credentialId"
+
+							[routerLink]="['../earned-badge', credential.credentialId]"
+
+							[title]="credential.achievementName"
+
+							[description]="credential.achievementDescription"
+
+							[image]="credential.achievementImage"
+
+							[date]="credential.validFrom"
+
+							[status]="credential.signature ? 'Signed' : undefined">
+
+						</bg-badgecard>
+
+					</div>
+
+				</div>
+
 			</ng-template>
 
 			<!-- List View -->
+
 			<ng-template [ngIf]="badgesDisplay == 'list'">
+
 				<table class="datatable datatable-roundheaders datatable-onlyfirstcolumn datatable-verticalalignmiddle">
+
 					<thead class="datatable-x-head">
+
 						<tr class="datatable-x-header">
-							<th class="datatable-x-cell" scope="col">Badge</th>
-							<th class="datatable-x-cell" scope="col">Issuer</th>
-							<th class="datatable-x-cell" scope="col">Awarded</th>
-							<th class="datatable-x-cell" scope="col"><span class="visuallyhidden">Actions</span></th>
+
+							<th class="datatable-x-cell" scope="col">
+								Credential
+							</th>
+
+							<th class="datatable-x-cell" scope="col">
+								Type
+							</th>
+
+							<th class="datatable-x-cell" scope="col">
+								Issued
+							</th>
+
+							<th class="datatable-x-cell" scope="col">
+								Status
+							</th>
+
 						</tr>
+
 					</thead>
+
 					<tbody class="datatable-x-body">
-						<!-- Issuer title if grouped by issuer -->
-						<ng-template ngFor let-issuerGroup [ngForOf]="issuerResults" let-i="index">
-							<tr class="datatable-x-row" *ngIf="groupByIssuer">
-								<th class="datatable-x-inlineheader" scope="row" colspan="4">{{ issuerGroup.issuer.name }}</th>
-							</tr>
-							<!-- Badges -->
-							<ng-template ngFor let-badge [ngForOf]="issuerGroup.badges" let-i="index">
-								<tr class="datatable-x-row">
-									<td class="datatable-x-cell">
-										<div class="l-flex l-flex-2x l-flex-aligncenter">
-											<img class="badgeimage badgeimage-{{badge.mostRelevantStatus}} badgeimage-small u-margin-right2x l-flex-x-shrink0" width="40"
-												[loading-src]="badgeLoadingImageUrl"
-												[error-src]="badgeFailedImageUrl"
-												[loaded-src]="badge.image" />
-											<a class="u-text u-text-link u-text-breakword"
-											[routerLink]="['../earned-badge', badge.slug]"
-											>{{ badge.badgeClass.name }}</a>
-											<div class="datatable-x-status badgestatus badgestatus-intable badgestatus-{{badge.mostRelevantStatus}}"
-												*ngIf="badge.mostRelevantStatus"
-											>{{badge.mostRelevantStatus}}</div>
-										</div>
-									</td>
-									<td class="datatable-x-cell u-text-body"
-									>{{ badge.badgeClass.issuer.name }}</td>
-									<td class="datatable-x-cell u-text-body"
-									><time [date]="badge?.issueDate" format="mediumDate"></time></td>
-									<td class="datatable-x-cell">
-										<button class="u-text-link-small u-text-bold u-margin-leftauto"
-											(click)="shareBadge(badge)"
-										>Share</button>
-									</td>
-								</tr>
-							</ng-template>
-						</ng-template>
+
+						<!-- Academic -->
+
+						<tr
+							class="datatable-x-row"
+							*ngIf="filteredAcademicCertificates.length">
+
+							<th
+								class="datatable-x-inlineheader"
+								scope="row"
+								colspan="4">
+
+								Academic Certificates
+
+							</th>
+
+						</tr>
+
+						<tr
+							class="datatable-x-row"
+							*ngFor="let credential of filteredAcademicCertificates">
+
+							<td class="datatable-x-cell">
+
+								<div class="l-flex l-flex-2x l-flex-aligncenter">
+
+									<img
+										*ngIf="credential.achievementImage"
+										class="badgeimage badgeimage-small u-margin-right2x l-flex-x-shrink0"
+										width="40"
+										[src]="credential.achievementImage">
+
+									<a
+										class="u-text u-text-link u-text-breakword"
+										[routerLink]="['../earned-badge', credential.credentialId]">
+
+										{{ credential.achievementName }}
+
+									</a>
+
+								</div>
+
+							</td>
+
+							<td class="datatable-x-cell">
+								Academic
+							</td>
+
+							<td class="datatable-x-cell">
+
+								<time
+									[date]="credential.validFrom"
+									format="mediumDate">
+								</time>
+
+							</td>
+
+							<td class="datatable-x-cell">
+
+								{{ credential.signature ? 'Signed' : '-' }}
+
+							</td>
+
+						</tr>
+
+						<!-- Degree -->
+
+						<tr
+							class="datatable-x-row"
+							*ngIf="filteredDegreeCertificates.length">
+
+							<th
+								class="datatable-x-inlineheader"
+								scope="row"
+								colspan="4">
+
+								Degree Certificates
+
+							</th>
+
+						</tr>
+
+						<tr
+							class="datatable-x-row"
+							*ngFor="let credential of filteredDegreeCertificates">
+
+							<td class="datatable-x-cell">
+
+								<div class="l-flex l-flex-2x l-flex-aligncenter">
+
+									<img
+										*ngIf="credential.achievementImage"
+										class="badgeimage badgeimage-small u-margin-right2x l-flex-x-shrink0"
+										width="40"
+										[src]="credential.achievementImage">
+
+									<a
+										class="u-text u-text-link u-text-breakword"
+										[routerLink]="['../earned-badge', credential.credentialId]">
+
+										{{ credential.achievementName }}
+
+									</a>
+
+								</div>
+
+							</td>
+
+							<td class="datatable-x-cell">
+								Degree
+							</td>
+
+							<td class="datatable-x-cell">
+
+								<time
+									[date]="credential.validFrom"
+									format="mediumDate">
+								</time>
+
+							</td>
+
+							<td class="datatable-x-cell">
+
+								{{ credential.signature ? 'Signed' : '-' }}
+
+							</td>
+
+						</tr>
+
+						<!-- Experience -->
+
+						<tr
+							class="datatable-x-row"
+							*ngIf="filteredExperienceCertificates.length">
+
+							<th
+								class="datatable-x-inlineheader"
+								scope="row"
+								colspan="4">
+
+								Experience Certificates
+
+							</th>
+
+						</tr>
+
+						<tr
+							class="datatable-x-row"
+							*ngFor="let credential of filteredExperienceCertificates">
+
+							<td class="datatable-x-cell">
+
+								<div class="l-flex l-flex-2x l-flex-aligncenter">
+
+									<img
+										*ngIf="credential.achievementImage"
+										class="badgeimage badgeimage-small u-margin-right2x l-flex-x-shrink0"
+										width="40"
+										[src]="credential.achievementImage">
+
+									<a
+										class="u-text u-text-link u-text-breakword"
+										[routerLink]="['../earned-badge', credential.credentialId]">
+
+										{{ credential.achievementName }}
+
+									</a>
+
+								</div>
+
+							</td>
+
+							<td class="datatable-x-cell">
+								Experience
+							</td>
+
+							<td class="datatable-x-cell">
+
+								<time
+									[date]="credential.validFrom"
+									format="mediumDate">
+								</time>
+
+							</td>
+
+							<td class="datatable-x-cell">
+
+								{{ credential.signature ? 'Signed' : '-' }}
+
+							</td>
+
+						</tr>
+
 					</tbody>
+
 				</table>
+
 			</ng-template>
+
 		</div>
+
 	</ng-template>
-	<add-badge-dialog #addBadgeDialog></add-badge-dialog>
+
 </main>

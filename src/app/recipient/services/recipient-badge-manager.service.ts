@@ -5,30 +5,28 @@ import {ApiRecipientBadgeInstance, RecipientBadgeInstanceCreationInfo} from '../
 import {StandaloneEntitySet} from '../../common/model/managed-entity-set';
 import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
 import {EventsService} from '../../common/services/events.service';
-
-const test = [CommonEntityManager];
+import { ApiCredential } from '../../issuer/models/badgeinstance-api.model';
 
 @Injectable()
 export class RecipientBadgeManager {
-	recipientBadgeList = new StandaloneEntitySet<RecipientBadgeInstance, ApiRecipientBadgeInstance>(
-		apiModel => new RecipientBadgeInstance(this.commonEntityManager),
-		apiModel => String(apiModel.id),
-		() => this.recipientBadgeApiService.listRecipientBadges()
-	);
-
 	constructor(
 		public recipientBadgeApiService: RecipientBadgeApiService,
 		public eventsService: EventsService,
 		@Inject(forwardRef(() => CommonEntityManager))
 		public commonEntityManager: CommonEntityManager
-	) {
-		eventsService.profileEmailsChanged.subscribe(() => {
-			this.updateIfLoaded();
-		});
-		eventsService.recipientBadgesStale.subscribe(() => {
-			this.updateIfLoaded();
-		});
-	}
+	) {}
+
+	listAcademicCertificates(): Promise<ApiCredential[]> {
+        return this.recipientBadgeApiService.listAcademicCertificates();
+    }
+
+    listDegreeCertificates(): Promise<ApiCredential[]> {
+        return this.recipientBadgeApiService.listDegreeCertificates();
+    }
+
+    listExperienceCertificates(): Promise<ApiCredential[]> {
+        return this.recipientBadgeApiService.listExperienceCertificates();
+    }
 
 	createRecipientBadge(
 		badgeInfo: RecipientBadgeInstanceCreationInfo
@@ -44,22 +42,6 @@ export class RecipientBadgeManager {
 
 
 		return this.recipientBadgeApiService
-			.addRecipientBadge(payload)
-			.then(newBadge => this.recipientBadgeList.addOrUpdate(newBadge))
-			;
-	}
-
-	deleteRecipientBadge(badge: RecipientBadgeInstance) {
-		return this.recipientBadgeApiService
-			.removeRecipientBadge(badge.slug)
-			.then(() => this.recipientBadgeList.remove(badge))
-			.then(r => {
-				this.commonEntityManager.recipientBadgeCollectionManager.updateIfLoaded();
-				return r;
-			});
-	}
-
-	updateIfLoaded() {
-		this.recipientBadgeList.updateIfLoaded();
+			.addRecipientBadge(payload);
 	}
 }

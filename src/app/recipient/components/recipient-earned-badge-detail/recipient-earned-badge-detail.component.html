@@ -182,43 +182,6 @@
 				</div>
 			</div>
 			</section>
-
-			<!-- collections -->
-			<section>
-			<div class="l-flex l-flex-1x l-flex-justifybetween u-margin-bottom2x u-margin-top4x">
-	            <h2 class="u-text-h3-semibold u-text-dark2">Collections</h2>
-	            <button
-            	    [class.connectionadd-is-added]="badge.collections.length > 0"
-			        (click)="manageCollections()"
-			        class="button button-secondary"
-		        >Add to Collection</button>
-	        </div>
-			<table class="datatable datatable-roundheaders datatable-verticalalignmiddle"
-				*ngIf="badge.collections.length > 0">
-				<thead class="datatable-x-head">
-	                <tr class="datatable-x-header">
-	                    <th class="datatable-x-cell">Collection</th>
-	                    <th class="datatable-x-cell"><span class="visuallyhidden">Actions</span></th>
-	                </tr>
-	            </thead>
-	            <tbody class="datatable-x-body">
-                    <tr class="datatable-x-row"
-                    	*ngFor="let collection of badge.collections">
-                    	<td class="datatable-x-cell">
-                            <p class="u-text-body-semibold u-break-word">{{ collection.name }}</p>
-                        </td>
-                        <td class="datatable-x-cell">
-                            <div class="l-flex l-flex-justifyend">
-                                <button class="u-text-link-small"
-                            		(click)="removeCollection(collection)"
-                        		>Remove</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-			</table>
-			</section>
 		</div>
 	</div>
-	<recipient-badge-collection-selection-dialog #collectionSelectionDialog> </recipient-badge-collection-selection-dialog>
 </main>

@@ -30,8 +30,6 @@
 				<div class="navbar-x-navitems">
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
 					 [routerLink]="['/recipient/badges']" *ngIf="!isAuthorizedIssuer && !isAdmin">Backpack</a>
-					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
-					 [routerLink]="['/recipient/badge-collections']" *ngIf="!isAuthorizedIssuer && !isAdmin">Collections</a>
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isAuthorizedIssuer || isAdmin"
 					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']" >Issuer</a>
 					<button role="menuitem" aria-haspopup="true" [class.navitem-light]="!theme.useColorNavbar" class="navitem u-cursor-pointer"
@@ -98,7 +96,6 @@
 	 [class.mobilenav-light]="!theme.useColorNavbar">
 		<div class="mobilenav-x-navitems">
 			<a [routerLink]="['/recipient/badges']" *ngIf="!isAuthorizedIssuer && !isAdmin">Backpack</a>
-			<a [routerLink]="['/recipient/badge-collections']" *ngIf="!isAuthorizedIssuer && !isAdmin">Collections</a>
 			<a [routerLink]="['/issuer']" *ngIf="isAuthorizedIssuer || isAdmin">Issuer</a>
 
 			<hr class="mobilenav-x-rule" *ngIf="launchpoints?.length">
@@ -151,15 +148,6 @@
 				<li *ngIf="theme.providedBy">Provided by <a href="{{ theme.providedBy.url}}" target="_blank">{{
 						theme.providedBy.name }}</a></li>
 			</ul>
-
-			<ul class="footer-x-links">
-				<li><a [href]="theme.termsOfServiceLink || 'https://badgr.org/missing-terms'" target="_blank">Terms of Service</a></li>
-				<li><a [href]="theme.privacyPolicyLink || 'https://badgr.org/missing-privacy-policy'" target="_blank">Privacy
-						Policy</a></li>
-				<li *ngIf="theme.showApiDocsLink === undefined || theme.showApiDocsLink"><a href="https://support.badgr.io/docs/"
-					 target="_blank">Documentation</a></li>
-			</ul>
-
 		</div>
 	</div>
 </footer>

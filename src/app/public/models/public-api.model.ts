@@ -73,16 +73,3 @@ export interface PublicApiIssuer {
     publicKeyMultibase: string;
   }>;
 }
-
-export interface PublicApiBadgeCollectionWithBadgeClassAndIssuer {
-  entityId: string;
-  entityType: "SharedCollection";
-  id: string;
-  name: string;
-  description: string;
-  badges: PublicApiBadgeAssertion[];
-  owner: {
-    firstName: string;
-    lastName: string;
-  };
-}

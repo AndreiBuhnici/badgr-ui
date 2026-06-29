@@ -23,12 +23,7 @@ export class SharingService {
 			"LinkedIn": "width=550,height=448",
 			"Twitter": "width=550,height=274",
 		};
-		let promise;
-		if (objectType === "BadgeInstance") {
-			promise = this.recipientBadgeApiService.getBadgeShareUrlForProvider(objectIdUrl, shareServiceType, includeIdentifier);
-		} else if (objectType === "BadgeCollection") {
-			promise = this.recipientBadgeApiService.getCollectionShareUrlForProvider(objectIdUrl, shareServiceType);
-		}
+		const promise = this.recipientBadgeApiService.getBadgeShareUrlForProvider(objectIdUrl, shareServiceType, includeIdentifier);
 
 		// open window with share url retrieved from server
 		const newTab = window.open('', '_blank', providerFeatures[shareServiceType]);
@@ -55,6 +50,6 @@ export class SharingService {
 	}
 }
 
-export type SharedObjectType = "BadgeInstance" | "BadgeCollection";
+export type SharedObjectType = "BadgeInstance";
 export type ShareServiceType = "Facebook" | "LinkedIn" | "Twitter" | "Pinterest";
 export type ShareEndPoint = "shareArticle" | "certification";

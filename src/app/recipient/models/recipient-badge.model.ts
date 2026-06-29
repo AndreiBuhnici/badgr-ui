@@ -3,8 +3,6 @@ import {ApiEntityRef} from '../../common/model/entity-ref';
 import {ApiRecipientBadgeClass, ApiRecipientBadgeInstance, RecipientBadgeInstanceRef} from './recipient-badge-api.model';
 import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
 import {LinkedEntitySet} from '../../common/model/linked-entity-set';
-import {RecipientBadgeCollection} from './recipient-badge-collection.model';
-import {RecipientBadgeCollectionRef} from './recipient-badge-collection-api.model';
 
 type BadgeMostRelevantStatusType = "new" | "expired" | "pending";
 
@@ -54,24 +52,6 @@ export class RecipientBadgeInstance extends ManagedEntity<ApiRecipientBadgeInsta
 	 */
 	_expiresDate: Date | null = null;
 
-	collections = new LinkedEntitySet<
-		RecipientBadgeInstance,
-		RecipientBadgeCollection,
-		RecipientBadgeCollectionRef
-	>(
-		this,
-		() => this.commonManager.recipientBadgeCollectionManager.recipientBadgeCollectionList.loadedPromise.then(
-			list => list.entities.filter(c => c.containsBadge(this))
-		),
-		c => { c.addBadge(this); this.modifiedCollections.push(c); },
-		c => { c.removeBadge(this); this.modifiedCollections.push(c); }
-	);
-
-	/**
-	 * List of collection that we've modified to either include or exclude ourselves from.
-	 */
-	private modifiedCollections: RecipientBadgeCollection[] = [];
-
 	constructor(
 		commonManager: CommonEntityManager,
 		initialEntity: ApiRecipientBadgeInstance = null,
@@ -89,21 +69,6 @@ export class RecipientBadgeInstance extends ManagedEntity<ApiRecipientBadgeInsta
 			"@id": String(this.apiModel.id),
 			slug: String(this.apiModel.id),
 		};
-	}
-
-	save(): Promise<this> {
-		const collections = this.modifiedCollections;
-		this.modifiedCollections = [];
-
-		return Promise.all(collections.map(c => c.save())).then(() => this);
-	}
-
-
-	revertChanges(): boolean {
-		this.modifiedCollections.forEach(c => c.revertChanges());
-		this.modifiedCollections = [];
-
-		return super.revertChanges();
 	}
 
 

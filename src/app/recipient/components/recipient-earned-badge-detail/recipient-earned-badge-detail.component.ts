@@ -8,9 +8,7 @@ import {BaseAuthenticatedRoutableComponent} from '../../../common/pages/base-aut
 import {CommonDialogsService} from '../../../common/services/common-dialogs.service';
 
 import {RecipientBadgeInstance} from '../../models/recipient-badge.model';
-import {RecipientBadgeCollection} from '../../models/recipient-badge-collection.model';
 import {RecipientBadgeManager} from '../../services/recipient-badge-manager.service';
-import {RecipientBadgeCollectionSelectionDialogComponent} from '../recipient-badge-collection-selection-dialog/recipient-badge-collection-selection-dialog.component';
 import {preloadImageURL} from '../../../common/util/file-util';
 import {ShareSocialDialogOptions} from '../../../common/dialogs/share-social-dialog/share-social-dialog.component';
 import {addQueryParamsToUrl, didWebToUrl} from '../../../common/util/url-util';
@@ -30,9 +28,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	readonly issuerImagePlacholderUrl = preloadImageURL(require('../../../../breakdown/static/images/placeholderavatar-issuer.svg') as string);
 	readonly badgeLoadingImageUrl = require('../../../../breakdown/static/images/badge-loading.svg') as string;
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
-
-	@ViewChild("collectionSelectionDialog")
-	collectionSelectionDialog: RecipientBadgeCollectionSelectionDialogComponent;
 
 	badgesLoaded: Promise<unknown>;
 	badges: RecipientBadgeInstance[] = [];
@@ -95,26 +90,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 		this.dialogService.shareSocialDialog.openDialog(badgeShareDialogOptionsFor(this.badge));
 	}
 
-	deleteBadge(badge: RecipientBadgeInstance) {
-		this.dialogService.confirmDialog.openResolveRejectDialog({
-			dialogTitle: "Confirm Remove",
-			dialogBody: `Are you sure you want to remove ${badge.badgeClass.name} from your badges?`,
-			rejectButtonLabel: "Cancel",
-			resolveButtonLabel: "Remove Badge"
-		}).then(
-			() => this.recipientBadgeManager.deleteRecipientBadge(badge).then(
-				() => {
-					this.messageService.reportMajorSuccess(`${badge.badgeClass.name} has been deleted`, true);
-					this.router.navigate([ '/recipient']);
-				},
-				error => {
-					this.messageService.reportHandledError(`Failed to delete ${badge.badgeClass.name}`, error);
-				}
-			),
-			() => {}
-		);
-	}
-
 	private get rawJsonUrl() {
 		return `${this.configService.apiConfig.baseUrl}/public/assertions/${this.badgeSlug}.json`;
 	}
@@ -125,27 +100,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 
 	get isExpired() {
 		return (this.badge && this.badge.expiresDate && this.badge.expiresDate < new Date());
-	}
-
-	manageCollections() {
-		this.collectionSelectionDialog.openDialog({
-			dialogId: "recipient-badge-collec",
-			dialogTitle: "Add to Collection(s)",
-			omittedCollection: this.badge
-		})
-		.then( recipientBadgeCollection => {
-			this.badge.collections.addAll(recipientBadgeCollection);
-			this.badge.save()
-				.then(  success => this.messageService.reportMinorSuccess(`Collection ${this.badge.badgeClass.name} badges saved successfully`))
-				.catch( failure => this.messageService.reportHandledError(`Failed to save Collection`, failure));
-		});
-	}
-
-	removeCollection(collection: RecipientBadgeCollection) {
-		this.badge.collections.remove(collection);
-		this.badge.save()
-			.then(  success => this.messageService.reportMinorSuccess(`Collection removed successfully from ${this.badge.badgeClass.name}`))
-			.catch( failure => this.messageService.reportHandledError(`Failed to remove Collection from badge`, failure));
 	}
 
 	private updateBadge(results) {

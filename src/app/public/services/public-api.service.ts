@@ -6,7 +6,6 @@ import { MessageService } from '../../common/services/message.service';
 import {
 	PublicApiBadgeAssertion,
 	PublicApiBadgeClass,
-	PublicApiBadgeCollectionWithBadgeClassAndIssuer,
 	PublicApiIssuer
 } from '../models/public-api.model';
 import { stripQueryParamsFromUrl } from '../../common/util/url-util';
@@ -92,12 +91,5 @@ export class PublicApiService extends BaseHttpApiService {
 			this.getIssuer(issuerId),
 			this.getIssuerBadges(issuerId)
 		]).then(([issuer, badges]) => ({ issuer, badges }));
-	}
-
-	getBadgeCollection(
-		shareHash: string
-	): Promise<PublicApiBadgeCollectionWithBadgeClassAndIssuer> {
-		return this.get<PublicApiBadgeCollectionWithBadgeClassAndIssuer>(`/public/collections/${shareHash}.json`, null, false, false)
-			.then(r => r.body);
 	}
 }

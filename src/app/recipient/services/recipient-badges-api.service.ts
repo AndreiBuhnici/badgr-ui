@@ -1,10 +1,12 @@
-import {Injectable} from '@angular/core';
-import {SessionService} from '../../common/services/session.service';
-import {AppConfigService} from '../../common/app-config.service';
-import {BaseHttpApiService} from '../../common/services/base-http-api.service';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { SessionService } from '../../common/services/session.service';
+import { AppConfigService } from '../../common/app-config.service';
+import { BaseHttpApiService } from '../../common/services/base-http-api.service';
+import { MessageService } from '../../common/services/message.service';
 import {ApiRecipientBadgeInstance, RecipientBadgeInstanceCreationInfo} from '../models/recipient-badge-api.model';
-import {MessageService} from '../../common/services/message.service';
-import {HttpClient} from '@angular/common/http';
+import { ApiCredential } from '../../issuer/models/badgeinstance-api.model';
 
 @Injectable()
 export class RecipientBadgeApiService extends BaseHttpApiService {
@@ -18,16 +20,22 @@ export class RecipientBadgeApiService extends BaseHttpApiService {
 		super(loginService, http, configService, messageService);
 	}
 
-	listRecipientBadges() {
+	listAcademicCertificates(): Promise<ApiCredential[]> {
 		return this
-			.get<ApiRecipientBadgeInstance[]>(`/v1/earner/badges?json_format=plain&include_pending=true`)
+			.get<ApiCredential[]>('/academicCertificates/byUser/me')
 			.then(r => r.body);
 	}
 
-	removeRecipientBadge(instanceSlug: string): Promise<void> {
+	listDegreeCertificates(): Promise<ApiCredential[]> {
 		return this
-			.delete(`/v1/earner/badges/${instanceSlug}`)
-			.then(r => void 0);
+			.get<ApiCredential[]>('/degreeCertificates/byUser/me')
+			.then(r => r.body);
+	}
+
+	listExperienceCertificates(): Promise<ApiCredential[]> {
+		return this
+			.get<ApiCredential[]>('/experienceCertificates/byUser/me')
+			.then(r => r.body);
 	}
 
 	addRecipientBadge(
@@ -49,13 +57,6 @@ export class RecipientBadgeApiService extends BaseHttpApiService {
 		const include_identifier = includeIdentifier ? '&include_identifier=1' : '';
 		return this
 			.get<{url: string}>(`/v1/earner/share/badge/${idUrl}?provider=${shareServiceType}&source=badgr-ui&redirect=0${include_identifier}`)
-			.then(r => r.body.url);
-	}
-
-	getCollectionShareUrlForProvider(objectIdUrl, shareServiceType): Promise<string> {
-		const idUrl = objectIdUrl.replace(/.*\//, '');
-		return this
-			.get<{url: string}>(`/v1/earner/share/collection/${idUrl}?provider=${shareServiceType}&source=badgr-ui&redirect=0`)
 			.then(r => r.body.url);
 	}
 }

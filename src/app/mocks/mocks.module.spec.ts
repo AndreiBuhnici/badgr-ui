@@ -32,11 +32,9 @@ import { OAuth2AppAuthorization } from "../common/model/oauth.model";
 import { ApiOAuth2AppAuthorization } from "../common/model/oauth-api.model";
 import { CommonEntityManager } from "../entity-manager/services/common-entity-manager.service";
 import { EmbedService } from "../common/services/embed.service";
-import { RecipientBadgeCollectionManager } from "../recipient/services/recipient-badge-collection-manager.service";
 import { PublicApiService } from "../public/services/public-api.service";
 import { BaseHttpApiService } from "../common/services/base-http-api.service";
 import { NavigationService } from "../common/services/navigation.service";
-import { RecipientBadgeCollectionApiService } from "../recipient/services/recipient-badge-collection-api.service";
 
 /*@Injectable()
 export class MockRouter { navigate = () => {jasmine.createSpy('navigate'); };}*/
