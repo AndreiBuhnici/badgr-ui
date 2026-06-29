@@ -29,8 +29,6 @@ export abstract class ManagedEntity<ApiModelType, ApiRefType extends ApiEntityRe
 
 	get issuerManager() { return this._commonManager.issuerManager; }
 
-	get badgeManager() { return this._commonManager.badgeManager; }
-
 	get badgeInstanceManager() { return this._commonManager.badgeInstanceManager; }
 
 	get recipientBadgeManager() { return this._commonManager.recipientBadgeManager; }

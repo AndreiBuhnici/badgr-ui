@@ -19,8 +19,7 @@ import { LinkEntry } from "../../../common/components/bg-breadcrumbs/bg-breadcru
 export class ProfileEditComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
 	profile: UserProfile;
 	profileEditForm = typedFormGroup()
-		.addControl("firstName", "", Validators.required)
-		.addControl("lastName", "", Validators.required)
+		.addControl("username", "", Validators.required)
 	;
 
 	profileLoaded: Promise<unknown>;
@@ -67,8 +66,7 @@ export class ProfileEditComponent extends BaseAuthenticatedRoutableComponent imp
 
 		const formValue = this.profileEditForm.value;
 
-		this.profile.firstName = formValue.firstName;
-		this.profile.lastName = formValue.lastName;
+		this.profile.username = formValue.username;
 
 		this.profile.save().then(
 			() => {

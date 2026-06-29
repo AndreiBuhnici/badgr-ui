@@ -14,30 +14,24 @@
 				<img class="topbar-x-image" *ngIf="issuer.image" [src]="issuer.image" alt="{{issuer.name}} logo " />
 				<img class="topbar-x-image" *ngIf="!issuer.image" [src]="issuerImagePlaceHolderUrl" alt="Default issuer image">
 				<div>
-					<a 
-						[routerLink]="['/public/issuers', issuer.slug]"
+					<a
 						class="topbar-x-heading u-text"
 					>
-						{{ issuer.name }}
+						University with id {{ issuer.id }}
 					</a>
 				</div>
 				<div class="topbar-x-subheading">
 					<p class="u-text u-text-small">
-						<strong [truncatedText]="issuer.email" [maxLength]="64"></strong>
-						<br class="u-hidden-minmobilelarge"><span class="u-hidden-maxmobilelarge">
-							— </span>Your Role: {{ issuer.currentUserStaffMember?.roleInfo.label ? issuer.currentUserStaffMember?.roleInfo.label : "Viewer" }}
+						Your Role: {{ isAdmin ? 'Admin' : isAuthorizedIssuer ? 'Issuer' : 'Viewer' }}
 					</p>
 					<p class="u-margin-top1x u-width-paragraph">
 						{{ issuer.description }}
 					</p>
-					<div class="u-margin-top1x">
-						<a href="{{issuer.websiteUrl}}" class="u-text-outlink">Visit Website<svg icon="icon_external_link"></svg></a>
-					</div>
 					<p></p>
 				</div>
-				<div class="topbar-x-buttons" *ngIf="isAuthorizedIssuer">
+				<div class="topbar-x-buttons" *ngIf="isAuthorizedIssuer || isAdmin">
 					<div class="l-primarymore">
-						<button class="button" [routerLink]="['./badges/create']">Create Badge</button>
+						<button class="button" [routerLink]="['credentials/create']">Create Credential</button>
 						<button class="buttonicon buttonicon-secondary" [bgPopupMenuTrigger]="issuerActionsMenu">
 							<svg icon="icon_more"></svg>
 							<span class="visuallyhidden">More</span>
@@ -52,89 +46,169 @@
 							<svg icon="icon_remove"></svg>
 							Delete
 						</a>
-						<a class="menuitem" [routerLink]="['./staff']">
-							<svg icon="icon_group"></svg>
-							{{ issuer?.currentUserStaffMember?.isOwner ? "Manage": "View" }} Staff
-						</a>
-						<a class="menuitem" *ngFor="let lp of launchpoints" href="{{lp.launch_url}}" target="_blank">
-							<svg icon="icon_external_link"></svg>
-							{{lp.label}}
-						</a>
 					</bg-popup-menu>
 				</div>
 			</div>
 		</div>
 	</header>
 
-	<div *bgAwaitPromises="[issuerLoaded, badgesLoaded]">
+	<div *bgAwaitPromises="[issuerLoaded]">
+		<section class="l-containerxaxis l-containeryaxis">
 
-		<!-- EMPTY STATE: No badge classes -->
+			<div class="forminput">
+
+				<label class="forminput-x-label">
+					Filter by Recipient ID
+				</label>
+
+				<bg-formfield-text
+					[control]="filterForm.rawControlMap.userId"
+					ariaLabel="Recipient ID">
+				</bg-formfield-text>
+
+			</div>
+
+			<div class="l-flex l-flex-aligncenter u-margin-top2x">
+
+				<button
+					class="button"
+					(click)="applyFilter()">
+					Search
+				</button>
+
+				<button
+					class="button button-secondary u-margin-left1x"
+					(click)="clearFilter()">
+					Clear
+				</button>
+
+			</div>
+
+		</section>
+		
 		<section class="emptysection l-emptysection"
-			 *ngIf="! badges?.length">
+				*ngIf="!(academicCertificates?.length || degreeCertificates?.length || experienceCertificates?.length)">
 			<h2 class="emptysection-x-headline">
-				This Issuer has no badges
+				There are no credentials
 			</h2>
 			<p class="emptysection-x-copy">
-				No badges associated with this issuer, yet.</p>
-			<div class="emptysection-x-buttons" *ngIf="isAuthorizedIssuer">
-			    <button class="button button-secondary"
-			    		[routerLink]="['badges/create']"
-			    		[disabled-when-requesting]="true"
-	    		>Create a badge</button>
-		  	</div>
+				No credentials found associated with this issuer yet.
+			</p>
 			<div class="emptysection-x-imagecontainer">
-				<img alt="Illustration" class="emptysection-x-image"
-					 [src]="noIssuersPlaceholderSrc">
+				<img alt="Illustration"
+					class="emptysection-x-image"
+					[src]="noIssuersPlaceholderSrc">
 			</div>
 		</section>
 
-		<!-- Has Badge Classes -->
-		<section class="l-containerxaxis l-containeryaxis"
-				 *ngIf="badges?.length">
-			<h4 class="u-text-h3-bold u-text-dark2 u-margin-top1x">
-					{{ badges.length }} Badge{{ badges.length==1? '':'s' }}
-			</h4>
-			<table class="datatable datatable-roundheaders datatable-onlyfirstcolumn datatable-verticalalignmiddle u-margin-top2x" *ngIf="badges?.length">
-				<thead class="datatable-x-head">
-					<tr class="datatable-x-header">
-						<th class="datatable-x-cell">Badge</th>
-						<th class="datatable-x-cell">Created</th>
-						<th class="datatable-x-cell">Recipients</th>
-						<th class="datatable-x-cell" *ngIf="isAuthorizedIssuer">
-							<span class="visuallyhidden">Actions</span></th>
-					</tr>
-				</thead>
-				<tbody class="datatable-x-body">
-					<tr class="datatable-x-row" *ngFor="let badge of badges; let i=index">
-						<td class="datatable-x-cell">
-							<div class="l-flex l-flex-aligncenter l-flex-1x">
-								<img class="l-flex-x-shrink0 badgeimage badgeimage-small" src="{{badge.image}}" alt="{{badge.description}}" width="40">
-								<a class="u-text u-text-breakword" [routerLink]="['/issuer/issuers', issuer.slug, 'badges', badge.slug]">{{badge.name}}</a>
-								<div class="u-hidden-minmobilelarge l-flex-x-selfcenter u-margin-leftauto">
-									<a class="u-text-link-small" [routerLink]="['/issuer/issuers/', issuer.slug, 'badges', badge.slug, 'issue']">Award</a>
+		<ng-container *ngFor="let section of [
+			{type:'academic', title:'Academic Certificates', items: academicCertificates},
+			{type:'degree', title:'Degree Certificates', items: degreeCertificates},
+			{type:'experience', title:'Experience Certificates', items: experienceCertificates}
+		]">
+
+			<section class="l-containerxaxis l-containeryaxis"
+					*ngIf="section.items?.length">
+
+				<h4 class="u-text-h3-bold u-text-dark2 u-margin-top1x">
+					{{ section.title }} ({{ section.items.length }})
+				</h4>
+
+				<table class="datatable datatable-roundheaders datatable-onlyfirstcolumn datatable-verticalalignmiddle u-margin-top2x">
+
+					<thead class="datatable-x-head">
+						<tr class="datatable-x-header">
+							<th class="datatable-x-cell">Credential</th>
+							<th class="datatable-x-cell">Recipient ID</th>
+							<th class="datatable-x-cell">Issued</th>
+							<th class="datatable-x-cell">Valid Until</th>
+							<th class="datatable-x-cell">Status</th>
+
+							<th class="datatable-x-cell"
+								*ngIf="isAuthorizedIssuer || isAdmin">
+								<span class="visuallyhidden">Actions</span>
+							</th>
+						</tr>
+					</thead>
+
+					<tbody class="datatable-x-body">
+
+						<tr class="datatable-x-row"
+							*ngFor="let credential of section.items">
+
+							<td class="datatable-x-cell">
+								<div class="l-flex l-flex-aligncenter l-flex-1x">
+
+									<img
+										*ngIf="credential.achievementImage"
+										class="l-flex-x-shrink0 badgeimage badgeimage-small"
+										[src]="credential.achievementImage"
+										width="40">
+
+									<div class="u-margin-left1x">
+										<div class="u-text">
+											{{ credential.achievementName }}
+										</div>
+
+										<div class="u-text-small u-text-dark3">
+											{{ credential.achievementType }}
+										</div>
+									</div>
+
 								</div>
-							</div>
-						</td>
-						<td class="datatable-x-cell">
-							<div class="l-flex l-flex-aligncenter">
-								<p class="u-text"><time [date]="badge.createdAt" format="mediumDate"></time></p>
-							</div>
-						</td>
-						<td class="datatable-x-cell">
-							<div class="l-flex l-flex-aligncenter">
-								<p class="u-text">{{ badge.recipientCount }}</p>
-							</div>
-						</td>
-						<td class="datatable-x-cell" *ngIf="isAuthorizedIssuer">
-							<div class="l-flex l-flex-aligncenter l-flex-justifyend">
-								<a class="u-text-link-small" [routerLink]="['/issuer/issuers/', issuer.slug, 'badges', badge.slug, 'issue']">Award</a>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</section>
+							</td>
+
+							<td class="datatable-x-cell">
+								{{ credential.recipientId }}
+							</td>
+
+							<td class="datatable-x-cell">
+								<time [date]="credential.validFrom"
+									format="mediumDate"></time>
+							</td>
+
+							<td class="datatable-x-cell">
+								<span *ngIf="credential.validUntil; else noExpiry">
+									<time [date]="credential.validUntil"
+										format="mediumDate"></time>
+								</span>
+
+								<ng-template #noExpiry>-</ng-template>
+							</td>
+
+							<td class="datatable-x-cell">
+								<span *ngIf="credential.signature; else unsigned">
+									Signed
+								</span>
+
+								<ng-template #unsigned>
+									Unsigned
+								</ng-template>
+							</td>
+
+							<td class="datatable-x-cell"
+								*ngIf="isAuthorizedIssuer || isAdmin">
+								<div class="l-flex l-flex-aligncenter l-flex-justifyend">
+									<button
+										class="button button-primary button-small"
+										(click)="revokeCredential(section.type, credential)">
+
+										Revoke
+									</button>
+								</div>
+							</td>
+
+						</tr>
+
+					</tbody>
+
+				</table>
+
+			</section>
+
+		</ng-container>
 
 	</div>
+
 
 </ng-template>

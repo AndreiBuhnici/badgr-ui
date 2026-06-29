@@ -2,45 +2,9 @@ import {Injectable} from '@angular/core';
 import {BaseHttpApiService} from '../../common/services/base-http-api.service';
 import {SessionService} from '../../common/services/session.service';
 import {AppConfigService} from '../../common/app-config.service';
-import {IssuerSlug} from '../models/issuer-api.model';
-import {BadgeClassSlug} from '../models/badgeclass-api.model';
-import {ApiBadgeInstance, ApiBadgeInstanceForBatchCreation, ApiBadgeInstanceForCreation} from '../models/badgeinstance-api.model';
+import {AcademicCertificateForCreation, ApiCredential, DegreeCertificateForCreation, ExperienceCertificateForCreation} from '../models/badgeinstance-api.model';
 import {MessageService} from '../../common/services/message.service';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-
-
-export class PaginationResults {
-	private _links = {};
-
-	constructor(linkHeader?: string) {
-		if (linkHeader) {
-			this.parseLinkHeader(linkHeader);
-		}
-	}
-	parseLinkHeader(linkHeader: string) {
-		const re = /<([^>]+)>; rel="([^"]+)"/g;
-		let match;
-		do {
-			match = re.exec(linkHeader);
-			if (match) {
-				this._links[match[2]] = match[1];
-			}
-		} while (match);
-	}
-
-	get hasNext(): boolean {
-		return 'next' in this._links;
-	}
-	get hasPrev(): boolean {
-		return 'prev' in this._links;
-	}
-	get nextUrl() { return this._links['next']; }
-	get prevUrl() { return this._links['prev']; }
-}
-export class BadgeInstanceResultSet {
-	instances: ApiBadgeInstance[];
-	links: PaginationResults;
-}
 
 @Injectable()
 export class BadgeInstanceApiService extends BaseHttpApiService {
@@ -53,77 +17,63 @@ export class BadgeInstanceApiService extends BaseHttpApiService {
 		super(loginService, http, configService, messageService);
 	}
 
-	createBadgeInstance(
-		issuerSlug: IssuerSlug,
-		badgeSlug: BadgeClassSlug,
-		creationInstance: ApiBadgeInstanceForCreation
-	) {
-		return this.post<ApiBadgeInstance>(`/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/assertions`, creationInstance)
-			.then(r => r.body);
+	createAcademicCertificate(creationInstance: AcademicCertificateForCreation) {
+		return this.post(`/store-academic-certificate`, creationInstance).then(r => r.body);
 	}
 
-	createBadgeInstanceBatched(
-		issuerSlug: IssuerSlug,
-		badgeSlug: BadgeClassSlug,
-		batchCreationInstance: ApiBadgeInstanceForBatchCreation
-	) {
-		return this.post<ApiBadgeInstance[]>(`/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/batchAssertions`, batchCreationInstance)
-			.then(r => r.body);
+	createDegreeCertificate(creationInstance: DegreeCertificateForCreation) {
+		return this.post(`/store-degree-certificate`, creationInstance).then(r => r.body);
 	}
 
-	listBadgeInstances(issuerSlug: string, badgeSlug: string, query?: string, num = 100): Promise<BadgeInstanceResultSet> {
-		let url = `/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/assertions?num=${num}`;
-		if (query) {
-			url += `&recipient=${query}`;
-		}
-		return this.get(url).then(this.handleAssertionResult);
+	createExperienceCertificate(creationInstance: ExperienceCertificateForCreation) {
+		return this.post(`/store-experience-certificate`, creationInstance).then(r => r.body);
+	}
+	
+	listAcademicCertificates(userId?: string): Promise<ApiCredential[]> {
+		const endpoint = userId
+			? `/academicCertificates?userId=${encodeURIComponent(userId)}`
+			: '/academicCertificates';
+
+		return this.get<ApiCredential[]>(endpoint).then(r => r.body);
 	}
 
-	getBadgeInstancePage(paginationUrl: string): Promise<BadgeInstanceResultSet> {
-		return this.get(paginationUrl).then(this.handleAssertionResult);
+	listDegreeCertificates(userId?: string): Promise<ApiCredential[]> {
+		const endpoint = userId
+			? `/degreeCertificates?userId=${encodeURIComponent(userId)}`
+			: '/degreeCertificates';
+
+		return this.get<ApiCredential[]>(endpoint).then(r => r.body);
 	}
 
-	revokeBadgeInstance(
-		issuerSlug: string,
-		badgeSlug: string,
-		badgeInstanceSlug: string,
-		revocationReason: string
-	) {
-		return this.delete(
-			`/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/assertions/${badgeInstanceSlug}`,
+	listExperienceCertificates(userId?: string): Promise<ApiCredential[]> {
+		const endpoint = userId
+			? `/experienceCertificates?userId=${encodeURIComponent(userId)}`
+			: '/experienceCertificates';
+
+		return this.get<ApiCredential[]>(endpoint).then(r => r.body);
+	}
+
+	revokeAcademicCertificate(id: string) {
+		return this.post('/academicCertificates/revoke',
 			{
-				"action": "revoke",
-				"revocation_reason": revocationReason
+				"academicCertificateid": id
 			}
 		);
 	}
 
-	deleteBadgeInstance(
-		issuerSlug: string,
-		badgeSlug: string,
-		badgeInstanceSlug: string,
-		revocationReason: string
-	) {
-		return this.delete(
-			`/v1/issuer/issuers/${issuerSlug}/badges/${badgeSlug}/assertions/${badgeInstanceSlug}`,
+	revokeDegreeCertificate(id: string) {
+		return this.post('/degreeCertificates/revoke',
 			{
-				"action": "delete",
-				"revocation_reason": revocationReason
+				"degreeCertificateid": id
 			}
 		);
 	}
 
-	private handleAssertionResult = (r: HttpResponse<ApiBadgeInstance[]>) => {
-			const resultset = new BadgeInstanceResultSet();
-
-			if (r.headers.has('link')) {
-				const link = r.headers.get('link');
-
-				resultset.links = new PaginationResults(link);
+	revokeExperienceCertificate(id: string) {
+		return this.post('/experienceCertificates/revoke',
+			{
+				"experienceCertificateid": id
 			}
-
-			resultset.instances = r.body || [];
-
-			return resultset;
-	};
+		);
+	}
 }

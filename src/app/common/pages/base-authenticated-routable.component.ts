@@ -8,6 +8,7 @@ import {SessionService} from '../services/session.service';
  */
 export class BaseAuthenticatedRoutableComponent extends BaseRoutableComponent implements OnInit {
 	isAuthorizedIssuer = false;
+	isAdmin = false;
 	constructor(
 		protected router: Router,
 		protected route: ActivatedRoute,
@@ -26,6 +27,7 @@ export class BaseAuthenticatedRoutableComponent extends BaseRoutableComponent im
 			throw new Error("Not logged in");
 		}
 
-		this.isAuthorizedIssuer = this.sessionService.currentAuthToken.scope.includes("rw:issuer")
+		this.isAuthorizedIssuer = this.sessionService.isIssuer();
+		this.isAdmin = this.sessionService.isAdmin();
 	}
 }

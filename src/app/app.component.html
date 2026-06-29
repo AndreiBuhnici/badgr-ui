@@ -29,11 +29,11 @@
 			<nav class="navbar-x-items" role="menubar">
 				<div class="navbar-x-navitems">
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
-					 [routerLink]="['/recipient/badges']">Backpack</a>
+					 [routerLink]="['/recipient/badges']" *ngIf="!isAuthorizedIssuer && !isAdmin">Backpack</a>
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
-					 [routerLink]="['/recipient/badge-collections']">Collections</a>
-					<a role="menuitem" *ngIf="showIssuersTab" [class.navitem-light]="!theme.useColorNavbar"
-					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']">Issuers</a>
+					 [routerLink]="['/recipient/badge-collections']" *ngIf="!isAuthorizedIssuer && !isAdmin">Collections</a>
+					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isAuthorizedIssuer || isAdmin"
+					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']" >Issuer</a>
 					<button role="menuitem" aria-haspopup="true" [class.navitem-light]="!theme.useColorNavbar" class="navitem u-cursor-pointer"
 					 *ngIf="launchpoints?.length" routerLinkActive="navitem-is-active" [bgPopupMenuTrigger]="appsMenu">
 						Apps
@@ -76,8 +76,7 @@
 
 	<bg-popup-menu #accountMenu>
 		<a class="menuitem" routerLinkActive="menuitem-is-active" [routerLink]="['/profile/profile']"><svg icon="icon_member"></svg>Profile</a>
-		<a class="menuitem" routerLinkActive="menuitem-is-active" [routerLink]="['/profile/app-integrations']"><svg icon="icon_compare"></svg>App
-			Integrations</a>
+
 		<a class="menuitem" routerLinkActive="menuitem-is-active" [routerLink]="['/auth/logout']"><svg icon="icon_exit_to_app"></svg>Sign
 			Out</a>
 	</bg-popup-menu>
@@ -98,9 +97,9 @@
 	<nav class="l-dialog mobilenav" [class.mobilenav-is-active]="mobileNavOpen" *ngIf="loggedIn && ! isOAuthAuthorizationInProcess"
 	 [class.mobilenav-light]="!theme.useColorNavbar">
 		<div class="mobilenav-x-navitems">
-			<a [routerLink]="['/recipient/badges']">Backpack</a>
-			<a [routerLink]="['/recipient/badge-collections']">Collections</a>
-			<a [routerLink]="['/issuer']" *ngIf="showIssuersTab">Issuers</a>
+			<a [routerLink]="['/recipient/badges']" *ngIf="!isAuthorizedIssuer && !isAdmin">Backpack</a>
+			<a [routerLink]="['/recipient/badge-collections']" *ngIf="!isAuthorizedIssuer && !isAdmin">Collections</a>
+			<a [routerLink]="['/issuer']" *ngIf="isAuthorizedIssuer || isAdmin">Issuer</a>
 
 			<hr class="mobilenav-x-rule" *ngIf="launchpoints?.length">
 			<p class="mobilenav-x-label" *ngIf="launchpoints?.length">Apps</p>
@@ -113,7 +112,6 @@
 			<hr class="mobilenav-x-rule">
 			<p class="mobilenav-x-label">Account</p>
 			<a [routerLink]="['/profile/profile']">Profile</a>
-			<a [routerLink]="['/profile/app-integrations']">App Integrations</a>
 			<a [routerLink]="['/auth/logout']">Sign Out</a>
 		</div>
 	</nav>
@@ -140,7 +138,6 @@
 
 <!-- TODO: Assess dialog patterns - use inert polyfill -->
 <confirm-dialog #confirmDialog></confirm-dialog>
-<new-terms-dialog #newTermsDialog></new-terms-dialog>
 <share-social-dialog #shareSocialDialog></share-social-dialog>
 <markdown-hints-dialog #markdownHintsDialog></markdown-hints-dialog>
 

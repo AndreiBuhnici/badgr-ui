@@ -1,5 +1,4 @@
 import {Input, OnChanges, SimpleChange} from '@angular/core';
-import {BadgeClassManager} from '../../issuer/services/badgeclass-manager.service';
 import {BadgeClass} from '../../issuer/models/badgeclass.model';
 import {MessageService} from '../services/message.service';
 import {IssuerUrl} from '../../issuer/models/issuer-api.model';
@@ -53,7 +52,6 @@ export class AbstractBadgeComponent implements OnChanges, BadgeLookupData {
 	get badgeLoaded$(): Observable<BadgeClass> { return this.badgeLoadedSubject.asObservable(); }
 
 	constructor(
-		protected badgeManager: BadgeClassManager,
 		protected messageService: MessageService
 	) {}
 
@@ -61,43 +59,6 @@ export class AbstractBadgeComponent implements OnChanges, BadgeLookupData {
 		if ("badge" in changes) {
 			this.inputBadge = this.badge;
 			this.badge = null;
-		}
-
-		if ("badge" in changes || "badgeId" in changes || "badgeSlug" in changes || "issuerId" in changes) {
-			this.lookupBadge();
-		}
-	}
-
-	private lookupBadge() {
-		this._loading = true;
-		this._failed = false;
-
-		this.badgeLoadedSubject.reset();
-		this.badgeLoadingSubject.next(this);
-
-		// The setTimeout is added to trigger change detection. Super hacky, and apparently related to this:
-		// https://github.com/angular/angular/issues/6005
-		if (this.inputBadge || this.inputBadge === null) {
-			// We consider null to be a valid badge. It's just an empty one. undefined,
-			// on the other hand, indicates that the property wasn't set.
-			setTimeout(x => this.success(this.inputBadge));
-		} else if (this.issuerId && this.badgeSlug) {
-			this.badgeManager
-				.badgeByIssuerUrlAndSlug(this.issuerId, this.badgeSlug)
-				.then(
-					b => setTimeout(x => this.success(b)),
-					err => this.fail(`Failed to load badge image for issuer ${this.issuerId} and slug ${this.badgeSlug}`,
-						err)
-				);
-		} else if (this.badgeId) {
-			this.badgeManager
-				.badgeByRef(this.badgeId)
-				.then(
-					b => setTimeout(x => this.success(b)),
-					err => this.fail(`Failed to load badge image ${this.badgeId}`, err)
-				);
-		} else {
-			// We'll assume that the parent is loading the badge and wait for it to come in
 		}
 	}
 

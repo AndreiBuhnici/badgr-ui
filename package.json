@@ -58,7 +58,8 @@
 		"tiny-sha256": "1.0.2",
 		"tslib": "^1.9.0",
 		"validator": "^10.11.0",
-		"zone.js": "^0.8.29"
+		"zone.js": "^0.8.29",
+		"jwt-decode": "^4.0.0"
 	},
 	"devDependencies": {
 		"@angular-builders/dev-server": "^7.3.1",

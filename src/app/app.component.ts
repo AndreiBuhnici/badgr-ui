@@ -19,7 +19,6 @@ import {ApiExternalToolLaunchpoint} from 'app/externaltools/models/externaltools
 import {ExternalToolsManager} from 'app/externaltools/services/externaltools-manager.service';
 
 import {UserProfileManager} from './common/services/user-profile-manager.service';
-import {NewTermsDialog} from './common/dialogs/new-terms-dialog.component';
 import {QueryParametersService} from './common/services/query-parameters.service';
 import {Title} from '@angular/platform-browser';
 import {MarkdownHintsDialog} from './common/dialogs/markdown-hints-dialog.component';
@@ -44,6 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 	title = "Badgr Angular";
 	loggedIn = false;
 	isAuthorizedIssuer = false;
+	isAdmin = false;
 	mobileNavOpen = false;
 	isUnsupportedBrowser = false;
 	launchpoints?: ApiExternalToolLaunchpoint[];
@@ -54,9 +54,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 	@ViewChild("confirmDialog")
 	private confirmDialog: ConfirmDialog;
-
-	@ViewChild("newTermsDialog")
-	private newTermsDialog: NewTermsDialog;
 
 	@ViewChild("shareSocialDialog")
 	private shareSocialDialog: ShareSocialDialog;
@@ -138,51 +135,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 	}
 
 	refreshProfile = () => {
-		this.profileManager.userProfileSet.changed$.subscribe(set => {
-			console.log(set.entities)
-			if (set.entities.length && set.entities[0].agreedTermsVersion !== set.entities[0].latestTermsVersion) {
-				this.commonDialogsService.newTermsDialog.openDialog();
-			}
-		});
 
 		// Load the profile
 		this.profileManager.userProfileSet.ensureLoaded();
 
-		// for issuers tab
-		if (this.isAuthorizedIssuer) {
-			this.issuerManager.allIssuersOfCurrentUser$.subscribe(
-				(issuers) => {
-					this.issuers = issuers.slice().sort(
-						(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-					);
-					this.shouldShowIssuersTab();
-				},
-				error => {
-					this.messageService.reportAndThrowError("Failed to load issuers", error);
-				}
-			);
-		} else {
-			this.issuerManager.allIssuers$.subscribe(
-				(issuers) => {
-					this.issuers = issuers.slice().sort(
-						(a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-					);
-					this.shouldShowIssuersTab();
-				},
-				error => {
-					this.messageService.reportAndThrowError("Failed to load issuers", error);
-				}
-			);
-		}
-
+		this.isAuthorizedIssuer = this.sessionService.isIssuer();
+		this.isAdmin = this.sessionService.isAdmin();
 	}
 
 	dismissUnsupportedBrowserMessage() {
 		this.isUnsupportedBrowser = false;
 	}
 
-	showIssuersTab = false;
-	shouldShowIssuersTab = () => this.showIssuersTab = !this.features.disableIssuers || (this.issuers && this.issuers.length > 0);
 
 	toggleMobileNav() {
 		this.mobileNavOpen = !this.mobileNavOpen;
@@ -212,24 +176,19 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		this.loggedIn = this.sessionService.isLoggedIn;
-
-		const authToken = this.sessionService.currentAuthToken
-
-		if (authToken !== null && authToken.scope !== null) {
-			this.isAuthorizedIssuer = authToken.scope.includes("rw:issuer")
-		}
+		
+		this.isAuthorizedIssuer = this.sessionService.isIssuer();
+		this.isAdmin = this.sessionService.isAdmin();
 
 		this.sessionService.loggedin$.subscribe(
 			loggedIn => setTimeout(() => {this.loggedIn = loggedIn; this.refreshProfile();})
 		);
-		this.shouldShowIssuersTab();
 	}
 
 	ngAfterViewInit() {
 		this.commonDialogsService.init(
 			this.confirmDialog,
 			this.shareSocialDialog,
-			this.newTermsDialog,
 			this.markdownHintsDialog
 		);
 	}

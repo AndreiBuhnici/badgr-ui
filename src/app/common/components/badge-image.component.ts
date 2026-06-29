@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
 
-import {BadgeClassManager} from '../../issuer/services/badgeclass-manager.service';
 import {MessageService} from '../services/message.service';
 import {AbstractBadgeComponent} from './abstract-badge.component';
 import {preloadImageURL} from '../util/file-util';
@@ -83,10 +82,9 @@ export class BadgeImageComponent extends AbstractBadgeComponent {
 	badgeImageUrl: string;
 
 	constructor(
-		protected badgeManager: BadgeClassManager,
 		protected messageService: MessageService
 	) {
-		super(badgeManager, messageService);
+		super(messageService);
 
 		this.badgeLoaded$.subscribe(
 			badge => {

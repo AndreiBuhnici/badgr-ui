@@ -1,52 +1,64 @@
-import {forwardRef, Inject, Injectable} from '@angular/core';
-import {BadgeClassInstances, BadgeInstance} from '../models/badgeinstance.model';
-import {BadgeInstanceApiService} from './badgeinstance-api.service';
-import {ApiBadgeInstanceForBatchCreation, ApiBadgeInstanceForCreation} from '../models/badgeinstance-api.model';
-import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
+import { Injectable } from '@angular/core';
+import { BadgeInstanceApiService } from './badgeinstance-api.service';
+import {
+    AcademicCertificateForCreation,
+    ApiCredential,
+    DegreeCertificateForCreation,
+    ExperienceCertificateForCreation
+} from '../models/badgeinstance-api.model';
 
 @Injectable()
 export class BadgeInstanceManager {
 
-	private instancesByBadgeClass: {[badgeClassSlug: string]: BadgeClassInstances} = {};
+    constructor(
+        public badgeInstanceApiService: BadgeInstanceApiService
+    ) {}
 
-	constructor(
-		public badgeInstanceApiService: BadgeInstanceApiService,
-		@Inject(forwardRef(() => CommonEntityManager))
-		public commonManager: CommonEntityManager
-	) {}
+    createAcademicCertificate(
+        creationInstance: AcademicCertificateForCreation
+    ): Promise<any> {
+        return this.badgeInstanceApiService.createAcademicCertificate(
+            creationInstance
+        );
+    }
 
-	instancesForBadgeClass(issuerSlug: string, badgeClassSlug: string): Promise<BadgeClassInstances> {
-		if (badgeClassSlug in this.instancesByBadgeClass) {
-			return this.instancesByBadgeClass[ badgeClassSlug ].loadedPromise;
-		} else {
-			const instanceList = this.instancesByBadgeClass[ badgeClassSlug ] = new BadgeClassInstances(this, issuerSlug, badgeClassSlug);
-			return instanceList.loadedPromise;
-		}
-	}
+    createDegreeCertificate(
+        creationInstance: DegreeCertificateForCreation
+    ): Promise<any> {
+        return this.badgeInstanceApiService.createDegreeCertificate(
+            creationInstance
+        );
+    }
 
+    createExperienceCertificate(
+        creationInstance: ExperienceCertificateForCreation
+    ): Promise<any> {
+        return this.badgeInstanceApiService.createExperienceCertificate(
+            creationInstance
+        );
+    }
 
-	createBadgeInstanceBatched(
-		issuerSlug: string,
-		badgeClassSlug: string,
-		batchCreationInstance: ApiBadgeInstanceForBatchCreation
-	): Promise<BadgeInstance[]> {
+    listAcademicCertificates(userId?: string): Promise<ApiCredential[]> {
+        return this.badgeInstanceApiService.listAcademicCertificates(userId);
+    }
 
-		return this
-			.instancesForBadgeClass(issuerSlug, badgeClassSlug)
-			.then(instances => instances.createBadgeInstanceBatched(batchCreationInstance));
-	}
+    listDegreeCertificates(userId?: string): Promise<ApiCredential[]> {
+        return this.badgeInstanceApiService.listDegreeCertificates(userId);
+    }
 
+    listExperienceCertificates(userId?: string): Promise<ApiCredential[]> {
+        return this.badgeInstanceApiService.listExperienceCertificates(userId);
+    }
 
-	createBadgeInstance(
-		issuerSlug: string,
-		badgeClassSlug: string,
-		initialBadgeInstance: ApiBadgeInstanceForCreation
-	): Promise<BadgeInstance> {
+    revokeAcademicCertificate(id: string): Promise<any> {
+        return this.badgeInstanceApiService.revokeAcademicCertificate(id);
+    }
 
-		return this
-			.instancesForBadgeClass(issuerSlug, badgeClassSlug)
-			.then(instances => instances.createBadgeInstance(initialBadgeInstance));
+    revokeDegreeCertificate(id: string): Promise<any> {
+        return this.badgeInstanceApiService.revokeDegreeCertificate(id);
+    }
 
-	}
-
+    revokeExperienceCertificate(id: string): Promise<any> {
+        return this.badgeInstanceApiService.revokeExperienceCertificate(id);
+    }
 }

@@ -99,15 +99,6 @@ export class RecipientEarnedBadgeListComponent extends BaseAuthenticatedRoutable
 			badges => this.updateBadges(badges.entities)
 		);
 
-		if (sessionService.isLoggedIn) {
-			// force a refresh of the userProfileSet now that we are authenticated
-			profileManager.userProfileSet.updateList().then(p => {
-				if (profileManager.userProfile.agreedTermsVersion !== profileManager.userProfile.latestTermsVersion) {
-					dialogService.newTermsDialog.openDialog();
-				}
-			});
-		}
-
 		this.mozillaTransitionOver = !!localStorage.getItem('mozillaTransitionOver') || false;
 
 		this.restoreDisplayState();

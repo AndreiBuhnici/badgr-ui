@@ -4,7 +4,7 @@ import {BaseHttpApiService} from './base-http-api.service';
 import {SessionService} from './session.service';
 import {MessageService} from './message.service';
 import {EventsService} from './events.service';
-import {ApiUserProfile, ApiUserProfileEmail, ApiUserProfileSocialAccount} from '../model/user-profile-api.model';
+import {ApiUserProfile} from '../model/user-profile-api.model';
 import {HttpClient} from '@angular/common/http';
 
 
@@ -22,7 +22,7 @@ export class UserProfileApiService extends BaseHttpApiService {
 
 	getProfile() {
 		return this
-			.get<ApiUserProfile>('/v1/user/profile').then(r => r.body);
+			.get<ApiUserProfile>('/profile').then(r => r.body);
 	}
 
 	updatePassword(newPassword: string, currentPassword: string) {
@@ -34,39 +34,6 @@ export class UserProfileApiService extends BaseHttpApiService {
 	updateProfile(profile: ApiUserProfile) {
 		return this
 			.put<ApiUserProfile>('/v1/user/profile', profile)
-			.then(r => r.body);
-	}
-
-	fetchEmails() {
-		return this
-			.get<ApiUserProfileEmail[]>('/v1/user/emails')
-			.then(r => r.body);
-	}
-
-	fetchSocialAccounts() {
-		return this
-			.get<ApiUserProfileSocialAccount[]>('/v1/user/socialaccounts')
-			.then(r => r.body);
-	}
-
-
-	addEmail(email: string) {
-		return this
-			.post<ApiUserProfileEmail>('/v1/user/emails', { 'email': email })
-			.then(r => r.body);
-	}
-
-	removeEmail(emailId: number) {
-		return this.delete('/v1/user/emails/' + emailId);
-	}
-
-	removeSocialAccount(accountId: string) {
-		return this.delete('/v1/user/socialaccounts/' + accountId);
-	}
-
-	setPrimaryEmail(emailId: number) {
-		return this
-			.put<ApiUserProfileEmail>('/v1/user/emails/' + emailId, { 'primary': true })
 			.then(r => r.body);
 	}
 

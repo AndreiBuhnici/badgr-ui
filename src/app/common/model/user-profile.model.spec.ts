@@ -1,8 +1,8 @@
 import {inject, TestBed} from '@angular/core/testing';
 
 import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
-import {UserProfile, UserProfileEmail, UserProfileSocialAccount} from './user-profile.model';
-import {ApiUserProfile, ApiUserProfileEmail, ApiUserProfileSocialAccount} from './user-profile-api.model';
+import {UserProfile} from './user-profile.model';
+import {ApiUserProfile} from './user-profile-api.model';
 import {verifyManagedEntitySet} from './managed-entity-set.spec';
 import {UserProfileManager} from '../services/user-profile-manager.service';
 import {MessageService} from '../services/message.service';
@@ -58,8 +58,6 @@ xdescribe('UserProfile', () => {
 				sessionService.storeToken({access_token: "testtoken"});
 
 				const userProfile = new UserProfile(commonManager).applyApiModel(apiUserProfile);
-				userProfile.emails.applyApiData(apiProfileEmails);
-				userProfile.socialAccounts.applyApiData(apiSocialAccounts);
 				verifyUserProfile(userProfile, apiUserProfile, apiProfileEmails, apiSocialAccounts);
 			}
 		)

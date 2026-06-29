@@ -12,7 +12,6 @@ import {FormFieldText} from '../../../common/components/formfield-text';
 
 import {QueryParametersService} from '../../../common/services/query-parameters.service';
 import {OAuthManager} from '../../../common/services/oauth-manager.service';
-import {ExternalToolsManager} from '../../../externaltools/services/externaltools-manager.service';
 import {UserProfileManager} from '../../../common/services/user-profile-manager.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {AppConfigService} from '../../../common/app-config.service';
@@ -51,7 +50,6 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 		private configService: AppConfigService,
 		private queryParams: QueryParametersService,
 		public oAuthManager: OAuthManager,
-		private externalToolsManager: ExternalToolsManager,
 		private profileManager: UserProfileManager,
 		private sanitizer: DomSanitizer,
 		router: Router,
@@ -95,29 +93,11 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 			.then(
 				() => {
 					this.profileManager.userProfilePromise.then((profile) => {
-						// fetch user profile and emails to check if they are verified
-						profile.emails.updateList().then(() => {
-							if (profile.isVerified) {
-								if (this.oAuthManager.isAuthorizationInProgress) {
-									this.router.navigate([ '/auth/oauth2/authorize' ]);
-								} else {
-									this.externalToolsManager.externaltoolsList.updateIfLoaded();
-									// catch localStorage.redirectUri
-									if (localStorage.redirectUri) {
-										const redirectUri = new URL(localStorage.redirectUri);
-										localStorage.removeItem('redirectUri');
-										window.location.replace(redirectUri.origin);
-										return false;
-									} else {
-										// first time only do welcome
-										this.router.navigate([ (localStorage.signup) ?'auth/welcome' :'recipient' ]);
-									}
-								}
-							} else {
-								this.router.navigate([ 'signup/success', { email: profile.emails.entities[0].email } ]);
-							}
-
-						});
+						console.log(profile);
+						if (this.sessionService.isIssuer() || this.sessionService.isAdmin())
+							this.router.navigate([ 'issuer' ]);
+						else
+							this.router.navigate([ 'recipient' ]);
 					});
 
 				},
@@ -142,7 +122,6 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 			if (authCode) {
 				this.sessionService.exchangeCodeForToken(authCode).then(token => {
 					this.sessionService.storeToken(token);
-					this.externalToolsManager.externaltoolsList.updateIfLoaded();
 					(redirectUri) ? window.location.replace(redirectUri) : this.initFinished = this.router.navigate([ redirect ]);
 				});
 				return;
@@ -151,7 +130,6 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 					access_token: this.queryParams.queryStringValue("authToken", true)
 				});
 
-				this.externalToolsManager.externaltoolsList.updateIfLoaded();
 				(redirectUri) ? window.location.replace(redirectUri) : this.initFinished = this.router.navigate([ redirect ]);
 				return;
 			} else if (this.queryParams.queryStringValue("infoMessage", true)) {
@@ -160,17 +138,11 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 				this.sessionService.logout(false);
 				this.messageService.reportHandledError(this.queryParams.queryStringValue("authError", true), null, true);
 			} else if (this.sessionService.isLoggedIn) {
-				this.externalToolsManager.externaltoolsList.updateIfLoaded();
 				this.initFinished = this.router.navigate([ redirect ]);
 				return;
 			}
 
 			this.initFinished = Promise.resolve(true);
-
-			// autologin, wait till get vars are processed and kick it to the end of the stack
-			if((this.sessionService.enabledExternalAuthProviders.length === 1) && (this.features.disableRegistration)) {
-				window.setTimeout(() => this.sessionService.initiateUnauthenticatedExternalAuth(this.sessionService.enabledExternalAuthProviders[0]), 0);
-			}
 
 		} finally {
 			this.queryParams.clearInitialQueryParams();

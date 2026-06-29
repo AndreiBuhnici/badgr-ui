@@ -186,32 +186,6 @@ export class ImportModalComponent extends BaseDialog implements OnInit {
 
 	}
 
-	verifyEmails(){
-		const verify = this.unverifiedEmails.filter(email => email.verify);
-		let successes = 0;
-		let errors = 0;
-		const reupBadges = [];
-		Promise.all(verify
-			.map(email => {
-				return this.userProfileApiService.addEmail(email.email)
-					.then(() => {
-						successes++;
-						reupBadges.push(email);
-						email.base64Files.forEach((base64File) => this.uploadImage(email.email, base64File));
-					})
-					.catch((error) => {
-						errors++;
-						return;
-					});
-			})
-		).finally(() => {
-				this.closeDialog();
-				if(successes) this.messageService.reportMajorSuccess( `${successes} email ${(successes>1)?'addresses':'address'} will be verified.`);
-				if(errors) this.messageService.reportAndThrowError( `${errors} email ${(errors>1)?'addresses':'address'} can not be verified.`);
-				reupBadges.forEach((email) => email.base64File.forEach((base64File) => this.uploadImage(email.email, base64File)));
-			});
-	}
-
 	displaySuccess = () => {
 		this.messageService.reportMajorSuccess(this.successes + " Badges successfully imported.");
 		this.closeDialog();

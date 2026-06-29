@@ -136,20 +136,5 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 			return new Date(ret);
 		}
 	}
-
-	update(): Promise<this> {
-		return this.badgeManager.badgeClassApi.getBadgeForIssuerSlugAndBadgeSlug(this.issuerSlug, this.slug).then(
-			apiBadge => this.applyApiModel(apiBadge)
-		);
-	}
-
-	save(): Promise<this> {
-		return this.badgeManager.badgeClassApi.updateBadgeClass(this.issuerSlug, this.apiModel)
-			.catch(e => {
-				this.revertChanges();
-				throw e;
-			})
-			.then(apiBadge => this.applyApiModel(apiBadge));
-	}
 }
 

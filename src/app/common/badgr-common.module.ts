@@ -9,7 +9,6 @@ import {MenuItemDirective} from './directives/bg-menuitem.directive';
 import {ScrollPinDirective} from './directives/scroll-pin.directive';
 import {BadgeImageComponent} from './components/badge-image.component';
 import {ConfirmDialog} from './dialogs/confirm-dialog.component';
-import {NewTermsDialog} from './dialogs/new-terms-dialog.component';
 import {ConnectedBadgeComponent} from './components/connected-badge.component';
 import {TruncatedTextComponent} from './components/truncated-text.component';
 import {TooltipComponent} from './components/tooltip.component';
@@ -21,7 +20,6 @@ import {FormFieldMarkdown} from './components/formfield-markdown';
 import {FormFieldSelect} from './components/formfield-select';
 import {LoadingDotsComponent} from './components/loading-dots.component';
 import {LoadingErrorComponent} from './components/loading-error.component';
-import {BgIssuerLinkComponent} from './components/issuer-link.component';
 import {BgFormFieldImageComponent} from './components/formfield-image';
 import {BgFormFieldFileComponent} from './components/formfield-file';
 import {CommonDialogsService} from './services/common-dialogs.service';
@@ -87,7 +85,6 @@ export const COMMON_MODULE_COMPONENTS = [
 	BgBreadcrumbsComponent,
 	BgFormFieldFileComponent,
 	BgFormFieldImageComponent,
-	BgIssuerLinkComponent,
 	BgPopupMenu,
 	ConfirmDialog,
 	ConnectedBadgeComponent,
@@ -100,7 +97,6 @@ export const COMMON_MODULE_COMPONENTS = [
 	LoadingDotsComponent,
 	LoadingErrorComponent,
 	MarkdownDisplay,
-	NewTermsDialog,
 	OAuthBannerComponent,
 	ShareSocialDialog,
 	MarkdownHintsDialog,

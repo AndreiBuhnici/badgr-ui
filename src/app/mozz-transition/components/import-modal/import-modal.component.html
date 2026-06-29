@@ -123,32 +123,6 @@
 						</div>
 					</ng-template>
 
-					<!-- verify emails list -->
-					<ng-template [ngIf]="unverifiedEmails.length">
-						<form (submit)="verifyEmails()">
-						<p class="u-text u-margin-top1x">
-							We also found badges awarded to the following email addresses. You'll need to verify these email addresses before you can import the badges.
-						</p>
-						<div class="u-background-light3 border borderradius u-padding-xaxis2x u-padding-top2x u-padding-bottom1x u-margin-top2x">
-							<div class="l-flex l-flex-justifybetween u-margin-bottom1x" *ngFor="let email of unverifiedEmails; let i = index" >
-								<label class="checkbox">
-									<input
-										[name]="'email-'+i"
-										[value]="email.email"
-										type="checkbox"
-										[(ngModel)]="email.verify">
-									<span class="checkbox-x-text">
-										{{unverifiedEmails[i].email}}
-									</span>
-								</label>
-								<div class="u-text-small u-margin-leftauto">  {{email.count | i18nPlural: plural['badge']}}</div>
-							</div>
-						</div>
-
-						<button type="submit" class="button button-full u-margin-top3x">Send Verification Emails</button>
-						</form>
-					</ng-template>
-
 					<!-- no badges + earn a badge -->
 					<ng-template [ngIf]="!successes && !unverifiedEmails.length && serverErrors.length && !inProgress" >
 						<div class="l-flex l-flex-1x">

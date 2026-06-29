@@ -21,52 +21,6 @@ export interface ApiIssuerJsonld {
 }
 
 export interface ApiIssuer {
-	name: string;
-	slug: IssuerSlug;
-	description: string;
-	image: string;
-
-	created_at: string;
-	created_by: string;
-	staff: ApiIssuerStaff[];
-
-	json: ApiIssuerJsonld;
+	id: string;
+	did: string;
 }
-
-export type IssuerStaffRoleSlug = "owner" | "editor" | "staff";
-export interface ApiIssuerStaff {
-	role: IssuerStaffRoleSlug;
-	user: {
-		first_name: string
-		last_name: string
-		email?: string
-		telephone?: string | string[]
-		url?: string | string[]
-	};
-}
-
-export interface IssuerStaffRef extends ApiEntityRef {}
-
-export interface ApiIssuerStaffOperation {
-	action: "add" | "modify" | "remove";
-	username?: string;
-	email?: string;
-	role?: IssuerStaffRoleSlug;
-}
-
-export interface ApiIssuerForCreation {
-	name: string;
-	description: string;
-	image?: string;
-	email: string;
-	url: string;
-}
-
-export interface ApiIssuerForEditing {
-	name: string;
-	description: string;
-	image?: string;
-	email: string;
-	url: string;
-}
-

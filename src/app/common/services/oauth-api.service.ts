@@ -4,7 +4,7 @@ import {AppConfigService} from '../app-config.service';
 import {MessageService} from './message.service';
 import {BaseHttpApiService} from './base-http-api.service';
 import {ApiOAuth2AppAuthorization, ApiOAuth2ClientAuthorized, ApiOAuthResponse, OAuth2RequestParams} from '../model/oauth-api.model';
-import { ExternalAuthProvider, SocialAccountProviderInfo } from '../model/user-profile-api.model';
+import { ExternalAuthProvider } from '../model/user-profile-api.model';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable()

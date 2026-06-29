@@ -8,14 +8,10 @@ export class IssuerPermissionGuard implements CanActivate {
   constructor(private session: SessionService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {    
-    const token = this.session.currentAuthToken;
-    const scope = token && token.scope ? String(token.scope) : '';
-    const hasIssuerScope = scope.includes('rw:issuer');
-
-    if (!hasIssuerScope) {
-      return this.router.parseUrl('/');
+    if (this.session.isIssuer() || this.session.isAdmin()) {
+      return true;
     }
 
-    return true;
+    return this.router.parseUrl('/');
   }
 }

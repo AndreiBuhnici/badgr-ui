@@ -12,7 +12,7 @@
 
 		<div class="l-containerxaxis">
 			<div class="topbar-x-heading">
-				Edit Profile Name
+				Edit Profile Username
 			</div>
 		</div>
 	</div>
@@ -24,18 +24,12 @@
 		      novalidate
 		>
 			<div class="u-width-form">
-				<bg-formfield-text [control]="profileEditForm.rawControlMap.firstName"
-				                   [label]="'First Name'"
-				                   [errorMessage]="'Please enter your first name'"
+				<bg-formfield-text [control]="profileEditForm.rawControlMap.username"
+				                   [label]="'Username'"
+				                   [errorMessage]="'Please enter your username'"
 				                   class="u-margin-bottom2x forminput-large"
 				>
 				</bg-formfield-text>
-
-				<bg-formfield-text [control]="profileEditForm.rawControlMap.lastName"
-				                   [label]="'Last Name'"
-				                   [errorMessage]="'Please enter your last name'"
-				                   class="u-margin-bottom4x forminput-large"
-				></bg-formfield-text>
 			</div>
 
 			<div class="l-flex l-flex-1x">

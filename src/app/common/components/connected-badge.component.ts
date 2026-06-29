@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 
-import {BadgeClassManager} from '../../issuer/services/badgeclass-manager.service';
 import {BadgeClass} from '../../issuer/models/badgeclass.model';
 import {MessageService} from '../services/message.service';
 import {AbstractBadgeComponent} from './abstract-badge.component';
@@ -39,10 +38,9 @@ export class ConnectedBadgeComponent extends AbstractBadgeComponent {
 	onRemove = new EventEmitter<BadgeClass>();
 
 	constructor(
-		protected badgeManager: BadgeClassManager,
 		protected messageService: MessageService
 	) {
-		super(badgeManager, messageService);
+		super(messageService);
 	}
 
 	removeConnection() {

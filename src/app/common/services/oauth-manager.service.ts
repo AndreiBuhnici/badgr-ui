@@ -138,13 +138,7 @@ export class OAuthManager {
 			window.location.href = successUrl;
 		};
 
-		if (this.commonDialogsService.newTermsDialog.isOpen) {
-			this.commonDialogsService.newTermsDialog.agreedPromise.then(() => {
-				do_redirect();
-			});
-		} else {
-			do_redirect();
-		}
+		do_redirect();
 	}
 
 	clearPersistentAuthorization = () => {

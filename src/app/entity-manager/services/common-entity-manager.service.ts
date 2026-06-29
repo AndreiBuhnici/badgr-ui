@@ -1,5 +1,4 @@
 import {Injectable, Injector} from '@angular/core';
-import {BadgeClassManager} from '../../issuer/services/badgeclass-manager.service';
 import {MessageService} from '../../common/services/message.service';
 import {BadgeInstanceManager} from '../../issuer/services/badgeinstance-manager.service';
 import {RecipientBadgeManager} from '../../recipient/services/recipient-badge-manager.service';
@@ -17,10 +16,6 @@ import {OAuthManager} from '../../common/services/oauth-manager.service';
 export class CommonEntityManager {
 	get badgeInstanceManager(): BadgeInstanceManager {
 		return this.injector.get(BadgeInstanceManager);
-	}
-
-	get badgeManager(): BadgeClassManager {
-		return this.injector.get(BadgeClassManager);
 	}
 
 	get recipientBadgeManager(): RecipientBadgeManager {
