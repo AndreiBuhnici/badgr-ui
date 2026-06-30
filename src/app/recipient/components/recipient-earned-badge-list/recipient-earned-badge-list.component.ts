@@ -94,7 +94,6 @@ export class RecipientEarnedBadgeListComponent
     }
 
     private reloadCredentials(): Promise<void> {
-
         return Promise.all([
             this.recipientBadgeManager.listAcademicCertificates(),
             this.recipientBadgeManager.listDegreeCertificates(),
@@ -110,7 +109,6 @@ export class RecipientEarnedBadgeListComponent
 
             console.log(this.filteredAcademicCertificates);
         });
-
     }
 
     private updateResults(): void {

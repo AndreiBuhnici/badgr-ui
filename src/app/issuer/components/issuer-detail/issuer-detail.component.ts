@@ -28,7 +28,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 		require('../../../../../node_modules/@concentricsky/badgr-style/dist/images/image-empty-issuer.svg') as string;
 
 	issuer: Issuer;
-	issuerSlug: string;
 
 	launchpoints: ApiExternalToolLaunchpoint[];
 
@@ -37,11 +36,8 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	experienceCertificates: ApiCredential[] = [];
 
 	issuerLoaded: Promise<unknown>;
-	badgesLoaded: Promise<unknown>;
 
-	profileEmailsLoaded: Promise<unknown>;
 	crumbs: LinkEntry[];
-
 
 	filterUserId = "";
 
@@ -81,7 +77,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 			},
 			(error) => {
 				this.messageService.reportLoadingError(
-					`Issuer '${this.issuerSlug}' does not exist.`,
+					`Issuer does not exist.`,
 					error
 				);
 			}
@@ -129,8 +125,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	private reloadCredentials(): Promise<void> {
 		const userId = this.filterUserId.trim();
 
-		console.log(userId);
-
 		return Promise.all([
 			this.badgeInstanceManager.listAcademicCertificates(userId || undefined),
 			this.badgeInstanceManager.listDegreeCertificates(userId || undefined),
@@ -141,7 +135,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 			this.academicCertificates = academic || [];
 			this.degreeCertificates = degree || [];
 			this.experienceCertificates = experience || [];
-
 		});
 	}
 

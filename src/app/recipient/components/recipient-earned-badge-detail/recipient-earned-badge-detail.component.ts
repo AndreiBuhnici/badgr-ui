@@ -29,7 +29,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	readonly badgeLoadingImageUrl = require('../../../../breakdown/static/images/badge-loading.svg') as string;
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
 
-	badgesLoaded: Promise<unknown>;
 	badges: RecipientBadgeInstance[] = [];
 	badge: RecipientBadgeInstance;
 	issuerBadgeCount: string;
@@ -50,7 +49,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	crumbs: LinkEntry[];
 
 	get badgeSlug(): string { return this.route.snapshot.params['badgeSlug']; }
-	get recipientBadgeInstances() { return this.recipientBadgeManager.recipientBadgeList; }
 
 	constructor(
 		router: Router,
@@ -67,15 +65,6 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	) {
 		super(router, route, loginService);
 
-		this.badgesLoaded = this.recipientBadgeManager.recipientBadgeList.loadedPromise
-			.then( r => {
-				this.updateBadge(r);
-				this.crumbs = [
-					{title: 'Backpack', routerLink: ['/recipient/badges']},
-					{title: this.badge.badgeClass.name, routerLink: ['/earned-badge/' + this.badge.slug]},
-				];
-			})
-			.catch(e => this.messageService.reportAndThrowError("Failed to load your badges", e));
 
 		this.externalToolsManager.getToolLaunchpoints("earner_assertion_action").then(launchpoints => {
 			this.launchpoints = launchpoints;

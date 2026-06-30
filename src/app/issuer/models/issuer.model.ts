@@ -25,9 +25,11 @@ export class Issuer extends ManagedEntity<ApiIssuer, IssuerRef> {
 		}
 	}
 
-	get issuerDid(): IssuerUrl { return this.apiModel.did; }
+	get issuerDid(): string { return this.apiModel.did; }
 
 	get id(): string { return this.apiModel.id; }
+
+	get name(): string { return this.apiModel.name; }
 
 	private get issuerApiService() {
 		return this.commonManager.issuerManager.issuerApiService;

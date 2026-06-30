@@ -1,4 +1,4 @@
-<main *bgAwaitPromises="[ badgesLoaded ]" class="o-container">
+<main class="o-container">
 
 	<external-tool-launch></external-tool-launch>
 	<form-message></form-message>
@@ -34,10 +34,6 @@
 						[href]="v2BakedUrl"
 						>Download Baked Image</a>
 					-->
-					<button class="menuitem"
-						 (click)="deleteBadge(badge)"
-						 [disabled-when-requesting]="true"
-						><svg icon="icon_remove"></svg>Delete</button>
 					<ng-container *ngIf="launchpoints">
 						<a class="menuitem" *ngFor="let lp of launchpoints" (click)="clickLaunchpoint(lp)">
 							<svg icon="icon_external_link"></svg>

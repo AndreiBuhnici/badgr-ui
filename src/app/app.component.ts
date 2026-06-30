@@ -197,4 +197,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 	defaultLogoDesktop = require("../breakdown/static/images/logo-desktop.svg");
 	get logoSmall() { return this.theme['logoImg'] ? this.theme['logoImg']['small'] : this.defaultLogoSmall; }
 	get logoDesktop() { return this.theme['logoImg'] ? this.theme['logoImg']['desktop'] : this.defaultLogoDesktop; }
+
+	poweredByEpaiLogo = require('../breakdown/static/images/epai.png');
+	powererdByEULogo = require('../breakdown/static/images/eu.png');
 }

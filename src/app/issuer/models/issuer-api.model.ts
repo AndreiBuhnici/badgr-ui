@@ -22,5 +22,6 @@ export interface ApiIssuerJsonld {
 
 export interface ApiIssuer {
 	id: string;
+	name: string;
 	did: string;
 }
