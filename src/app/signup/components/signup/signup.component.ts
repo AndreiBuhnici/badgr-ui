@@ -28,13 +28,9 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 		.addControl('lastName', '', Validators.required)
 		.addControl('password', '', [ Validators.required, Validators.minLength(8) ])
 		.addControl('passwordConfirm', '', [ Validators.required, this.passwordsMatch.bind(this) ])
-		.addControl('agreedTermsService', false, Validators.requiredTrue)
-		.addControl('marketingOptIn', false)
 	;
 
 	signupFinished: Promise<unknown>;
-
-	agreedTermsService = false;
 
 	get theme() {
 		return this.configService.theme;
@@ -79,9 +75,7 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 			formState.username,
 			formState.firstName,
 			formState.lastName,
-			formState.password,
-			formState.agreedTermsService,
-			formState.marketingOptIn
+			formState.password
 		);
 
 		this.signupFinished = new Promise((resolve, reject) => {
@@ -118,10 +112,6 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 
 	sendSignupConfirmation(email) {
 		this.router.navigate(['signup/success', encodeURIComponent(btoa(email))]);
-	}
-
-	get showMarketingOptIn() {
-		return !!!this.theme['hideMarketingOptIn'];
 	}
 
 	passwordsMatch(): ValidationErrors | null {

@@ -22,10 +22,7 @@ import { Observable } from "rxjs";
 import { SettingsService } from "../common/services/settings.service";
 import { IssuerManager } from "../issuer/services/issuer-manager.service";
 import { HttpClient, HttpHandler } from "@angular/common/http";
-import { RouterTestingModule } from "@angular/router/testing";
 import { BadgeInstanceManager } from "../issuer/services/badgeinstance-manager.service";
-import { BadgeClass } from "../issuer/models/badgeclass.model";
-import { AppIntegrationManager } from "../profile/services/app-integration-manager.service";
 import { OAuthApiService } from "../common/services/oauth-api.service";
 import { StandaloneEntitySet } from "../common/model/managed-entity-set";
 import { OAuth2AppAuthorization } from "../common/model/oauth.model";
@@ -312,9 +309,7 @@ export let COMMON_MOCKS_PROVIDERS_WITH_SUBS = [];
 	InitialLoadingIndicatorService,
 	CommonDialogsService,
 	OAuthApiService,
-	RecipientBadgeCollectionApiService,
 	OAuthManager,
-	AppIntegrationManager,
 	ExternalToolsManager,
 	UserProfileManager,
 	BadgeClassManager,
@@ -323,7 +318,6 @@ export let COMMON_MOCKS_PROVIDERS_WITH_SUBS = [];
 	EventsService,
 	EmbedService,
 	ElementRef,
-	RecipientBadgeCollectionManager,
 	RecipientBadgeManager,
 ].forEach((m,i,a) => {
 	const thisMock = eval('Mock' + m.name);

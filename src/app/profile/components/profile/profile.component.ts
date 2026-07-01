@@ -9,17 +9,11 @@ import { DomSanitizer, Title } from '@angular/platform-browser';
 
 import {CommonDialogsService} from '../../../common/services/common-dialogs.service';
 import {BaseAuthenticatedRoutableComponent} from '../../../common/pages/base-authenticated-routable.component';
-import {BadgrApiFailure} from '../../../common/services/api-failure';
-import { ExternalAuthProvider } from '../../../common/model/user-profile-api.model';
 import {UserProfileManager} from '../../../common/services/user-profile-manager.service';
 import {UserProfile} from '../../../common/model/user-profile.model';
-import {Subscription} from 'rxjs';
 import {QueryParametersService} from '../../../common/services/query-parameters.service';
-import {OAuthApiService} from '../../../common/services/oauth-api.service';
 import {AppConfigService} from '../../../common/app-config.service';
 import {typedFormGroup} from '../../../common/util/typed-forms';
-import { Message } from "@angular/compiler/src/i18n/i18n_ast";
-import { animationFramePromise } from "../../../common/util/promise-util";
 
 @Component({
 	selector: 'userProfile',
@@ -31,10 +25,7 @@ export class ProfileComponent extends BaseAuthenticatedRoutableComponent impleme
 	;
 
 	profile: UserProfile;
-
 	profileLoaded: Promise<unknown>;
-	// isMoveInProgress = false;
-	// menuOpen = false;
 
 	constructor(
 		router: Router,
@@ -47,7 +38,6 @@ export class ProfileComponent extends BaseAuthenticatedRoutableComponent impleme
 		protected dialogService: CommonDialogsService,
 		protected paramService: QueryParametersService,
 		protected configService: AppConfigService,
-		private oauthService: OAuthApiService,
 		private sanitizer: DomSanitizer,
 	) {
 		super(router, route, sessionService);

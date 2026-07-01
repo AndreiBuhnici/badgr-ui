@@ -21,11 +21,6 @@ export interface BadgrTheme {
 	showPoweredByBadgr: boolean;
 
 	/**
-	 *
-	 */
-	hideMarketingOptIn?: boolean;
-
-	/**
 	 * Shows "Provided by ____ link
 	 */
 	providedBy?: {

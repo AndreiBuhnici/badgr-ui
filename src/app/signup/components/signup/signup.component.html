@@ -102,49 +102,6 @@
 			</fieldset>
 
 			<div>
-				<label
-					class="checkbox checkbox-small l-flex u-margin-top2p5x"
-					[class.checkbox-is-error]="signupForm.rawControlMap.agreedTermsService.dirty && !signupForm.rawControlMap.agreedTermsService.valid"
-				>
-					<input
-						name="terms"
-						id="terms"
-						type="checkbox"
-						[formControl]="signupForm.rawControlMap.agreedTermsService"
-					>
-					<span class="checkbox-x-text">
-						<strong>
-							I have read and agree to the
-							<a
-								target="_blank"
-								[href]="theme.termsOfServiceLink || 'https://badgr.org/missing-terms'"
-							>Terms of Service</a>.
-							</strong>
-							<div
-								*ngIf="signupForm.rawControlMap.agreedTermsService.dirty && !signupForm.rawControlMap.agreedTermsService.valid"
-								class="checkbox-x-errortext"
-							>
-								Please read and agree to the Terms of Service if you want to continue.
-							</div>
-						</span>
-				</label>
-				<label
-					class="checkbox checkbox-light l-flex u-margin-top2p5x"
-					for="news"
-					*ngIf="showMarketingOptIn"
-				>
-					<input
-						name="news"
-						id="news"
-						type="checkbox"
-						[formControl]="signupForm.rawControlMap.marketingOptIn"
-					>
-					<span class="checkbox-x-text">
-                        <strong>Yes,</strong>
-                        I would like to receive email updates about products &amp;
-						services, upcoming webinars, news and events from {{configService.theme['serviceName'] || "Badgr"}}.
-                    </span>
-				</label>
 				<div class="l-stack l-stack-2x l-stack-buttons u-margin-top3x">
 					<button class="button button-secondary"
 					        type="button"

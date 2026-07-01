@@ -21,9 +21,7 @@ export class SignupService {
 			email: signupModel.username,
 			first_name: signupModel.firstName,
 			last_name: signupModel.lastName,
-			password: signupModel.password,
-			agreed_terms_service: signupModel.agreedTermsService,
-			marketing_opt_in: signupModel.marketingOptIn,
+			password: signupModel.password
 		};
 
 		if(source) payload['source'] = source;
