@@ -26,7 +26,7 @@ const routes = [
 
 	},
 	{
-		path: "earned-badge/:id",
+		path: "earned-badge/:type/:id",
 		component: RecipientEarnedBadgeDetailComponent
 	},
 	{

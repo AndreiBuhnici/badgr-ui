@@ -8,7 +8,7 @@ import { MessageService } from '../../../common/services/message.service';
 import { RecipientBadgeManager } from '../../services/recipient-badge-manager.service';
 import { AppConfigService } from '../../../common/app-config.service';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
-import { ApiCredential } from '../../../issuer/models/badgeinstance-api.model';
+import { BadgeInstance } from '../../../issuer/models/badgeinstance.model';
 
 type BadgeDisplay = "grid" | "list";
 
@@ -32,13 +32,13 @@ export class RecipientEarnedBadgeListComponent
 
     badgesLoaded: Promise<unknown>;
 
-    academicCertificates: ApiCredential[] = [];
-    degreeCertificates: ApiCredential[] = [];
-    experienceCertificates: ApiCredential[] = [];
+    academicCertificates: BadgeInstance[] = [];
+    degreeCertificates: BadgeInstance[] = [];
+    experienceCertificates: BadgeInstance[] = [];
 
-    filteredAcademicCertificates: ApiCredential[] = [];
-    filteredDegreeCertificates: ApiCredential[] = [];
-    filteredExperienceCertificates: ApiCredential[] = [];
+    filteredAcademicCertificates: BadgeInstance[] = [];
+    filteredDegreeCertificates: BadgeInstance[] = [];
+    filteredExperienceCertificates: BadgeInstance[] = [];
 
     private _searchQuery = "";
 
@@ -117,7 +117,7 @@ export class RecipientEarnedBadgeListComponent
             .trim()
             .toLowerCase();
 
-        const matches = (credential: ApiCredential) => {
+        const matches = (credential: BadgeInstance) => {
 
             if (!query) {
                 return true;

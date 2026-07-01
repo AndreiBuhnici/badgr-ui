@@ -7,18 +7,14 @@ import {SessionService} from '../../../common/services/session.service';
 import {BaseAuthenticatedRoutableComponent} from '../../../common/pages/base-authenticated-routable.component';
 import {CommonDialogsService} from '../../../common/services/common-dialogs.service';
 
-import {RecipientBadgeInstance} from '../../models/recipient-badge.model';
 import {RecipientBadgeManager} from '../../services/recipient-badge-manager.service';
 import {preloadImageURL} from '../../../common/util/file-util';
 import {ShareSocialDialogOptions} from '../../../common/dialogs/share-social-dialog/share-social-dialog.component';
-import {addQueryParamsToUrl, didWebToUrl} from '../../../common/util/url-util';
 import {compareDate} from '../../../common/util/date-compare';
-import {EventsService} from '../../../common/services/events.service';
 import {AppConfigService} from '../../../common/app-config.service';
-import {ApiExternalToolLaunchpoint} from '../../../externaltools/models/externaltools-api.model';
-import {ExternalToolsManager} from '../../../externaltools/services/externaltools-manager.service';
-import {QueryParametersService} from '../../../common/services/query-parameters.service';
-import { LinkEntry } from "../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component";
+import {LinkEntry} from "../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component";
+import {BadgeInstance} from '../../../issuer/models/badgeinstance.model';
+import {CredentialType} from '../../../issuer/models/badgeinstance-api.model';
 
 @Component({
 	selector: 'recipient-earned-badge-detail',
@@ -29,10 +25,8 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	readonly badgeLoadingImageUrl = require('../../../../breakdown/static/images/badge-loading.svg') as string;
 	readonly badgeFailedImageUrl = require('../../../../breakdown/static/images/badge-failed.svg') as string;
 
-	badges: RecipientBadgeInstance[] = [];
-	badge: RecipientBadgeInstance;
-	issuerBadgeCount: string;
-	launchpoints: ApiExternalToolLaunchpoint[];
+	credential: BadgeInstance;
+	credentialLoaded: Promise<unknown>;
 
 	now = new Date();
 	compareDate = compareDate;
@@ -44,11 +38,7 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 		},
 	};
 
-	didWebToUrl = didWebToUrl
-
 	crumbs: LinkEntry[];
-
-	get badgeSlug(): string { return this.route.snapshot.params['badgeSlug']; }
 
 	constructor(
 		router: Router,
@@ -57,18 +47,42 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 		private recipientBadgeManager: RecipientBadgeManager,
 		private title: Title,
 		private messageService: MessageService,
-		private eventService: EventsService,
 		private dialogService: CommonDialogsService,
-		private configService: AppConfigService,
-		private externalToolsManager: ExternalToolsManager,
-		public queryParametersService: QueryParametersService
+		private configService: AppConfigService
 	) {
 		super(router, route, loginService);
 
+		this.credentialLoaded = this.recipientBadgeManager
+			.getCredential(this.credentialType, this.credentialId)
+			.then(credential => {
+				this.credential = credential;
 
-		this.externalToolsManager.getToolLaunchpoints("earner_assertion_action").then(launchpoints => {
-			this.launchpoints = launchpoints;
-		});
+				this.title.setTitle(credential.achievementName);
+
+				this.crumbs = [
+					{
+						title: "My Credentials",
+						routerLink: ["/recipient/badges"]
+					},
+					{
+						title: credential.achievementName
+					}
+				];
+			})
+			.catch(error =>
+				this.messageService.reportAndThrowError(
+					"Failed to load credential.",
+					error
+				)
+			);
+	}
+
+	get credentialId(): string {
+		return this.route.snapshot.params.id;
+	}
+
+	get credentialType(): CredentialType {
+		return this.route.snapshot.params.type;
 	}
 
 	ngOnInit() {
@@ -76,113 +90,45 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	}
 
 	shareBadge() {
-		this.dialogService.shareSocialDialog.openDialog(badgeShareDialogOptionsFor(this.badge));
+		this.dialogService.shareSocialDialog.openDialog(badgeShareDialogOptionsFor(this.credentialId, this.credentialType, this.credential.recipientId));
 	}
 
 	private get rawJsonUrl() {
-		return `${this.configService.apiConfig.baseUrl}/public/assertions/${this.badgeSlug}.json`;
-	}
+		switch (this.credentialType) {
+			case "academic":
+				return `${this.configService.apiConfig.baseUrl}/academicCertificates/${this.credentialId}.json`;
 
-	get rawBakedUrl() {
-		return `${this.configService.apiConfig.baseUrl}/public/assertions/${this.badgeSlug}/baked`;
-	}
+			case "degree":
+				return `${this.configService.apiConfig.baseUrl}/degreeCertificates/${this.credentialId}.json`;
 
-	get isExpired() {
-		return (this.badge && this.badge.expiresDate && this.badge.expiresDate < new Date());
-	}
-
-	private updateBadge(results) {
-		this.badge = results.entityForSlug(this.badgeSlug);
-		// tag test
-		// this.badge.badgeClass.tags = ['qwerty', 'boberty', 'BanannaFanna'];
-		this.badges = results.entities;
-		this.updateData();
-	}
-
-	private updateData() {
-		this.title.setTitle(`Backpack - ${this.badge.badgeClass.name} - ${this.configService.theme['serviceName'] || "Badgr"}`);
-
-		this.badge.markAccepted();
-
-		const issuerBadgeCount = () => {
-			const count = this.badges
-				.filter(instance => instance.issuerId === this.badge.issuerId)
-				.length;
-			return count === 1 ? "1 Badge" : `${count} Badges`;
-		};
-		this.issuerBadgeCount = issuerBadgeCount();
-	}
-
-	private clickLaunchpoint(launchpoint: ApiExternalToolLaunchpoint) {
-		this.externalToolsManager.getLaunchInfo(launchpoint, this.badgeSlug).then(launchInfo => {
-			this.eventService.externalToolLaunch.next(launchInfo);
-		});
+			case "experience":
+				return `${this.configService.apiConfig.baseUrl}/experienceCertificates/${this.credentialId}.json`;
+		}
 	}
 }
 
-export function badgeShareDialogOptionsFor(badge: RecipientBadgeInstance): ShareSocialDialogOptions {
+export function badgeShareDialogOptionsFor(credentialId: string, credentialType: CredentialType, credentialRecipient: string): ShareSocialDialogOptions {
 	return badgeShareDialogOptions({
-		shareUrl: badge.shareUrl,
-		imageUrl: badge.imagePreview,
-		badgeClassName: badge.badgeClass.name,
-		badgeClassDescription: badge.badgeClass.description,
-		issueDate: badge.issueDate,
-		recipientName: badge.getExtension('extensions:recipientProfile', {'name': undefined}).name,
-		recipientIdentifier: badge.recipientEmail
+		shareUrl: `${window.location.origin}/public/credentials/${credentialType}/${credentialId}`,
+		recipientIdentifier: credentialRecipient,
+		recipientType: 'studentId'
 	});
 }
 
 interface BadgeShareOptions {
 	shareUrl: string;
-	imageUrl: string;
-	badgeClassName: string;
-	badgeClassDescription: string;
-	issueDate: Date;
-	recipientName?: string;
 	recipientIdentifier?: string;
 	recipientType?: string;
 }
 
 export function badgeShareDialogOptions(options: BadgeShareOptions): ShareSocialDialogOptions {
 	return {
-		title: "Share Badge",
-		shareObjectType: "BadgeInstance",
+		title: "Share Credential",
 		shareUrl: options.shareUrl,
-		shareTitle: options.badgeClassName,
-		imageUrl: options.imageUrl,
-		// shareIdUrl: badge.url,
 		shareIdUrl: options.shareUrl,
-		shareSummary: options.badgeClassDescription,
-		shareEndpoint: "certification",
 
 		showRecipientOptions: true,
 		recipientIdentifier: options.recipientIdentifier,
 		recipientType: options.recipientType,
-
-		embedOptions: [
-			{
-				label: "Card",
-				embedTitle: "Badge: " + options.badgeClassName,
-				embedType: "iframe",
-				embedSize: { width: 330, height: 186 },
-				embedVersion: 1,
-				// The UI will show the embedded version because of the embedding params that are included automatically by the dialog
-				embedUrl: options.shareUrl,
-				embedLinkUrl: null
-			},
-
-			{
-				label: "Badge",
-				embedTitle: "Badge: " + options.badgeClassName,
-				embedType: "image",
-				embedSize: { width: 128, height: 128},
-				embedVersion: 1,
-				embedUrl: options.imageUrl,
-				embedLinkUrl: options.shareUrl,
-				embedAwardDate: options.issueDate,
-				embedBadgeName: options.badgeClassName,
-				embedRecipientName: options.recipientName,
-			}
-		]
 	};
 }

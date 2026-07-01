@@ -25,7 +25,7 @@
         class="dialog dialog-is-active l-dialog"
         role="dialog"
 >
-	<div *ngIf="badgeAssertion; else dialogLoading"
+	<div *ngIf="credential; else dialogLoading"
 		     class="dialog-x-box o-container"
 	>
 
@@ -43,7 +43,7 @@
 
 			<div class="l-stack l-stack-withimage">
 				<div>
-					<img [loaded-src]="badgeAssertion.image"
+					<img [loaded-src]="credential.image"
 					     [loading-src]="issuerImagePlaceholderUrl"
 					     [error-src]="issuerImagePlaceholderUrl"
 					     width="128"
@@ -58,7 +58,7 @@
 					<div class="l-flex l-flex-1x l-flex-justifybetween u-width-full">
 						<div class="l-flex l-flex-column">
 							<h1 class="u-text-h3 u-text-bold u-text-dark2">
-								{{badgeAssertion?.credentialSubject.achievement.name}}
+								{{credential?.credentialSubject.achievement.name}}
 							</h1>
 							<p class="u-text u-text-small u-width-small u-animate-step6">
 								{{isBadgeVerified
@@ -78,8 +78,8 @@
 										<dd class="u-margin-bottom2x"
 										    [ngSwitch]="awardedState"
 										>
-											<ng-container *ngSwitchCase="AWARDED_STATES.MATCH"> {{identityEmail}}</ng-container>
-											<ng-container *ngSwitchCase="AWARDED_STATES.NO_MATCH"> This badge was not awarded to {{identityEmail}} </ng-container>
+											<ng-container *ngSwitchCase="AWARDED_STATES.MATCH"> Student with id {{identityStudent}}</ng-container>
+											<ng-container *ngSwitchCase="AWARDED_STATES.NO_MATCH"> This badge was not awarded to student with id {{identityStudent}} </ng-container>
 											<ng-container *ngSwitchCase="AWARDED_STATES.NOT_VERIFIED"> Recipient not verified </ng-container>
 										</dd>
 									</div>
@@ -96,7 +96,7 @@
 										    [ngSwitch]="signatureValid"
 										>
 											<ng-container *ngSwitchCase="true"> Signature is valid </ng-container>
-											<ng-container *ngSwitchCase="false"> Signature does not match: {{ signatureErrors.length ? signatureErrors.join(', ') : 'Unknown error' }} </ng-container>
+											<ng-container *ngSwitchCase="false"> Signature does not match </ng-container>
 										</dd>
 									</div>
 								</div>
@@ -112,7 +112,7 @@
 										    [ngSwitch]="credentialBlockchainDataValid"
 										>
 											<ng-container *ngSwitchCase="true"> Local data and blockchain data match </ng-container>
-											<ng-container *ngSwitchCase="false"> Local data and blockchain data do not match: {{ credentialErrors.length ? credentialErrors.join(', ') : 'Unknown error' }} </ng-container>
+											<ng-container *ngSwitchCase="false"> Local data and blockchain data do not match </ng-container>
 										</dd>
 									</div>
 								</div>
@@ -129,7 +129,6 @@
 										>
 											<ng-container *ngSwitchCase="REVOKED_STATES.NOT_REVOKED"> Credential is active </ng-container>
 											<ng-container *ngSwitchCase="REVOKED_STATES.REVOKED"> This badge was revoked: {{ revocationReason }} </ng-container>
-											<ng-container *ngSwitchCase="REVOKED_STATES.NOT_SYNCED"> Credential revocation is pending blockchain synchronization. Reason: {{ registryRevocationError }} </ng-container>
 										</dd>
 									</div>
 								</div>
@@ -140,7 +139,7 @@
 									></svg>
 									<div>
 										<dt class="u-text-small-bold u-text-dark2">Issued On</dt>
-										<dd class="u-margin-bottom2x"><time [date]="badgeAssertion?.validFrom" format="mediumDate"></time></dd>
+										<dd class="u-margin-bottom2x"><time [date]="credential?.validFrom" format="mediumDate"></time></dd>
 									</div>
 								</div>
 
@@ -157,7 +156,7 @@
 											<ng-container *ngSwitchCase="EXPIRY_STATES.EXPIRED"> Expired</ng-container>
 											<ng-container *ngSwitchCase="EXPIRY_STATES.NEVER_EXPIRES"> Does not expire</ng-container>
 											<ng-container *ngSwitchCase="EXPIRY_STATES.NOT_EXPIRED">
-												<time [date]="badgeAssertion?.validUntil"
+												<time [date]="credential?.validUntil"
 															format="mediumDate"
 												></time>
 											</ng-container>

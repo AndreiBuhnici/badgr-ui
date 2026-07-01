@@ -4,6 +4,8 @@ export type BadgeInstanceSlug = string;
 export type BadgeInstanceUrl = string;
 export interface BadgeInstanceRef extends ApiEntityRef {}
 
+export type CredentialType = "academic" | "degree" | "experience";
+
 export interface AcademicCertificateForCreation {
 	grade: number;
 	userId: string;
@@ -37,6 +39,7 @@ export interface ApiCredential {
     recipientId: string;
 
     issuerDid: string;
+    issuerName: string;
     universityId: string;
 
     revocationListId: string;

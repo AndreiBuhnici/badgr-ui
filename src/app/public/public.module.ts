@@ -4,12 +4,10 @@ import {BadgrCommonModule, COMMON_IMPORTS} from '../common/badgr-common.module';
 
 import {PublicComponent} from './components/public/public.component';
 import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module';
-import {PublicBadgeAssertionComponent} from './components/badge-assertion/badge-assertion.component';
+import {PublicCredentialComponent} from './components/credential/credential.component';
 import {PublicApiService} from './services/public-api.service';
-import {PublicBadgeClassComponent} from './components/badgeclass/badgeclass.component';
-import {PublicIssuerComponent} from './components/issuer/issuer.component';
 import {BadgrRouteData} from '../common/services/navigation.service';
-import { VerifyBadgeDialog } from './components/verify-badge-dialog/verify-badge-dialog.component';
+import {VerifyBadgeDialog} from './components/verify-badge-dialog/verify-badge-dialog.component';
 
 export const routes: Routes = [
 	{
@@ -21,24 +19,8 @@ export const routes: Routes = [
 	},
 
 	{
-		path: 'assertions/:assertionId',
-		component: PublicBadgeAssertionComponent,
-		data: {
-			publiclyAccessible: true,
-		} as BadgrRouteData
-	},
-
-	{
-		path: 'badges/:badgeId',
-		component: PublicBadgeClassComponent,
-		data: {
-			publiclyAccessible: true,
-		} as BadgrRouteData
-	},
-
-	{
-		path: 'issuers/:issuerId',
-		component: PublicIssuerComponent,
+		path: 'credentials/:typeId/:credentialId',
+		component: PublicCredentialComponent,
 		data: {
 			publiclyAccessible: true,
 		} as BadgrRouteData
@@ -62,9 +44,7 @@ export const routes: Routes = [
 	],
 	declarations: [
 		PublicComponent,
-		PublicBadgeAssertionComponent,
-		PublicBadgeClassComponent,
-		PublicIssuerComponent,
+		PublicCredentialComponent,
 		VerifyBadgeDialog
 	],
 	exports: [],

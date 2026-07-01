@@ -3,24 +3,42 @@
  * https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html
  */
 
-export interface PublicApiBadgeAssertion {
+export interface PublicApiCredential {
   "@context": string[];
   type: string[];
   id: string;
-  issuer: string;
-  validFrom: string;
-  validUntil?: string;
   credentialSubject: {
     type: string;
-    achievement: PublicApiBadgeClass;
+    achievement: {
+      type: string;
+      id: string;
+      name: string;
+      description: string;
+      achievementType: string
+      creator : {
+        id: string;
+        type: string;
+        name: string;
+      };
+      image?: string;
+      criteria?: {
+        narrative?: string;
+        id?: string;
+      }
+      alignment?: object[];
+      tag?: string[];
+    };
     identifier: {
       type: "IdentityObject";
       hashed: boolean;
-      identityType: "email" | "url" | "telephone" | "id" | string;
+      identityType: string;
       identityHash: string;
       salt: string;
     };
   };
+  issuer: string;
+  validFrom: string;
+  validUntil?: string;
   proof: {
     type: string;
     cryptosuite: string;
@@ -29,47 +47,4 @@ export interface PublicApiBadgeAssertion {
     proofPurpose: string;
     proofValue: string;
   };
-}
-
-export interface PublicApiBadgeClass {
-  "@context": string | string[];
-  type: string;
-  id: string;
-  name: string;
-  description: string;
-  creator?: PublicApiIssuer;
-  image?: string;
-  criteria: {
-    narrative?: string;
-	id?: string;
-  } | string;
-  alignment: Array<{
-    frameworkName?: string;
-    targetName?: string;
-    targetUrl?: string;
-    targetDescription?: string;
-    targetFramework?: string;
-    targetCode?: string;
-  }>;
-  tag: string[];
-}
-
-export interface PublicApiIssuer {
-  "@context": string[];
-  type: string;
-  id: string;
-  name: string;
-  url: string;
-  email: string;
-  description?: string;
-  image?: string | null;
-  authentication?: string[];
-  assertionMethod?: string[];
-  keyAgreement?: string[];
-  verificationMethod?: Array<{
-    id: string;
-    type: string;
-    controller: string;
-    publicKeyMultibase: string;
-  }>;
 }

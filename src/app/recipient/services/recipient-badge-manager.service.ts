@@ -1,11 +1,9 @@
 import {forwardRef, Inject, Injectable} from '@angular/core';
 import {RecipientBadgeApiService} from './recipient-badges-api.service';
-import {RecipientBadgeInstance} from '../models/recipient-badge.model';
-import {ApiRecipientBadgeInstance, RecipientBadgeInstanceCreationInfo} from '../models/recipient-badge-api.model';
-import {StandaloneEntitySet} from '../../common/model/managed-entity-set';
 import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
 import {EventsService} from '../../common/services/events.service';
-import { ApiCredential } from '../../issuer/models/badgeinstance-api.model';
+import { BadgeInstance } from '../../issuer/models/badgeinstance.model';
+import { CredentialType } from '../../issuer/models/badgeinstance-api.model';
 
 @Injectable()
 export class RecipientBadgeManager {
@@ -16,29 +14,60 @@ export class RecipientBadgeManager {
 		public commonEntityManager: CommonEntityManager
 	) {}
 
-	listAcademicCertificates(): Promise<ApiCredential[]> {
-        return this.recipientBadgeApiService.listAcademicCertificates();
-    }
+	listAcademicCertificates(): Promise<BadgeInstance[]> {
+		return this.recipientBadgeApiService
+			.listAcademicCertificates()
+			.then(credentials =>
+				credentials.map(c => new BadgeInstance(this.commonEntityManager, c))
+			);
+	}
 
-    listDegreeCertificates(): Promise<ApiCredential[]> {
-        return this.recipientBadgeApiService.listDegreeCertificates();
-    }
+	listDegreeCertificates(): Promise<BadgeInstance[]> {
+		return this.recipientBadgeApiService
+			.listDegreeCertificates()
+			.then(credentials =>
+				credentials.map(c => new BadgeInstance(this.commonEntityManager, c))
+			);
+	}
 
-    listExperienceCertificates(): Promise<ApiCredential[]> {
-        return this.recipientBadgeApiService.listExperienceCertificates();
-    }
+	listExperienceCertificates(): Promise<BadgeInstance[]> {
+		return this.recipientBadgeApiService
+			.listExperienceCertificates()
+			.then(credentials =>
+				credentials.map(c => new BadgeInstance(this.commonEntityManager, c))
+			);
+	}
 
-	createRecipientBadge(
-    	badgeInfo: RecipientBadgeInstanceCreationInfo
-	): Promise<string> {
-		// Ensure there aren't any null or undefined values in the request, despite not being needed, they cause validation
-		// errors in the API.
-		const payload: RecipientBadgeInstanceCreationInfo = Object.assign({}, badgeInfo);
-		Object.keys(payload).forEach(key => {
-			if (payload[key] === null || payload[key] === undefined || payload[key] === "") {
-				delete payload[key];
-			}
-		});
+	getCredential(
+		type: CredentialType,
+		id: string
+	): Promise<BadgeInstance> {
+
+		switch (type) {
+			case "academic":
+				return this.recipientBadgeApiService
+					.getAcademicCertificate(id)
+					.then(c => new BadgeInstance(this.commonEntityManager, c));
+
+			case "degree":
+				return this.recipientBadgeApiService
+					.getDegreeCertificate(id)
+					.then(c => new BadgeInstance(this.commonEntityManager, c));
+
+			case "experience":
+				return this.recipientBadgeApiService
+					.getExperienceCertificate(id)
+					.then(c => new BadgeInstance(this.commonEntityManager, c));
+
+			default:
+				return Promise.reject(
+					new Error(`Unknown credential type: ${type}`)
+				);
+		}
+	}
+
+	createRecipientBadge(credential): Promise<string> {
+		// TODO: add import
 
 		return Promise.resolve("success");
 	}

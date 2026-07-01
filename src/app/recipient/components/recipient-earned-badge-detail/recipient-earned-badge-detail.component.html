@@ -10,174 +10,132 @@
 			</div>
 		</div>
 	</div>
-	<div class="badgedetail">
-		<div class="badgedetail-x-header">
-			<h1>{{ badge.badgeClass.name }}</h1>
+	<ng-template [bgAwaitPromises]="[credentialLoaded]">
 
-			<div class="l-primarymore">
-				<button
-					*ngIf="badge.mostRelevantStatus !== 'pending'"
-					class="button"
-					type="button"
-					(click)="shareBadge()"
-				>Share Badge</button>
-				<button class="buttonicon buttonicon-secondary" id="actionstrigger"
-		    		[bgPopupMenuTrigger]="moreMenu">
-			        <svg icon="icon_more"></svg>
-			        <span class="visuallyhidden">More</span>
-			    </button>
-				<bg-popup-menu #moreMenu>
-					<!--<a class="menuitem"
-						[href]="v2JsonUrl"
-						>Download JSON</a>
-					<a class="menuitem"
-						[href]="v2BakedUrl"
-						>Download Baked Image</a>
-					-->
-					<ng-container *ngIf="launchpoints">
-						<a class="menuitem" *ngFor="let lp of launchpoints" (click)="clickLaunchpoint(lp)">
-							<svg icon="icon_external_link"></svg>
-							{{lp.label}}
-						</a>
-					</ng-container>
-				</bg-popup-menu>
-			</div>
-		</div>
-		<div class="badgedetail-x-sidebar">
-			<div class="badgedetail-x-sidebarinternal">
-				<img
-					 [loaded-src]="badge.image"
-					 [loading-src]="badgeLoadingImageUrl"
-					 [error-src]="badgeFailedImageUrl"
-					 [ngStyle]="badge.isExpired && {'filter':'grayscale(1)'}"
-					 class="badgeimage badgeimage-center badgeimage-large"
-					 width="200"
-			    />
-				<div class="badgestatus badgestatus-{{badge.mostRelevantStatus}} u-margin-top2x" *ngIf="badge.mostRelevantStatus">
-					{{badge.mostRelevantStatus}}
-				</div>
-				<dl>
-			    	<div class="l-flex l-flex-2x u-padding-top2x border border-top border-light3">
-						<div>
-							<img [loaded-src]="badge.badgeClass?.issuer?.image"
-                 				 [loading-src]="issuerImagePlacholderUrl"
-                 				 [error-src]="issuerImagePlacholderUrl"
-				 				 width="40" />
-						</div>
-						<div>
-							<dt class="u-text-small-bold u-text-dark2">Issued by:</dt>
-							<dd class="u-text">
-									<a class="u-break-word" [href]="didWebToUrl(badge.badgeClass.issuer.id)">{{ badge.badgeClass.issuer.name }}</a>
-							</dd>
-						</div>
-			    	</div>
-			    	<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">Issued on:</dt>
-					<dd class="u-text"><time [date]="badge?.issueDate" format="mediumDate"></time></dd>
-			    	<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">Awarded to:</dt>
-					<dd class="u-text u-break-all" *ngIf="badge.hasExtension('extensions:recipientProfile')">{{ badge.getExtension('extensions:recipientProfile', null).name }}</dd>
-					<dd class="u-text u-break-all">{{ badge.recipientEmail }}</dd>
-			    	<div
-			    		*ngIf="badge && badge.expiresDate">
-				    	<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">{{ compareDate(badge.expiresDate, now) | i18nPlural: tense['expires'] }} on:</dt>
-				    	<dd class="u-text"><time [date]="badge?.expiresDate" format="mediumDate"></time></dd>
-				    </div>
-			    </dl>
-			</div>
-		</div>
-		<div class="badgedetail-x-desc">
-			<h2 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-hidden-mintablet">Description</h2>
-			<p class="u-text-body u-width-paragraph">{{ badge.badgeClass.description }}</p>
-		</div>
-		<div class="badgedetail-x-body">
+		<div class="badgedetail">
+			<div class="badgedetail-x-header">
+				<h1>{{ credential.achievementName }}</h1>
 
-			<!-- criteria -->
-			<section
-				*ngIf="badge.badgeClass.criteria_url || badge.badgeClass.criteria_text || badge.badgeClass.criteria">
-				<h3
-					class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x"
-				>Criteria</h3>
-				<show-more class="u-margin-bottom8x"
-					*ngIf="badge.badgeClass.criteria_text">
-					<markdown-display
-						[value]="badge.badgeClass.criteria_text"></markdown-display>
-				</show-more>
-				<div class="u-margin-yaxis2x"
-					*ngIf="badge.badgeClass.criteria_url">
-					<a class="u-text-outlink" target="_blank"
-						[href]="badge.badgeClass.criteria_url"
-					>View external Criteria URL
-						<svg icon="icon_external_link"></svg>
-					</a>
-				</div>
-			</section>
-
-			<!-- alignment -->
-			<section>
-			<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x"
-				*ngIf="badge.badgeClass.alignment && badge.badgeClass?.alignment.length>0"
-				>Alignment</h3>
-			<div
-			     *ngFor="let alignment of badge.badgeClass.alignment; let i=index">
-				<div class="l-flex l-flex-justifybetween">
-					<h4 class="u-text-body-bold u-margin-bottom1x">{{ alignment.targetName }}</h4>
-					<small>{{ alignment.targetCode }}</small>
-				</div>
-				<p class="u-break-word u-text-body u-width-paragraph">{{ alignment.targetDescription }}</p>
-				<div *ngIf="alignment.frameworkName">
-					<h1>Framework</h1>
-					{{ alignment.frameworkName }}
-				</div>
-				<div class="u-margin-yaxis2x">
+				<div class="l-primarymore">
+					<button
+						class="button"
+						type="button"
+						(click)="shareBadge()">
+						Share Credential
+					</button>
 					<a
-						*ngIf="alignment.targetUrl"
-						class="u-text-outlink"
-						[href]="alignment.targetUrl"
-						target="_blank"
-					>View alignment URL
-						<svg icon="icon_external_link"></svg>
+						class="button button-secondary"
+						[href]="rawJsonUrl"
+						download>
+						Download JSON
 					</a>
 				</div>
 			</div>
-			</section>
+			<div class="badgedetail-x-sidebar">
+				<div class="badgedetail-x-sidebarinternal">
+					<img
+						[loaded-src]="credential.achievementImage"
+						[loading-src]="badgeLoadingImageUrl"
+						[error-src]="badgeFailedImageUrl"
+						[ngStyle]="credential.isExpired && {'filter':'grayscale(1)'}"
+						class="badgeimage badgeimage-center badgeimage-large"
+						width="200"
+					/>
+					<div
+						class="badgestatus"
+						*ngIf="credential">
+						{{ credential.isSigned ? 'Signed' : 'Unsigned' }}
+					</div>
+					<dl>
+						<div class="l-flex l-flex-2x u-padding-top2x border border-top border-light3">
+							<div>
+								<img
+									[loaded-src]="issuerImagePlacholderUrl"
+									[loading-src]="issuerImagePlacholderUrl"
+									[error-src]="issuerImagePlacholderUrl"
+									width="40" />
+							</div>
 
-			<!-- tags -->
-			<section
-				*ngIf="badge.badgeClass.tag.length > 0">
-			<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">Tags</h3>
-			<div class="l-tags">
-				<div class="tag"
-					*ngFor="let tag of badge.badgeClass.tag; last as last"
-				>{{tag}}</div>
+							<div>
+								<dt class="u-text-small-bold u-text-dark2">Issued by:</dt>
+								<dd class="u-text u-break-word">
+									{{ credential.issuerName }}
+								</dd>
+							</div>
+						</div>
+						<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">Issued on:</dt>
+						<dd class="u-text"><time [date]="credential.validFrom" format="mediumDate"></time></dd>
+						<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">Awarded to:</dt>
+						<dd class="u-text u-break-all">Student with id {{ credential.recipientId }}</dd>
+						<div
+							*ngIf="credential && credential.validUntil">
+							<dt class="u-text-small-bold u-padding-top2x u-margin-top2x border border-top border-light3 u-text-dark2">{{ compareDate(credential.validUntil, now) | i18nPlural: tense['expires'] }} on:</dt>
+							<dd class="u-text"><time [date]="credential.validUntil" format="mediumDate"></time></dd>
+						</div>
+					</dl>
+				</div>
 			</div>
-			</section>
+			<div class="badgedetail-x-desc">
+				<h2 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-hidden-mintablet">Description</h2>
+				<p class="u-text-body u-width-paragraph">{{ credential.achievementDescription }}</p>
+			</div>
+			<div class="badgedetail-x-body">
 
-			<!-- evidence -->
-			<section>
-			<div *ngIf="badge.narrative" class="u-break-word">
+				<!-- criteria -->
+				<section *ngIf="credential.achievementCriteria">
+					<h3
+						class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">
+						Criteria
+					</h3>
+
+					<show-more>
+						<markdown-display
+							[value]="credential.achievementCriteria.narrative">
+						</markdown-display>
+					</show-more>
+
+				</section>
+
+				<!-- alignment -->
+				<section>
 				<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x"
-					*ngIf="badge.evidence_items?.length>0 || badge.narrative"
-				>Narrative</h3>
-				<show-more>
-					<markdown-display [value]="badge.narrative"></markdown-display>
-				</show-more>
-			</div>
-			<div *ngFor="let evidence of badge.evidence_items; let i=index" class="u-break-word">
-				<div  *ngIf="badge.evidence_items?.length>0 || badge.narrative">
-					<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">Evidence</h3>
-					<markdown-display [value]="evidence.narrative"></markdown-display>
+					*ngIf="credential.achievementAlignment && credential.achievementAlignment.length>0"
+					>Alignment</h3>
+				<div
+					*ngFor="let alignment of credential.achievementAlignment">
+					<div class="l-flex l-flex-justifybetween">
+						<h4 class="u-text-body-bold u-margin-bottom1x">{{ alignment.targetName }}</h4>
+						<small>{{ alignment.targetCode }}</small>
+					</div>
+					<p class="u-break-word u-text-body u-width-paragraph">{{ alignment.targetDescription }}</p>
+					<div *ngIf="alignment.frameworkName">
+						<h1>Framework</h1>
+						{{ alignment.frameworkName }}
+					</div>
+					<div class="u-margin-yaxis2x">
+						<a
+							*ngIf="alignment.targetUrl"
+							class="u-text-outlink"
+							[href]="alignment.targetUrl"
+							target="_blank"
+						>View alignment URL
+							<svg icon="icon_external_link"></svg>
+						</a>
+					</div>
 				</div>
-				<div class="u-margin-yaxis2x">
-					<a
-						*ngIf="evidence.evidence_url"
-						class="u-text-outlink"
-						[href]="evidence.evidence_url"
-						target="_blank"
-					>View Evidence URL
-						<svg icon="icon_external_link"></svg>
-					</a>
+				</section>
+
+				<!-- tags -->
+				<section
+					*ngIf="credential.achievementTag.length > 0">
+				<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">Tags</h3>
+				<div class="l-tags">
+					<div class="tag"
+						*ngFor="let tag of credential.achievementTag; last as last"
+					>{{tag}}</div>
 				</div>
+				</section>
 			</div>
-			</section>
 		</div>
-	</div>
+	</ng-template>
 </main>

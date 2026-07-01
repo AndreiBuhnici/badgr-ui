@@ -1,12 +1,11 @@
 import { BaseDialog } from '../../../common/dialogs/base-dialog';
 import { Component, ElementRef, EventEmitter, Output, Renderer2 } from '@angular/core';
-import { PublicApiBadgeAssertion } from '../../models/public-api.model';
+import { PublicApiCredential } from '../../models/public-api.model';
 import { QueryParametersService } from '../../../common/services/query-parameters.service';
 import { preloadImageURL } from '../../../common/util/file-util';
-import { PublicApiService } from '../../services/public-api.service';
+import { CredentialType, PublicApiService } from '../../services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
-import { ApiV2Wrapper } from "../../../common/model/api-v2-wrapper";
-// import { RecipientBadgeManager } from '../../../recipient/services/recipient-badge-manager.service';
+import { VerificationResponse } from "../../../common/model/verification-response";
 
 const sha256 = require('tiny-sha256') as (email: string) => string;
 
@@ -25,7 +24,6 @@ export enum ExpiryState {
 export enum RevokedState {
 	'REVOKED' = 'revoked',
 	'NOT_REVOKED' = 'notRevoked',
-	'NOT_SYNCED' = 'notSynced'
 }
 
 @Component({
@@ -44,10 +42,10 @@ export class VerifyBadgeDialog extends BaseDialog {
 		super(componentElem, renderer);
 	}
 
-	@Output() verifiedBadgeAssertion: EventEmitter<PublicApiBadgeAssertion> = new EventEmitter<PublicApiBadgeAssertion>();
+	@Output() verifiedBadgeAssertion: EventEmitter<PublicApiCredential> = new EventEmitter<PublicApiCredential>();
 
-	get identityEmail(): string {
-		return this.queryParamService.queryStringValue('identity__email');
+	get identityStudent(): string {
+		return this.queryParamService.queryStringValue('identity__studentId');
 	}
 
 	get isBadgeVerified() {
@@ -56,23 +54,13 @@ export class VerifyBadgeDialog extends BaseDialog {
 		&& this.revokedState == RevokedState.NOT_REVOKED;
 	}
 
-	badgeAssertion: PublicApiBadgeAssertion | null = null;
+	credential: PublicApiCredential;
 
 	signatureValid: boolean | null = null;
 
 	credentialBlockchainDataValid: boolean | null = null;
 
-	signatureErrors?: string[];
-
-	credentialErrors?: string[];
-
 	revoked: boolean | null = null;
-
-	revocationReason?: string;
-
-	registryRevocationSynced?: boolean;
-
-	registryRevocationError?: string;
 
 	readonly issuerImagePlaceholderUrl = preloadImageURL(require('../../../../breakdown/static/images/placeholderavatar-issuer.svg') as string);
 
@@ -93,54 +81,34 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 	revokedState: RevokedState;
 
-	async openDialog( badgeAssertion: PublicApiBadgeAssertion ) {
+	async openDialog(credential: PublicApiCredential, credentialId: string, credentialType: CredentialType) {
 		this.showModal();
 
 		try {
-			const entityId = badgeAssertion['id'].split('/').pop();
-			const instance: ApiV2Wrapper<PublicApiBadgeAssertion> =
-				await this.publicApiService.verifyBadgeAssertion(entityId);
+			const instance: VerificationResponse = await this.publicApiService.verifyCredential(credentialType, credentialId);
+			this.credential = credential;
 
 			if (instance) {
-				this.badgeAssertion = instance.result;
 				this.signatureValid = instance.signatureValid;
 				this.credentialBlockchainDataValid = instance.credentialBlockchainDataValid;
-				this.signatureErrors = instance.signatureErrors
-					? instance.signatureErrors
-					: [];
-				this.credentialErrors = instance.credentialErrors
-					? instance.credentialErrors
-					: [];
 				this.revoked = instance.revoked;
-				this.revocationReason = instance.revocationReason
-					? instance.revocationReason
-					: null;
-				this.registryRevocationSynced = instance.registryRevocationSynced
-					? instance.registryRevocationSynced
-					: null;
-				this.registryRevocationError = instance.registryRevocationError
-					? instance.registryRevocationError
-					: null;
-			}
-			else {
-				this.messageService.reportAndThrowError("Failed to verify your badge");
+			} else {
+				this.messageService.reportAndThrowError("Failed to verify your credential. Invalid response received.");
 			}
 		}
 		catch(e) {
 			this.closeDialog();
-			const parsed = JSON.parse(e.message);
-			const validationErrors = parsed.validationErrors || [];
-			this.messageService.reportAndThrowError(`Failed to verify your badge: ${validationErrors}`, e);
+			this.messageService.reportAndThrowError(`Failed to verify your credential: ${e.message}`);
 		}
 
-		this.verifyBadgeAssertion();
+		this.verifyCredential();
 	}
 
-	private verifyBadgeAssertion(){
+	private verifyCredential(){
 		this.verifyRevocation();
 
-		if (this.badgeAssertion.credentialSubject.identifier.identityType === "email") {
-			this.verifyEmail();
+		if (this.credential.credentialSubject.identifier.identityType === "studentId") {
+			this.verifyStudentId();
 		}
 		this.verifyExpiresOn();
 		this.broadcastVerifiedBadgeAssertion();
@@ -148,30 +116,20 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 	private verifyRevocation() {
 		if (this.revoked) {
-			if (!this.revocationReason) {
-				this.revocationReason = "No reason provided";
-			}
-			if (this.registryRevocationSynced) {
-				this.revokedState = RevokedState.REVOKED;
-			} else {
-				this.revokedState = RevokedState.NOT_SYNCED;
-				if (!this.registryRevocationError) {
-					this.registryRevocationError = "Unknown error";
-				}
-			}
+			this.revokedState = RevokedState.REVOKED;
 		} else {
 			this.revokedState = RevokedState.NOT_REVOKED;
 		}
 	}
 
-	private verifyEmail() {
-		if (!this.identityEmail) {
+	private verifyStudentId() {
+		if (!this.identityStudent) {
 			this.awardedState = AwardedState.NOT_VERIFIED;
 		}
-		else if (this.badgeAssertion.credentialSubject.identifier.hashed) {
+		else if (this.credential.credentialSubject.identifier.hashed) {
 			// hashed is true
-			const hashedEmail = 'sha256$'+sha256( `${this.identityEmail}${this.badgeAssertion.credentialSubject.identifier.salt}`);
-			this.awardedState = hashedEmail === this.badgeAssertion.credentialSubject.identifier.identityHash
+			const hashedId = 'sha256$' + sha256(`${this.identityStudent}${this.credential.credentialSubject.identifier.salt}`);
+			this.awardedState = hashedId === this.credential.credentialSubject.identifier.identityHash
 			                    ? AwardedState.MATCH
 			                    : AwardedState.NO_MATCH;
 		}
@@ -182,19 +140,19 @@ export class VerifyBadgeDialog extends BaseDialog {
 	}
 
 	private verifyExpiresOn() {
-		if (!this.badgeAssertion.validUntil) {
+		if (!this.credential.validUntil) {
 			this.expiryState = ExpiryState.NEVER_EXPIRES;
 		}
 		else {
-			this.expiryState = new Date() > new Date(this.badgeAssertion.validUntil)
+			this.expiryState = new Date() > new Date(this.credential.validUntil)
 			                   ? ExpiryState.EXPIRED
 			                   : ExpiryState.NOT_EXPIRED;
 		}
 	}
 
 	private broadcastVerifiedBadgeAssertion() {
-		if (this.badgeAssertion){
-			this.verifiedBadgeAssertion.emit(this.badgeAssertion);
+		if (this.credential){
+			this.verifiedBadgeAssertion.emit(this.credential);
 		}
 	}
 

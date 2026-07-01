@@ -1,4 +1,4 @@
-import {PublicApiBadgeAssertion} from "../app/public/models/public-api.model";
+import {PublicApiCredential} from "../app/public/models/public-api.model";
 import {generateEmbedHtml} from "./generate-embed-html";
 
 const sha256 = require('tiny-sha256') as (message: string) => string;
@@ -43,7 +43,7 @@ export function setupEmbeddedBadges() {
 			xhr.setRequestHeader('accept', 'application/json');
 			xhr.onload = () => {
 				if (xhr.status === 200) {
-					const data = JSON.parse(xhr.responseText) as PublicApiBadgeAssertion;
+					const data = JSON.parse(xhr.responseText) as PublicApiCredential;
 
 					const recipientName = ('extensions:recipientProfile' in data) ? data['extensions:recipientProfile']['name'] : undefined;
 

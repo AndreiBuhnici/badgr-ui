@@ -35,7 +35,6 @@ import {BgCopyInputDirective} from './directives/bg-copy-input.directive';
 import {ShareSocialDialog} from './dialogs/share-social-dialog/share-social-dialog.component';
 import {TimeComponent} from './components/time.component';
 import {BadgrButtonComponent} from './components/badgr-button.component';
-import {SharingService} from './services/sharing.service';
 import {EventsService} from './services/events.service';
 import {ForwardRouteComponent} from './pages/forward-route.component';
 import {MarkdownDisplay} from './components/markdown-display';
@@ -114,7 +113,6 @@ const SERVICES = [
 	IssuerApiService,
 	MessageService,
 	SettingsService,
-	SharingService,
 	EventsService,
 	SessionService,
 	QueryParametersService,

@@ -3,16 +3,11 @@ import { BaseHttpApiService } from '../../common/services/base-http-api.service'
 import { SessionService } from '../../common/services/session.service';
 import { AppConfigService } from '../../common/app-config.service';
 import { MessageService } from '../../common/services/message.service';
-import {
-	PublicApiBadgeAssertion,
-	PublicApiBadgeClass,
-	PublicApiIssuer
-} from '../models/public-api.model';
-import { stripQueryParamsFromUrl } from '../../common/util/url-util';
+import {PublicApiCredential} from '../models/public-api.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {ApiV2Wrapper} from "../../common/model/api-v2-wrapper";
+import {VerificationResponse} from "../../common/model/verification-response";
 
-
+export type CredentialType = "academic" | "degree" | "experience";
 @Injectable()
 export class PublicApiService extends BaseHttpApiService {
 	constructor(
@@ -24,72 +19,59 @@ export class PublicApiService extends BaseHttpApiService {
 		super(loginService, http, configService, messageService);
 	}
 
-	getBadgeAssertion(
-		assertionId: string
-	) {
-		const url = assertionId.startsWith("http")
-			? assertionId
-			: `/public/assertions/${assertionId}.json`;
+	getCredential(credentialType: CredentialType, credentialId: string): Promise<PublicApiCredential> {
+		let endpoint: string;
 
-		return this.get<PublicApiBadgeAssertion>(url, null, false, false)
-			.then(r => r.body);
-	}
+		switch (credentialType) {
+			case "academic":
+				endpoint = `/academicCertificates/${credentialId}.json`;
+				break;
 
-	verifyBadgeAssertion (
-		entityId: string
-	):Promise<ApiV2Wrapper<PublicApiBadgeAssertion>> {
-		const payload = { entity_id: entityId};
+			case "degree":
+				endpoint = `/degreeCertificates/${credentialId}.json`;
+				break;
+
+			case "experience":
+				endpoint = `/experienceCertificates/${credentialId}.json`;
+				break;
+
+			default:
+				return Promise.reject(
+					new Error(`Unknown credential type: ${credentialType}`)
+				);
+		}
+
 		return this
-			.post<ApiV2Wrapper<PublicApiBadgeAssertion>>('/public/verify?json_format=plain', payload, null,  new HttpHeaders(), false, false)
+			.get<PublicApiCredential>(endpoint, null, false, false)
 			.then(r => r.body);
 	}
 
-	getBadgeClass(
-		badgeId: string
-	): Promise<PublicApiBadgeClass> {
-		const url = badgeId.startsWith("http")
-			? badgeId
-			: `/public/badges/${badgeId}`;
+	verifyCredential(credentialType: CredentialType, credentialId: string): Promise<VerificationResponse> {
+		let endpoint: string;
+		let payload = {
+			credentialId: credentialId
+		};
 
-		return this.get<PublicApiBadgeClass>(url, null, false, false)
-			.then(r => r.body)
-			.then(
-				badge =>
-					typeof badge.creator === "string"
-						? this.getIssuer(badge.creator)
-							.then(issuer => ({ ...badge, issuer }))
-						: Promise.resolve(badge)
-			);
-	}
+		switch (credentialType) {
+			case "academic":
+				endpoint = "/verify-academic-certificate";
+				break;
 
-	getIssuer(
-		issuerId: string
-	): Promise<PublicApiIssuer> {
-		const url = issuerId.startsWith("http")
-			? issuerId
-			: `/public/issuers/${issuerId}/did.json`;
+			case "degree":
+				endpoint = "/verify-degree-certificate";
+				break;
 
-		return this.get<PublicApiIssuer>(url, null, false, false)
+			case "experience":
+				endpoint = "/verify-experience-certificate";
+				break;
+
+			default:
+				return Promise.reject(
+					new Error(`Unknown credential type: ${credentialType}`)
+				);
+		}
+
+		return this.post<VerificationResponse>(endpoint, payload, null, new HttpHeaders(), false, false)
 			.then(r => r.body);
-	}
-
-	getIssuerBadges(
-		issuerId: string
-	): Promise<PublicApiBadgeClass[]> {
-		const url = issuerId.startsWith("http")
-			? stripQueryParamsFromUrl(issuerId) + "/badges"
-			: `/public/issuers/${issuerId}/badges`;
-
-		return this.get<PublicApiBadgeClass[]>(url, null, false, false)
-			.then(r => r.body);
-	}
-
-	getIssuerWithBadges(
-		issuerId: string
-	): Promise<{issuer: PublicApiIssuer; badges: PublicApiBadgeClass[]}> {
-		return Promise.all([
-			this.getIssuer(issuerId),
-			this.getIssuerBadges(issuerId)
-		]).then(([issuer, badges]) => ({ issuer, badges }));
 	}
 }

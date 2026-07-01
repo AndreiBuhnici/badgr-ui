@@ -70,6 +70,10 @@ export class BadgeInstance extends ManagedEntity<ApiCredential, BadgeInstanceRef
         return this.apiModel.issuerDid;
     }
 
+    get issuerName(): string {
+        return this.apiModel.issuerName;
+    }
+
     get universityId(): string {
         return this.apiModel.universityId;
     }
