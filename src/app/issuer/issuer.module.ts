@@ -25,11 +25,6 @@ const routes = [
 		component: CredentialCreateComponent,
 		canActivate: [IssuerPermissionGuard]
 	},
-	
-	// {
-	// 	path: "credentials/:id",
-	// 	component: BadgeClassDetailComponent
-	// },
 	{
 		path: "**",
 		component: IssuerDetailComponent

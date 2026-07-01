@@ -7,9 +7,7 @@ import {BgAwaitPromises} from './directives/bg-await-promises';
 import {BgImageStatusPlaceholderDirective} from './directives/bg-image-status-placeholder.directive';
 import {MenuItemDirective} from './directives/bg-menuitem.directive';
 import {ScrollPinDirective} from './directives/scroll-pin.directive';
-import {BadgeImageComponent} from './components/badge-image.component';
 import {ConfirmDialog} from './dialogs/confirm-dialog.component';
-import {ConnectedBadgeComponent} from './components/connected-badge.component';
 import {TruncatedTextComponent} from './components/truncated-text.component';
 import {TooltipComponent} from './components/tooltip.component';
 
@@ -78,7 +76,6 @@ const DIRECTIVES = [
 ];
 
 export const COMMON_MODULE_COMPONENTS = [
-	BadgeImageComponent,
 	BadgrButtonComponent,
 	BgBadgecard,
 	BgBreadcrumbsComponent,
@@ -86,7 +83,6 @@ export const COMMON_MODULE_COMPONENTS = [
 	BgFormFieldImageComponent,
 	BgPopupMenu,
 	ConfirmDialog,
-	ConnectedBadgeComponent,
 	ExternalToolLaunchComponent,
 	FormFieldMarkdown,
 	FormFieldSelect,
