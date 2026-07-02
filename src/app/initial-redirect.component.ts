@@ -17,8 +17,10 @@ export class InitialRedirectComponent {
 		private sessionService: SessionService,
 		private router: Router
 	) {
-		if (sessionService.isLoggedIn) {
+		if (sessionService.isStudent()) {
 			router.navigate(['/recipient/badges'], { replaceUrl: true });
+		} else if (sessionService.isEmployer() || sessionService.isIssuer() || sessionService.isAdmin()) {
+			router.navigate(['/issuer'], { replaceUrl: true });
 		} else {
 			router.navigate(['/auth/login'], { replaceUrl: true });
 		}

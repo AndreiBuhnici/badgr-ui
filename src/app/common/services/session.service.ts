@@ -9,8 +9,6 @@ import {UpdatableSubject} from '../util/updatable-subject';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {NavigationService} from './navigation.service';
 import { jwtDecode } from "jwt-decode";
-import { DomSanitizer } from "@angular/platform-browser";
-import { OAuthManager } from "./oauth-manager.service";
 
 /**
  * The key used to store the authentication token in session and local storage.
@@ -22,8 +20,6 @@ import { OAuthManager } from "./oauth-manager.service";
 export const TOKEN_STORAGE_KEY = "LoginService.token";
 
 const EXPIRATION_DATE_STORAGE_KEY = "LoginService.tokenExpirationDate";
-
-const SCOPE_STORAGE_KEY = "LoginService.scope"
 
 const DEFAULT_EXPIRATION_SECONDS = 24 * 60 * 60;
 
@@ -46,8 +42,7 @@ export class SessionService {
 		private http: HttpClient,
 		private configService: AppConfigService,
 		private messageService: MessageService,
-		private navService: NavigationService,
-		//public oAuthManager: OAuthManager,
+		private navService: NavigationService
 	) {
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 		this.enabledExternalAuthProviders = configService.featuresConfig.externalAuthProviders || [];
@@ -63,12 +58,24 @@ export class SessionService {
 		return jwtDecode<any>(token).user_role;
 	}
 
+	isStudent(): boolean {
+		return this.currentUserRole === "student";
+	}
+
 	isAdmin(): boolean {
 		return this.currentUserRole === "admin";
 	}
 
 	isIssuer(): boolean {
 		return this.currentUserRole === "issuer";
+	}
+
+	isEmployer(): boolean {
+		return this.currentUserRole === "employer";
+	}
+
+	isVerifier(): boolean {
+		return this.currentUserRole === "verifier";
 	}
 
 	login(credential: UserCredential, sessionOnlyStorage = false): Promise<AuthorizationToken> {

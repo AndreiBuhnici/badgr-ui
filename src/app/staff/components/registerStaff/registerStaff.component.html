@@ -11,30 +11,10 @@
 			class="u-text-h3-bold"
 			id="heading-form"
 		>
-			Create a {{ theme.serviceName || "Badgr" }} Account
+			Create a new staff account
 		</h3>
-		<p
-			class="u-text u-text-body u-responsivemargin-top1x2x"
-			*ngIf="! oAuthManager.currentAuthorization"
-		>
-			Already have an account?
-			<a [routerLink]="['/auth/login']">Sign in</a>.
-		</p>
-		<p
-			class="u-text u-text-body u-responsivemargin-top1x2x"
-			*ngIf="oAuthManager.currentAuthorization"
-		>
-			The application
-			<strong>
-				{{ oAuthManager.currentAuthorization.application.name }}
-			</strong>
-			would
-			like to sign you in using {{ theme.serviceName || "Badgr"}}.
-			Already have an account?
-			<a [routerLink]="['/login']">Sign in</a>!
-		</p>
 
-		<!-- Sign Up Form -->
+		<!-- SRegister Form -->
 		<form
 			class="u-margin-top2x"
 			role="form"
@@ -44,7 +24,7 @@
 			novalidate
 		>
 
-			<!-- Signup Controls -->
+			<!-- Register Controls -->
 			<fieldset
 				role="group"
 				aria-labelledby="heading-badgrsignup2"
@@ -53,7 +33,7 @@
 					class="visuallyhidden"
 					id="heading-badgrsignup2"
 				>
-					Sign up with {{ theme.serviceName || "Badgr"}} by providing your information
+					Provide information for new staff account
 				</legend>
 
 				<bg-formfield-text
@@ -69,7 +49,7 @@
 					class="u-margin-bottom2x"
 					[control]="signupForm.rawControlMap.username"
 					[label]="'Username'"
-					[errorMessage]="'Please enter a usernam'"
+					[errorMessage]="'Please enter a username'"
 				></bg-formfield-text>
 
 				<bg-formfield-text
@@ -83,15 +63,11 @@
 					}"
 				></bg-formfield-text>
 
-				<bg-formfield-text
-					[control]="signupForm.rawControlMap.passwordConfirm"
-					[label]="'Confirm Password'"
-					fieldType="password"
-					[errorMessage]="{
-						required: 'Please confirm your password',
-						passwordsMatch: 'Passwords do not match'
-					}"
-				></bg-formfield-text>
+				<bg-formfield-select
+					[control]="signupForm.rawControlMap.role"
+					[label]="'Role'"
+					[optionMap]="roles">
+				</bg-formfield-select>
 			</fieldset>
 
 			<div>
@@ -106,12 +82,9 @@
 					        type="submit"
 					        [disabled]="!! signupFinished"
 					        [loading-promises]="[ signupFinished ]"
-					        loading-message="Signing Up..."
-					>Create Account
+					        loading-message="Registering..."
+					>Register new staff
 					</button>
-					<!-- TO DO: Add a destination -->
-					<!--<a class="u-text-link-small" href="#"
-					>Change my Badgr location</a>-->
 				</div>
 			</div>
 		</form>

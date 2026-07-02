@@ -2,19 +2,16 @@ import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
-import {SignupComponent} from './components/signup/signup.component';
 import {BadgrCommonModule, COMMON_IMPORTS} from '../common/badgr-common.module';
-import {SignupService} from './services/signup.service';
+import { StaffService } from './services/staff.service';
+import { RegisterStaffComponent } from './components/registerStaff/registerStaff.component';
+import { StaffPermissionGuard } from '../common/guards/staff-permission.guard';
 
 const routes = [
-	/* Signup */
 	{
-		path: "",
-		component: SignupComponent
-	},
-	{
-		path: "**",
-		redirectTo: '',
+		path: "register",
+		component: RegisterStaffComponent,
+		canActivate: [StaffPermissionGuard]
 	},
 ];
 
@@ -28,11 +25,11 @@ const routes = [
 	  RouterModule.forChild(routes)
 	],
 	declarations: [
-		SignupComponent
+		RegisterStaffComponent
 	],
 	exports: [],
 	providers: [
-		SignupService
+		StaffService
 	]
 })
-export class SignupModule {}
+export class StaffModule {}

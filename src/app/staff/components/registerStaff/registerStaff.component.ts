@@ -1,8 +1,7 @@
 import { FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SignupModel } from '../../models/signup-model.type';
-import { SignupService } from '../../services/signup.service';
+import { StaffService } from '../../services/staff.service';
 import { SessionService } from '../../../common/services/session.service';
 import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
 import { MessageService } from '../../../common/services/message.service';
@@ -13,12 +12,13 @@ import { OAuthManager } from '../../../common/services/oauth-manager.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { typedFormGroup } from '../../../common/util/typed-forms';
 import { BadgrApiFailure } from '../../../common/services/api-failure';
+import { RegisterStaffModel } from '../../models/registerStaff-model.type';
 
 @Component({
-	selector: 'sign-up',
-	templateUrl: './signup.component.html',
+	selector: 'registerStaff',
+	templateUrl: './registerStaff.component.html',
 })
-export class SignupComponent extends BaseRoutableComponent implements OnInit {
+export class RegisterStaffComponent extends BaseRoutableComponent implements OnInit {
 	signupForm = typedFormGroup()
 		.addControl('email', '', [
 			Validators.required,
@@ -26,7 +26,7 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 		])
 		.addControl('username', '', Validators.required)
 		.addControl('password', '', [ Validators.required, Validators.minLength(8) ])
-		.addControl('passwordConfirm', '', [ Validators.required, this.passwordsMatch.bind(this) ])
+		.addControl('role', '', [ Validators.required ])
 	;
 
 	signupFinished: Promise<unknown>;
@@ -35,20 +35,27 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 		return this.configService.theme;
 	}
 
+	readonly roles: { [key: string]: string } = {
+		issuer: "Issuer",
+		verifier: "Verifier",
+		employer: "Employer",
+		student: "Student"
+	};
+
 	constructor(
 		fb: FormBuilder,
 		private title: Title,
 		public messageService: MessageService,
 		private configService: AppConfigService,
 		public sessionService: SessionService,
-		public signupService: SignupService,
+		public staffService: StaffService,
 		public oAuthManager: OAuthManager,
 		private sanitizer: DomSanitizer,
 		router: Router,
 		route: ActivatedRoute
 	) {
 		super(router, route);
-		title.setTitle(`Signup - ${this.configService.theme['serviceName'] || 'Badgr'}`);
+		title.setTitle(`Register staff`);
 	}
 
 	sanitize(url:string){
@@ -56,11 +63,7 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		if (this.sessionService.isLoggedIn) {
-			this.router.navigate(['/userProfile']);
-		}
-		const defaultEmail = this.route.snapshot.queryParams['email'];
-		if(defaultEmail) this.signupForm.controls.username.setValue(defaultEmail);
+		super.ngOnInit();
 	}
 
 	onSubmit() {
@@ -70,22 +73,19 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 
 		const formState = this.signupForm.value;
 
-		const signupUser = new SignupModel(
+		const signupUser = new RegisterStaffModel(
 			formState.email,
 			formState.username,
-			formState.password
+			formState.password,
+			formState.role
 		);
 
-		this.signupFinished = this.signupService.submitSignup(signupUser)
+		this.signupFinished = this.staffService.submitStaffRegistration(signupUser)
 			.then(() => {
-
 				this.messageService.setMessage(
-					"Account created successfully. Please sign in.",
+					"Account created successfully.",
 					"success"
 				);
-
-				this.router.navigate(["/auth/login"]);
-
 			})
 			.catch((response: HttpErrorResponse) => {
 
@@ -115,7 +115,7 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 
 				if (error && error.password) {
 					this.messageService.setMessage(
-						"Your password must be uncommon and at least 8 characters long.",
+						"The password must be uncommon and at least 8 characters long.",
 						"error"
 					);
 					return;
@@ -130,19 +130,5 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 			.then(() => {
 				this.signupFinished = null;
 			});
-
-	}
-
-	passwordsMatch(): ValidationErrors | null {
-		if (! this.signupForm) return null;
-
-		const p1 = this.signupForm.controls.password.value;
-		const p2 = this.signupForm.controls.passwordConfirm.value;
-
-		if (p1 && p2 && p1 !== p2) {
-			return { passwordsMatch: "Passwords do not match" };
-		}
-
-		return null;
 	}
 }

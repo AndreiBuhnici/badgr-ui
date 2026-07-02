@@ -15,16 +15,13 @@ export class SignupService {
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 	}
 
-	submitSignup(signupModel: SignupModel, source: string) {
-		const endpoint = this.baseUrl + '/v1/user/profile';
+	submitSignup(signupModel: SignupModel) {
+		const endpoint = this.baseUrl + '/auth/register';
 		const payload = {
-			email: signupModel.username,
-			first_name: signupModel.firstName,
-			last_name: signupModel.lastName,
+			email: signupModel.email,
+			username: signupModel.username,
 			password: signupModel.password
 		};
-
-		if(source) payload['source'] = source;
 
 		const headers = new HttpHeaders()
 			.append('Content-Type', 'application/json')

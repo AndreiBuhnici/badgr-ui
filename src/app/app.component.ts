@@ -15,9 +15,6 @@ import {EmbedService} from './common/services/embed.service';
 import {InitialLoadingIndicatorService} from './common/services/initial-loading-indicator.service';
 import {Angulartics2GoogleTagManager} from 'angulartics2/gtm';
 
-import {ApiExternalToolLaunchpoint} from 'app/externaltools/models/externaltools-api.model';
-import {ExternalToolsManager} from 'app/externaltools/services/externaltools-manager.service';
-
 import {UserProfileManager} from './common/services/user-profile-manager.service';
 import {QueryParametersService} from './common/services/query-parameters.service';
 import {Title} from '@angular/platform-browser';
@@ -42,11 +39,13 @@ import { ImportModalComponent } from "./mozz-transition/components/import-modal/
 export class AppComponent implements OnInit, AfterViewInit {
 	title = "Badgr Angular";
 	loggedIn = false;
-	isAuthorizedIssuer = false;
+	isIssuer = false;
 	isAdmin = false;
+	isEmployer = false;
+	isVerifier = false;
+	isStudent = false;
 	mobileNavOpen = false;
 	isUnsupportedBrowser = false;
-	launchpoints?: ApiExternalToolLaunchpoint[];
 	issuers: Issuer[];
 	issuersLoaded: Promise<unknown>;
 
@@ -105,7 +104,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 		private embedService: EmbedService,
 		private renderer: Renderer2,
 		private queryParams: QueryParametersService,
-		private externalToolsManager: ExternalToolsManager,
 		private initialLoadingIndicatorService: InitialLoadingIndicatorService,
 		private angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
 		private angulartics2GoogleTagManager: Angulartics2GoogleTagManager,   // required for angulartics to work
@@ -124,10 +122,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 		const authCode = this.queryParams.queryStringValue("authCode", true);
 		if (sessionService.isLoggedIn && !authCode) this.refreshProfile();
 
-		this.externalToolsManager.getToolLaunchpoints("navigation_external_launch").then(launchpoints => {
-			this.launchpoints = launchpoints.filter(lp => Boolean(lp) );
-		});
-
 		if (this.embedService.isEmbedded) {
 			// Enable the embedded indicator class on the body
 			renderer.addClass(document.body, "embeddedcontainer");
@@ -139,8 +133,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 		// Load the profile
 		this.profileManager.userProfileSet.ensureLoaded();
 
-		this.isAuthorizedIssuer = this.sessionService.isIssuer();
+		this.isIssuer = this.sessionService.isIssuer();
 		this.isAdmin = this.sessionService.isAdmin();
+		this.isEmployer = this.sessionService.isEmployer();
+		this.isVerifier = this.sessionService.isVerifier();
+		this.isStudent = this.sessionService.isStudent();
 	}
 
 	dismissUnsupportedBrowserMessage() {
@@ -176,9 +173,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		this.loggedIn = this.sessionService.isLoggedIn;
-		
-		this.isAuthorizedIssuer = this.sessionService.isIssuer();
-		this.isAdmin = this.sessionService.isAdmin();
 
 		this.sessionService.loggedin$.subscribe(
 			loggedIn => setTimeout(() => {this.loggedIn = loggedIn; this.refreshProfile();})

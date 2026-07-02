@@ -1,6 +1,5 @@
 <main class="o-container">
 
-	<external-tool-launch></external-tool-launch>
 	<form-message></form-message>
 	<div class="topbar">
 		<div class="l-containerxaxis">
@@ -80,60 +79,107 @@
 				<p class="u-text-body u-width-paragraph">{{ credential.achievementDescription }}</p>
 			</div>
 			<div class="badgedetail-x-body">
+				<!-- Criteria -->
+				<section *ngIf="
+						credential.achievementCriteria &&
+						(
+							credential.achievementCriteria.narrative ||
+							credential.achievementCriteria.id
+						)
+					">
 
-				<!-- criteria -->
-				<section *ngIf="credential.achievementCriteria">
-					<h3
-						class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">
+					<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">
 						Criteria
 					</h3>
 
-					<show-more>
+					<show-more *ngIf="credential.achievementCriteria.narrative">
 						<markdown-display
 							[value]="credential.achievementCriteria.narrative">
 						</markdown-display>
 					</show-more>
 
-				</section>
+					<div
+						class="u-margin-yaxis2x"
+						*ngIf="credential.achievementCriteria.id">
 
-				<!-- alignment -->
-				<section>
-				<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x"
-					*ngIf="credential.achievementAlignment && credential.achievementAlignment.length>0"
-					>Alignment</h3>
-				<div
-					*ngFor="let alignment of credential.achievementAlignment">
-					<div class="l-flex l-flex-justifybetween">
-						<h4 class="u-text-body-bold u-margin-bottom1x">{{ alignment.targetName }}</h4>
-						<small>{{ alignment.targetCode }}</small>
-					</div>
-					<p class="u-break-word u-text-body u-width-paragraph">{{ alignment.targetDescription }}</p>
-					<div *ngIf="alignment.frameworkName">
-						<h1>Framework</h1>
-						{{ alignment.frameworkName }}
-					</div>
-					<div class="u-margin-yaxis2x">
 						<a
-							*ngIf="alignment.targetUrl"
 							class="u-text-outlink"
-							[href]="alignment.targetUrl"
 							target="_blank"
-						>View alignment URL
+							[href]="credential.achievementCriteria.id">
+
+							View External Criteria URL
 							<svg icon="icon_external_link"></svg>
 						</a>
 					</div>
-				</div>
 				</section>
 
-				<!-- tags -->
-				<section
-					*ngIf="credential.achievementTag.length > 0">
-				<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">Tags</h3>
-				<div class="l-tags">
-					<div class="tag"
-						*ngFor="let tag of credential.achievementTag; last as last"
-					>{{tag}}</div>
-				</div>
+				<!-- Alignment -->
+				<section *ngIf="
+						credential.achievementAlignment &&
+						credential.achievementAlignment.length > 0
+					">
+
+					<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">
+						Alignment
+					</h3>
+
+					<div *ngFor="let alignment of credential.achievementAlignment">
+
+						<div class="l-flex l-flex-justifybetween">
+							<h4 class="u-text-body-bold u-margin-bottom1x">
+								{{ alignment.target_name }}
+							</h4>
+						</div>
+
+						<small>{{ alignment.target_code }}</small>
+
+						<p class="u-break-word u-text-body u-width-paragraph">
+							{{ alignment.target_description }}
+						</p>
+
+						<div *ngIf="alignment.target_framework">
+							<h1>Framework</h1>
+							{{ alignment.target_framework }}
+						</div>
+
+						<div *ngIf="alignment.target_type">
+							<h1>Type</h1>
+							{{ alignment.target_type }}
+						</div>
+
+						<div
+							class="u-margin-yaxis2x"
+							*ngIf="alignment.target_url">
+
+							<a
+								class="u-text-outlink"
+								[href]="alignment.target_url"
+								target="_blank">
+
+								View alignment URL
+								<svg icon="icon_external_link"></svg>
+							</a>
+						</div>
+					</div>
+				</section>
+
+				<!-- Tags -->
+				<section *ngIf="
+						credential.achievementTag &&
+						credential.achievementTag.length > 0
+					">
+
+					<h3 class="u-text-h3-semibold u-margin-bottom2x u-text-dark2 u-margin-top4x">
+						Tags
+					</h3>
+
+					<div class="l-tags">
+						<div
+							class="tag"
+							*ngFor="let tag of credential.achievementTag">
+							{{ tag }}
+						</div>
+					</div>
 				</section>
 			</div>
 		</div>

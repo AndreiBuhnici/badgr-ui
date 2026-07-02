@@ -22,14 +22,20 @@
 				</div>
 				<div class="topbar-x-subheading">
 					<p class="u-text u-text-small">
-						Your Role: {{ isAdmin ? 'Admin' : isAuthorizedIssuer ? 'Issuer' : 'Viewer' }}
+							Your Role:
+							{{	
+								isAdmin ? 'Admin' :
+								isIssuer ? 'Issuer' :
+								isEmployer ? 'Employer' :
+								'Viewer'
+							}}
 					</p>
 					<p class="u-margin-top1x u-width-paragraph">
 						{{ issuer.description }}
 					</p>
 					<p></p>
 				</div>
-				<div class="topbar-x-buttons" *ngIf="isAuthorizedIssuer || isAdmin">
+				<div class="topbar-x-buttons" *ngIf="isIssuer || isAdmin || isEmployer">
 					<div class="l-primarymore">
 						<button class="button" [routerLink]="['credentials/create']">Create Credential</button>
 					</div>
@@ -65,12 +71,12 @@
 		</div>
 		
 		<section class="emptysection l-emptysection"
-				*ngIf="!(academicCertificates?.length || degreeCertificates?.length || experienceCertificates?.length)">
+    			*ngIf="!hasVisibleCredentials">
 			<h2 class="emptysection-x-headline">
 				There are no credentials
 			</h2>
 			<p class="emptysection-x-copy">
-				No credentials found associated with this issuer yet.
+				No credentials found associated with this search.
 			</p>
 			<div class="emptysection-x-imagecontainer">
 				<img alt="Illustration"
@@ -79,17 +85,53 @@
 			</div>
 		</section>
 
-		<ng-container *ngFor="let section of [
-			{type:'academic', title:'Academic Certificates', items: academicCertificates},
-			{type:'degree', title:'Degree Certificates', items: degreeCertificates},
-			{type:'experience', title:'Experience Certificates', items: experienceCertificates}
-		]">
+		<ng-container *ngIf="isAdmin || isIssuer">
+			<ng-container
+				*ngTemplateOutlet="credentialSection;
+					context: {
+						type: 'academic',
+						title: 'Academic Certificates',
+						items: academicCertificates,
+						canRevoke: true
+					}">
+			</ng-container>
 
-			<section class="l-containerxaxis l-containeryaxis"
-					*ngIf="section.items?.length">
+			<ng-container
+				*ngTemplateOutlet="credentialSection;
+					context: {
+						type: 'degree',
+						title: 'Degree Certificates',
+						items: degreeCertificates,
+						canRevoke: true
+					}">
+			</ng-container>
+		</ng-container>
+
+		<ng-container *ngIf="isAdmin || isEmployer">
+			<ng-container
+				*ngTemplateOutlet="credentialSection;
+					context: {
+						type: 'experience',
+						title: 'Experience Certificates',
+						items: experienceCertificates,
+						canRevoke: true
+					}">
+			</ng-container>
+		</ng-container>
+
+		<ng-template
+			#credentialSection
+			let-type="type"
+			let-title="title"
+			let-items="items"
+			let-canRevoke="canRevoke">
+
+			<section
+				class="l-containerxaxis l-containeryaxis"
+				*ngIf="items?.length">
 
 				<h4 class="u-text-h3-bold u-text-dark2 u-margin-top1x">
-					{{ section.title }} ({{ section.items.length }})
+					{{ title }} ({{ items.length }})
 				</h4>
 
 				<table class="datatable datatable-roundheaders datatable-onlyfirstcolumn datatable-verticalalignmiddle u-margin-top2x">
@@ -102,8 +144,9 @@
 							<th class="datatable-x-cell">Valid Until</th>
 							<th class="datatable-x-cell">Status</th>
 
-							<th class="datatable-x-cell"
-								*ngIf="isAuthorizedIssuer || isAdmin">
+							<th
+								class="datatable-x-cell"
+								*ngIf="canRevoke">
 								<span class="visuallyhidden">Actions</span>
 							</th>
 						</tr>
@@ -111,8 +154,9 @@
 
 					<tbody class="datatable-x-body">
 
-						<tr class="datatable-x-row"
-							*ngFor="let credential of section.items">
+						<tr
+							class="datatable-x-row"
+							*ngFor="let credential of items">
 
 							<td class="datatable-x-cell">
 								<div class="l-flex l-flex-aligncenter l-flex-1x">
@@ -141,14 +185,18 @@
 							</td>
 
 							<td class="datatable-x-cell">
-								<time [date]="credential.validFrom"
-									format="mediumDate"></time>
+								<time
+									[date]="credential.validFrom"
+									format="mediumDate">
+								</time>
 							</td>
 
 							<td class="datatable-x-cell">
 								<span *ngIf="credential.validUntil; else noExpiry">
-									<time [date]="credential.validUntil"
-										format="mediumDate"></time>
+									<time
+										[date]="credential.validUntil"
+										format="mediumDate">
+									</time>
 								</span>
 
 								<ng-template #noExpiry>-</ng-template>
@@ -164,16 +212,22 @@
 								</ng-template>
 							</td>
 
-							<td class="datatable-x-cell"
-								*ngIf="isAuthorizedIssuer || isAdmin">
+							<td
+								class="datatable-x-cell"
+								*ngIf="canRevoke">
+
 								<div class="l-flex l-flex-aligncenter l-flex-justifyend">
+
 									<button
 										class="button button-primary button-small"
-										(click)="revokeCredential(section.type, credential)">
+										(click)="revokeCredential(type, credential)">
 
 										Revoke
+
 									</button>
+
 								</div>
+
 							</td>
 
 						</tr>
@@ -184,7 +238,7 @@
 
 			</section>
 
-		</ng-container>
+		</ng-template>
 
 	</div>
 

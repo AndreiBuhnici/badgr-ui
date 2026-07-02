@@ -94,8 +94,12 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 				() => {
 					this.profileManager.userProfilePromise.then((profile) => {
 						console.log(profile);
-						if (this.sessionService.isIssuer() || this.sessionService.isAdmin())
+						if (this.sessionService.isIssuer() || this.sessionService.isEmployer())
 							this.router.navigate([ 'issuer' ]);
+						else if (this.sessionService.isAdmin())
+							this.router.navigate([ 'staff/register' ]);
+						else if (this.sessionService.isVerifier())
+							this.router.navigate([ 'staff/approve' ]);
 						else
 							this.router.navigate([ 'recipient' ]);
 					});

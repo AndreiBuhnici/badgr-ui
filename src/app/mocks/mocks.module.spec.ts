@@ -6,7 +6,6 @@ import { BadgrTheme } from "../../theming/badgr-theme";
 import { SessionService } from "../common/services/session.service";
 import { EventsService } from "../common/services/events.service";
 import { UserProfileManager } from "../common/services/user-profile-manager.service";
-import { ExternalToolsManager } from "../externaltools/services/externaltools-manager.service";
 import { SignupService } from "../signup/services/signup.service";
 import { QueryParametersService } from "../common/services/query-parameters.service";
 import { AppConfigService } from "../common/app-config.service";
@@ -213,13 +212,7 @@ export class MockRecipientBadgeManager {
 	};
 }
 
-@Injectable()
-export class MockExternalToolsManager {
-	externaltoolsList = {
-		updateIfLoaded : () => {}
-	};
-	getToolLaunchpoints = () => new Promise(() => {});
-}
+
 
 @Injectable()
 export class MockUserProfileManager {
@@ -271,7 +264,6 @@ export class MockEventsService {
 	profileEmailsChanged = () => new Promise(() => null);
 	recipientBadgesStale = () => new Promise(() => null);
 	documentClicked =  new Observable(() => {});
-	externalToolLaunch = new Observable(() => {});
 }
 @Injectable()
 export class MockEmbedService {
@@ -310,7 +302,6 @@ export let COMMON_MOCKS_PROVIDERS_WITH_SUBS = [];
 	CommonDialogsService,
 	OAuthApiService,
 	OAuthManager,
-	ExternalToolsManager,
 	UserProfileManager,
 	BadgeClassManager,
 	BadgeInstanceManager,

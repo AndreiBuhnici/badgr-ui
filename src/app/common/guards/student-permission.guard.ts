@@ -4,11 +4,11 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTr
 import { SessionService } from '../services/session.service';
 
 @Injectable({ providedIn: 'root' })
-export class IssuerPermissionGuard implements CanActivate {
+export class StudentPermissionGuard implements CanActivate {
   constructor(private session: SessionService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {    
-    if (this.session.isIssuer() || this.session.isAdmin() || this.session.isEmployer()) {
+    if (this.session.isStudent()) {
       return true;
     }
 

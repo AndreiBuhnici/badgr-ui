@@ -29,14 +29,13 @@
 			<nav class="navbar-x-items" role="menubar">
 				<div class="navbar-x-navitems">
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
-					 [routerLink]="['/recipient/badges']" *ngIf="!isAuthorizedIssuer && !isAdmin">Backpack</a>
-					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isAuthorizedIssuer || isAdmin"
+					 [routerLink]="['/recipient/badges']" *ngIf="isStudent">Backpack</a>
+					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isIssuer || isAdmin || isEmployer"
 					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']" >Issuer</a>
-					<button role="menuitem" aria-haspopup="true" [class.navitem-light]="!theme.useColorNavbar" class="navitem u-cursor-pointer"
-					 *ngIf="launchpoints?.length" routerLinkActive="navitem-is-active" [bgPopupMenuTrigger]="appsMenu">
-						Apps
-						<svg class="navitem-x-icon" icon="icon_dropdown"></svg>
-					</button>
+					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isAdmin"
+					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/staff/register']">Register Staff</a>
+					 <a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isVerifier"
+					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/staff/approvals']">Approve credential operations</a>
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem u-cursor-pointer" *ngIf="theme.customMenu"
 					 routerLinkActive="navitem-is-active" [bgPopupMenuTrigger]="customMenu">
 						{{ theme.customMenu.label }}
@@ -60,12 +59,6 @@
 
 	<!-- Nav dropdown menus -->
 
-	<bg-popup-menu #appsMenu>
-		<a class="menuitem" href="{{lp.launch_url}}" *ngFor="let lp of launchpoints" target="_blank">
-			{{lp.label}}
-		</a>
-	</bg-popup-menu>
-
 	<bg-popup-menu #customMenu>
 		<a class="menuitem" [href]="item.url" *ngFor="let item of theme?.customMenu?.items" target="_blank">
 			{{ item.label }}
@@ -85,22 +78,17 @@
 			<a routerLinkActive="menuitem-is-active" [routerLink]="['/auth/login']">Sign In</a>
 			<a routerLinkActive="menuitem-is-active" [routerLink]="['/signup']">Create Account</a>
 			<hr class="mobilenav-x-rule">
-			<p class="mobilenav-x-label" *ngIf="launchpoints?.length">Apps</p>
-			<a href="{{lp.launch_url}}" *ngFor="let lp of launchpoints" target="_blank">
-				{{lp.label}}
-			</a>
 		</div>
 	</nav>
 
 	<nav class="l-dialog mobilenav" [class.mobilenav-is-active]="mobileNavOpen" *ngIf="loggedIn && ! isOAuthAuthorizationInProcess"
 	 [class.mobilenav-light]="!theme.useColorNavbar">
 		<div class="mobilenav-x-navitems">
-			<a [routerLink]="['/recipient/badges']" *ngIf="!isAuthorizedIssuer && !isAdmin">Backpack</a>
-			<a [routerLink]="['/issuer']" *ngIf="isAuthorizedIssuer || isAdmin">Issuer</a>
+			<a [routerLink]="['/recipient/badges']" *ngIf="isStudent">Backpack</a>
+			<a [routerLink]="['/issuer']" *ngIf="isIssuer || isAdmin || isEmployer">Issuer</a>
 
-			<hr class="mobilenav-x-rule" *ngIf="launchpoints?.length">
-			<p class="mobilenav-x-label" *ngIf="launchpoints?.length">Apps</p>
-			<a href="{{lp.launch_url}}" *ngFor="let lp of launchpoints" target="_blank"> {{lp.label}} </a>
+			<a [routerLink]="['/staff/register']" *ngIf="isAdmin">Register Staff</a>
+			<a [routerLink]="['/staff/approvals']" *ngIf="isVerifier">Approve credential operations</a>
 
 			<hr class="mobilenav-x-rule" *ngIf="theme.customMenu">
 			<p class="mobilenav-x-label" *ngIf="theme.customMenu">{{ theme.customMenu.label }}</p>

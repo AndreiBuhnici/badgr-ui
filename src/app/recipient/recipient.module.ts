@@ -9,29 +9,35 @@ import {RecipientBadgeApiService} from './services/recipient-badges-api.service'
 import {RecipientBadgeManager} from './services/recipient-badge-manager.service';
 import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module';
 import { MozzTransitionModule } from "../mozz-transition/mozz-transition.module";
+import { StudentPermissionGuard } from '../common/guards/student-permission.guard';
 
 const routes = [
 	/* Recipient Badges */
 	{
-		path: "",
-		redirectTo: 'badges',
+    	path: "",
+    	redirectTo: "badges",
+    	pathMatch: "full",
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "badges",
-		component: RecipientEarnedBadgeListComponent
+		component: RecipientEarnedBadgeListComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "badges/import",
-		component: RecipientEarnedBadgeListComponent
-
+		component: RecipientEarnedBadgeListComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "earned-badge/:type/:id",
-		component: RecipientEarnedBadgeDetailComponent
+		component: RecipientEarnedBadgeDetailComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "**",
 		redirectTo: 'badges',
+		canActivate: [StudentPermissionGuard]
 	},
 ];
 

@@ -46,9 +46,6 @@ import {AuthGuard} from './guards/auth.guard';
 import {OAuthBannerComponent} from './components/oauth-banner.component';
 import {EmbedService} from './services/embed.service';
 import {InitialLoadingIndicatorService} from './services/initial-loading-indicator.service';
-import {ExternalToolsManager} from '../externaltools/services/externaltools-manager.service';
-import {ExternalToolsApiService} from '../externaltools/services/externaltools-api.service';
-import {ExternalToolLaunchComponent} from './components/external-tool-launch.component';
 import {AppConfigService} from './app-config.service';
 import {HttpClientModule} from '@angular/common/http';
 import {AutosizeDirective} from './directives/autosize.directive';
@@ -83,7 +80,6 @@ export const COMMON_MODULE_COMPONENTS = [
 	BgFormFieldImageComponent,
 	BgPopupMenu,
 	ConfirmDialog,
-	ExternalToolLaunchComponent,
 	FormFieldMarkdown,
 	FormFieldSelect,
 	FormFieldText,
@@ -118,8 +114,6 @@ const SERVICES = [
 	OAuthApiService,
 	EmbedService,
 	InitialLoadingIndicatorService,
-	ExternalToolsApiService,
-	ExternalToolsManager,
 	AppConfigService,
 	NavigationService,
 	ZipService,

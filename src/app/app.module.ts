@@ -69,6 +69,11 @@ const ROUTE_CONFIG: Routes = [
 		path: 'public',
 		loadChildren: './public/public.module#PublicModule'
 	},
+	{
+		path: "staff",
+		loadChildren: './staff/staff.module#StaffModule',
+		canActivate: [AuthGuard]
+	},
 	// Legacy Auth Redirects
 	{
 		path: "login",

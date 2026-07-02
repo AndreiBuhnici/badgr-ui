@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -16,6 +16,12 @@ import { BadgeInstanceManager } from '../../services/badgeinstance-manager.servi
 import { Issuer } from '../../models/issuer.model';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { typedFormGroup } from '../../../common/util/typed-forms';
+import  {BadgeStudioComponent } from '../badge-studio/badge-studio.component';
+import { BgFormFieldImageComponent } from '../../../common/components/formfield-image';
+
+import { ElementRef } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { UrlValidator } from '../../../common/validators/url.validator';
 
 @Component({
     selector: 'credential-create',
@@ -30,11 +36,20 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
 
     submitting = false;
 
-    readonly credentialTypes: { [key: string]: string } = {
-        academic: "Academic Certificate",
-        degree: "Degree Certificate",
-        experience: "Experience Certificate"
-    };
+    @ViewChild('badgeStudio')
+    badgeStudio: BadgeStudioComponent;
+
+    @ViewChild('imageField')
+	imageField: BgFormFieldImageComponent;
+
+    @ViewChild('newTagInput')
+    newTagInput: ElementRef<HTMLInputElement>;
+
+    tags = new Set<string>();
+
+    showAdvanced: boolean[] = [false];
+
+    credentialTypes: { [key: string]: string } = {};
 
     constructor(
         protected title: Title,
@@ -43,6 +58,7 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
         protected badgeInstanceManager: BadgeInstanceManager,
         protected dialogService: CommonDialogsService,
         protected configService: AppConfigService,
+        protected fb: FormBuilder,
         sessionService: SessionService,
         router: Router,
         route: ActivatedRoute
@@ -72,11 +88,67 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                         title: 'Create Credential'
                     }
                 ];
+
+                if (this.isAdmin) {
+                    this.credentialTypes = {
+                        academic: "Academic Certificate",
+                        degree: "Degree Certificate",
+                        experience: "Experience Certificate"
+                    };
+                } else if (this.isIssuer) {
+                    this.credentialTypes = {
+                        academic: "Academic Certificate",
+                        degree: "Degree Certificate"
+                    };
+
+                    this.credentialForm.controls.credentialType.setValue("academic");
+                } else if (this.isEmployer) {
+                    this.credentialTypes = {
+                        experience: "Experience Certificate"
+                    };
+
+                    this.credentialForm.controls.credentialType.setValue("experience");
+                }
             });
     }
 
     ngOnInit() {
         super.ngOnInit();
+    }
+
+    addTag() {
+        const newTag = ((this.newTagInput.nativeElement as HTMLInputElement).value || '')
+            .trim()
+            .toLowerCase();
+
+        if (newTag.length > 0) {
+            this.tags.add(newTag);
+            this.newTagInput.nativeElement.value = '';
+        }
+    }
+
+    handleTagInputKeyPress(event: KeyboardEvent) {
+        if (event.keyCode === 13) {
+            this.addTag();
+            this.newTagInput.nativeElement.focus();
+            event.preventDefault();
+        }
+    }
+
+    removeTag(tag: string) {
+        this.tags.delete(tag);
+    }
+
+    addAlignment() {
+        this.credentialForm.controls.alignment.addFromTemplate();
+    }
+
+    removeAlignment(
+        alignment: this['credentialForm']['controls']['alignment']['controls'][0]
+    ) {
+        this.credentialForm.controls.alignment.removeAt(
+            this.credentialForm.controls.alignment.controls.indexOf(alignment)
+        );
     }
 
     credentialForm = typedFormGroup()
@@ -129,6 +201,41 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
         .addControl(
             "description",
             ""
+        )
+
+        // ------------------------
+        // Optional Achievement Metadata
+        // ------------------------
+
+        .addControl(
+            "criteriaText",
+            ""
+        )
+
+        .addControl(
+            "criteriaUrl",
+            ""
+        )
+
+        .addArray(
+            "alignment",
+            typedFormGroup()
+                .addControl("target_name", "", Validators.required)
+                .addControl("target_url", "", [Validators.required, UrlValidator.validUrl])
+                .addControl("target_description", "")
+                .addControl("target_framework", "")
+                .addControl("target_code", "")
+                .addControl("target_type", "")
+        )
+
+        .addControl(
+            "validUntil",
+            null
+        )
+
+        .addControl(
+            "image",
+            null
         );
 
     get selectedCredentialType(): string {
@@ -153,6 +260,11 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
         ]);
     }
 
+    
+    generateRandomImage() {
+        this.badgeStudio.generateRandom().then(imageUrl => this.imageField.useDataUrl(imageUrl, "Auto-generated image"));
+    }
+
     onSubmit() {
 
         if (!this.credentialForm.markTreeDirtyAndValidate()) {
@@ -172,7 +284,17 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                 request = this.badgeInstanceManager.createAcademicCertificate({
                     userId: form.userId,
                     courseId: form.courseId,
-                    grade: Number(form.grade)
+                    grade: Number(form.grade),
+                    criteria: {
+                        narrative: form.criteriaText,
+                        id: form.criteriaUrl
+                    },
+                    alignment: form.alignment,
+                    tag: Array.from(this.tags),
+                    validUntil: form.validUntil
+                        ? new Date(form.validUntil).toISOString()
+                        : null,
+                    image: form.image
                 });
 
                 break;
@@ -183,7 +305,17 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                     userId: form.userId,
                     grade: Number(form.grade),
                     name: form.name,
-                    degreeType: form.degreeType
+                    degreeType: form.degreeType,
+                    criteria: {
+                        narrative: form.criteriaText,
+                        id: form.criteriaUrl
+                    },
+                    alignment: form.alignment,
+                    tag: Array.from(this.tags),
+                    validUntil: form.validUntil
+                        ? new Date(form.validUntil).toISOString()
+                        : null,
+                    image: form.image
                 });
 
                 break;
@@ -192,7 +324,17 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
 
                 request = this.badgeInstanceManager.createExperienceCertificate({
                     userId: form.userId,
-                    description: form.description
+                    description: form.description,
+                    criteria: {
+                        narrative: form.criteriaText,
+                        id: form.criteriaUrl
+                    },
+                    alignment: form.alignment,
+                    tag: Array.from(this.tags),
+                    validUntil: form.validUntil
+                        ? new Date(form.validUntil).toISOString()
+                        : null,
+                    image: form.image
                 });
 
                 break;

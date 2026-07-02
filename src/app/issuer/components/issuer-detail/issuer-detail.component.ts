@@ -11,7 +11,6 @@ import { ApiCredential } from '../../models/badgeinstance-api.model';
 import { Title } from '@angular/platform-browser';
 import { preloadImageURL } from '../../../common/util/file-util';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
-import { ApiExternalToolLaunchpoint } from 'app/externaltools/models/externaltools-api.model';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 
 @Component({
@@ -28,8 +27,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 		require('../../../../../node_modules/@concentricsky/badgr-style/dist/images/image-empty-issuer.svg') as string;
 
 	issuer: Issuer;
-
-	launchpoints: ApiExternalToolLaunchpoint[];
 
 	academicCertificates: ApiCredential[] = [];
 	degreeCertificates: ApiCredential[] = [];
@@ -84,7 +81,27 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 		);
 	}
 
+	get hasVisibleCredentials(): boolean {
+		return (
+			this.academicCertificates.length > 0 ||
+			this.degreeCertificates.length > 0 ||
+			this.experienceCertificates.length > 0
+		);
+	}
+
 	revokeCredential(type: string, credential: ApiCredential) {
+		if (
+			(type === "academic" || type === "degree") &&
+			!(this.isAdmin || this.isIssuer)
+		) {
+			return;
+		}
+		if (
+			type === "experience" &&
+			!(this.isAdmin || this.isEmployer)
+		) {
+			return;
+		}
 		let request: Promise<any>;
 		switch (type) {
 			case "academic":
@@ -125,13 +142,26 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	private reloadCredentials(): Promise<void> {
 		const userId = this.filterUserId.trim();
 
-		return Promise.all([
-			this.badgeInstanceManager.listAcademicCertificates(userId || undefined),
-			this.badgeInstanceManager.listDegreeCertificates(userId || undefined),
-			this.badgeInstanceManager.listExperienceCertificates(userId || undefined)
-		])
-		.then(([academic, degree, experience]) => {
+		const academicRequest =
+			this.isAdmin || this.isIssuer
+				? this.badgeInstanceManager.listAcademicCertificates(userId || undefined)
+				: Promise.resolve([]);
 
+		const degreeRequest =
+			this.isAdmin || this.isIssuer
+				? this.badgeInstanceManager.listDegreeCertificates(userId || undefined)
+				: Promise.resolve([]);
+
+		const experienceRequest =
+			this.isAdmin || this.isEmployer
+				? this.badgeInstanceManager.listExperienceCertificates(userId || undefined)
+				: Promise.resolve([]);
+
+		return Promise.all([
+			academicRequest,
+			degreeRequest,
+			experienceRequest
+		]).then(([academic, degree, experience]) => {
 			this.academicCertificates = academic || [];
 			this.degreeCertificates = degree || [];
 			this.experienceCertificates = experience || [];

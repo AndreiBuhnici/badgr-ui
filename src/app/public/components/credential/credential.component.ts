@@ -42,8 +42,6 @@ export class PublicCredentialComponent {
 
 	credentialType: CredentialType;
 
-	awardedToDisplayName: string;
-
 	tense = {
 		'expires': {
 			'=1' : 'Expired',

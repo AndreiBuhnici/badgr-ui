@@ -10,15 +10,17 @@ import {BadgeInstanceApiService} from './services/badgeinstance-api.service';
 import {IssuerManager} from './services/issuer-manager.service';
 import {IssuerApiService} from './services/issuer-api.service';
 import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module';
-import {IssuerPermissionGuard} from '../common/guards/issuer-permission.guard';
 import { CredentialCreateComponent } from './components/credential-create/credential-create.component';
+import { BadgeStudioComponent } from './components/badge-studio/badge-studio.component';
+import { IssuerPermissionGuard } from '../common/guards/issuer-permission.guard';
 
 const routes = [
 	/* Issuer */
 	{
 		path: "",
 		component: IssuerDetailComponent,
-		pathMatch: "full"
+		pathMatch: "full",
+		canActivate: [IssuerPermissionGuard]
 	},
 	{
 		path: "credentials/create",
@@ -27,7 +29,8 @@ const routes = [
 	},
 	{
 		path: "**",
-		component: IssuerDetailComponent
+		component: IssuerDetailComponent,
+		canActivate: [IssuerPermissionGuard]
 	},
 ];
 
@@ -40,7 +43,8 @@ const routes = [
 	],
 	declarations: [
 		IssuerDetailComponent,
-		CredentialCreateComponent
+		CredentialCreateComponent,
+		BadgeStudioComponent
 	],
 	exports: [],
 	providers: [
