@@ -168,8 +168,7 @@ export class VerifyBadgeDialog extends BaseDialog {
 	private verifyExpiresOn() {
 		if (!this.credential.validUntil) {
 			this.expiryState = ExpiryState.NEVER_EXPIRES;
-		}
-		else {
+		} else {
 			this.expiryState = new Date() > new Date(this.credential.validUntil)
 			                   ? ExpiryState.EXPIRED
 			                   : ExpiryState.NOT_EXPIRED;

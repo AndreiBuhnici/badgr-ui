@@ -22,8 +22,6 @@ export class VerifyRequestsComponent extends BaseAuthenticatedRoutableComponent 
     degreeCertificates: CredentialModel[] = [];
     experienceCertificates: CredentialModel[] = [];
 
-    filterUserId = "";
-
     constructor(
         protected title: Title,
         protected sessionService: SessionService,
@@ -49,17 +47,16 @@ export class VerifyRequestsComponent extends BaseAuthenticatedRoutableComponent 
     }
 
     approve(type: CredentialType, credential: CredentialModel) {
-        console.log(this.academicCertificates)
         this.staffManager.approve(type, credential.credentialId).then(() => {
             this.messageService.setMessage(
-                "Credential request approved successfully.",
+                "Request approved successfully.",
                 "success"
             );
             this.loadPending();
         })
         .catch(err => {
             this.messageService.reportAndThrowError(
-                err && err.message ? err.message : "Failed to approve credential request.",
+                err && err.message ? err.message : "Failed to approve request.",
                 "error"
             );
         });
@@ -68,24 +65,22 @@ export class VerifyRequestsComponent extends BaseAuthenticatedRoutableComponent 
     reject(type: CredentialType, credential: CredentialModel) {
         this.staffManager.reject(type, credential.credentialId).then(() => {
             this.messageService.setMessage(
-                "Credential request rejected successfully.",
+                "Request rejected successfully.",
                 "success"
             );
             this.loadPending();
         })
         .catch(err => {
             this.messageService.reportAndThrowError(
-                err && err.message ? err.message : "Failed to reject credential request.",
+                err && err.message ? err.message : "Failed to reject request.",
                 "error"
             );
         });
     }
 
     get hasVisibleCredentials(): boolean {
-
         return this.academicCertificates.length > 0 ||
                this.degreeCertificates.length > 0 ||
                this.experienceCertificates.length > 0;
-
     }
 }

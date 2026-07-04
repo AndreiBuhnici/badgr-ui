@@ -255,7 +255,6 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
             "/issuer"
         ]);
     }
-
     
     generateRandomImage() {
         this.badgeStudio.generateRandom().then(imageUrl => this.imageField.useDataUrl(imageUrl, "Auto-generated image"));
@@ -342,7 +341,7 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
 
         request.then(() => {
                 this.messageService.reportMajorSuccess(
-                    "Credential created successfully.",
+                    "Requested approval for credential issuance.",
                     true
                 );
                 this.router.navigate([
@@ -359,15 +358,13 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                 }
 
                 this.messageService.reportAndThrowError(
-                    "Unable to create credential: " + message,
+                    "Unable to request credential issuance: " + message,
                     error
                 );
 
             })
             .finally(() => {
-
                 this.submitting = false;
-
             });
     }
 

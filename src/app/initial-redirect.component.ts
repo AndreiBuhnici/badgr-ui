@@ -21,6 +21,8 @@ export class InitialRedirectComponent {
 			router.navigate(['/recipient/badges'], { replaceUrl: true });
 		} else if (sessionService.isEmployer() || sessionService.isIssuer() || sessionService.isAdmin()) {
 			router.navigate(['/issuer'], { replaceUrl: true });
+		} else if (sessionService.isVerifier()) {
+			router.navigate(['/staff/verifyRequests'], { replaceUrl: true });
 		} else {
 			router.navigate(['/auth/login'], { replaceUrl: true });
 		}

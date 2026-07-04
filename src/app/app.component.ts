@@ -37,7 +37,7 @@ import { ImportModalComponent } from "./mozz-transition/components/import-modal/
 	templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit, AfterViewInit {
-	title = "Badgr Angular";
+	title = "Decentralized Open Badges Management Platform";
 	loggedIn = false;
 	isIssuer = false;
 	isAdmin = false;
@@ -115,7 +115,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 		messageService.useRouter(router);
 
-		titleService.setTitle(this.configService.theme['serviceName'] || "Badgr");
+		titleService.setTitle(this.title);
 
 		this.initScrollFix();
 
