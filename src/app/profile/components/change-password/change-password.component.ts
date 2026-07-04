@@ -45,7 +45,7 @@ export class ChangePasswordComponent extends BaseRoutableComponent {
 	) {
 		super(router, route);
 
-		title.setTitle(`Change Password - ${this.configService.theme['serviceName'] || "Badgr"}`);
+		title.setTitle(`Change Password`);
 
 		this.profileManager.userProfilePromise
 			.then(profile => this.profile = profile);

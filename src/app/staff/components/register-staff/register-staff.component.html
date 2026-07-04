@@ -3,9 +3,6 @@
 	<form-message></form-message>
 
 	<div class="shadowcontainer u-animate-dropfade">
-		<!-- OAuth Banner -->
-		<oauth-banner></oauth-banner>
-
 		<!-- Title Message -->
 		<h3
 			class="u-text-h3-bold"
@@ -14,7 +11,7 @@
 			Create a new staff account
 		</h3>
 
-		<!-- SRegister Form -->
+		<!-- Register Form -->
 		<form
 			class="u-margin-top2x"
 			role="form"
@@ -72,12 +69,6 @@
 
 			<div>
 				<div class="l-stack l-stack-2x l-stack-buttons u-margin-top3x">
-					<button class="button button-secondary"
-					        type="button"
-					        *ngIf="oAuthManager.currentAuthorization"
-					        (click)="oAuthManager.cancelCurrentAuthorization()"
-					>Cancel
-					</button>
 					<button class="button"
 					        type="submit"
 					        [disabled]="!! signupFinished"

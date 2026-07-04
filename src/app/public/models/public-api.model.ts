@@ -3,7 +3,7 @@
  * https://www.imsglobal.org/sites/default/files/Badges/OBv2p0/index.html
  */
 
-export interface PublicApiCredential {
+export interface PublicCredentialModel {
   "@context": string[];
   type: string[];
   id: string;

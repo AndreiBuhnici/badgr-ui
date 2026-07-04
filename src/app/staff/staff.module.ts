@@ -3,15 +3,23 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {BadgrCommonModule, COMMON_IMPORTS} from '../common/badgr-common.module';
-import { StaffService } from './services/staff.service';
-import { RegisterStaffComponent } from './components/registerStaff/registerStaff.component';
-import { StaffPermissionGuard } from '../common/guards/staff-permission.guard';
+import { RegisterStaffComponent } from './components/register-staff/register-staff.component';
+import { AdminPermissionGuard } from '../common/guards/admin-permission.guard';
+import { VerifierPermissionGuard } from '../common/guards/verifier-permission.guard';
+import { StaffManager } from './services/staff-manager.service';
+import { StaffApiService } from './services/staff-api.service';
+import { VerifyRequestsComponent } from './components/verify-requests/verify-requests.component';
 
 const routes = [
 	{
 		path: "register",
 		component: RegisterStaffComponent,
-		canActivate: [StaffPermissionGuard]
+		canActivate: [AdminPermissionGuard]
+	},
+	{
+		path: "verifyRequests",
+		component: VerifyRequestsComponent,
+		canActivate: [VerifierPermissionGuard]
 	},
 ];
 
@@ -25,11 +33,13 @@ const routes = [
 	  RouterModule.forChild(routes)
 	],
 	declarations: [
-		RegisterStaffComponent
+		RegisterStaffComponent,
+		VerifyRequestsComponent
 	],
 	exports: [],
 	providers: [
-		StaffService
+		StaffManager,
+		StaffApiService
 	]
 })
 export class StaffModule {}

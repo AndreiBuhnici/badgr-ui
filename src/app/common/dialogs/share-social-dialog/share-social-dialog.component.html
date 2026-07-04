@@ -31,19 +31,53 @@
 		<!-- Link Tab -->
 		<div class="u-responsivepadding-yaxis u-responsivepadding-xaxis" tabindex="-1" id="sharelink" *ngIf="currentTabId == 'link'">
 
-			<ng-template [ngIf]="options?.showRecipientOptions" >
-				<p class="u-text-bold u-margin-bottom3x">Badge Options:</p>
-				<label class="checkbox checkbox-light u-margin-bottom5x">
-					<input
-						[(ngModel)]="includeRecipientIdentifier"
-						type="checkbox"
-						checked>
-					<span class="checkbox-x-text">
-              <strong>Include Recipient Identifier:</strong> <br>
-              Student id {{ options.recipientIdentifier }}
-            </span>
-				</label>
-			</ng-template>
+			<p class="u-text-bold u-margin-bottom3x">Recipient Identifier</p>
+			<label
+				class="radio radio-light"
+				*ngIf="options?.recipientEmail">
+
+				<input
+					type="radio"
+					name="recipientType"
+					value="email"
+					[(ngModel)]="selectedRecipientType">
+
+				<span class="radio-x-text">
+					Email: {{ options.recipientEmail }}
+				</span>
+
+			</label>
+
+			<label
+				class="radio radio-light u-margin-top2x"
+				*ngIf="options?.recipientStudentId">
+
+				<input
+					type="radio"
+					name="recipientType"
+					value="studentId"
+					[(ngModel)]="selectedRecipientType">
+
+				<span class="radio-x-text">
+					Student ID: {{ options.recipientStudentId }}
+				</span>
+
+			</label>
+
+			<label
+				class="radio radio-light u-margin-top2x">
+
+				<input
+					type="radio"
+					name="recipientType"
+					value=""
+					[(ngModel)]="selectedRecipientType">
+
+				<span class="radio-x-text">
+					No recipient identifier
+				</span>
+
+			</label>
 
 			<div class="forminput forminput-hasiconleft forminput-withbutton u-margin-bottom3x" *ngIf="options">
 				<label class="forminput-x-label" for="link-input">Copy this link to share</label>

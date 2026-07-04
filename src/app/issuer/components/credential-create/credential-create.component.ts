@@ -8,7 +8,6 @@ import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-a
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { CommonDialogsService } from '../../../common/services/common-dialogs.service';
-import { AppConfigService } from '../../../common/app-config.service';
 
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { BadgeInstanceManager } from '../../services/badgeinstance-manager.service';
@@ -57,7 +56,6 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
         protected issuerManager: IssuerManager,
         protected badgeInstanceManager: BadgeInstanceManager,
         protected dialogService: CommonDialogsService,
-        protected configService: AppConfigService,
         protected fb: FormBuilder,
         sessionService: SessionService,
         router: Router,
@@ -65,9 +63,7 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
     ) {
         super(router, route, sessionService);
 
-        this.title.setTitle(
-            `Create Credential - ${this.configService.theme['serviceName'] || 'Badgr'}`
-        );
+        this.title.setTitle(`Create Credential`);
 
         this.issuerLoaded = this.issuerManager
             .getIssuer()
@@ -266,7 +262,6 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
     }
 
     onSubmit() {
-
         if (!this.credentialForm.markTreeDirtyAndValidate()) {
             return;
         }
@@ -278,9 +273,7 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
         let request: Promise<any>;
 
         switch (form.credentialType) {
-
             case "academic":
-
                 request = this.badgeInstanceManager.createAcademicCertificate({
                     userId: form.userId,
                     courseId: form.courseId,
@@ -300,7 +293,6 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                 break;
 
             case "degree":
-
                 request = this.badgeInstanceManager.createDegreeCertificate({
                     userId: form.userId,
                     grade: Number(form.grade),
@@ -321,7 +313,6 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                 break;
 
             case "experience":
-
                 request = this.badgeInstanceManager.createExperienceCertificate({
                     userId: form.userId,
                     description: form.description,
@@ -340,7 +331,6 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                 break;
 
             default:
-
                 this.messageService.setMessage(
                     "Unknown credential type.",
                     "error"
@@ -350,18 +340,14 @@ export class CredentialCreateComponent extends BaseAuthenticatedRoutableComponen
                 return;
         }
 
-        request
-            .then(() => {
-
-                this.messageService.setMessage(
+        request.then(() => {
+                this.messageService.reportMajorSuccess(
                     "Credential created successfully.",
-                    "success"
+                    true
                 );
-
                 this.router.navigate([
                     "/issuer"
                 ]);
-
             })
             .catch(error => {
                 let message = "Unknown error";

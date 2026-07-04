@@ -1,0 +1,192 @@
+<form-message></form-message>
+
+<ng-template [bgAwaitPromises]="[credentialsLoaded]">
+
+    <header class="topbar">
+        <div class="l-containerxaxis">
+            <div class="topbar-x-wrap">
+
+                <div>
+                    <h1 class="topbar-x-heading">
+                        Pending Credential Requests
+                    </h1>
+
+                    <div class="topbar-x-subheading">
+                        Review pending credentials for creation and revocation requests.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <div *bgAwaitPromises="[credentialsLoaded]">
+        <section
+            class="emptysection l-emptysection"
+            *ngIf="!hasVisibleCredentials">
+
+            <h2 class="emptysection-x-headline">
+                There are no pending requests
+            </h2>
+
+            <p class="emptysection-x-copy">
+                No pending credential approvals were found.
+            </p>
+
+        </section>
+
+        <ng-container
+            *ngTemplateOutlet="credentialSection;
+                context:{
+                    type:'academic',
+                    title:'Academic Certificates',
+                    items:academicCertificates
+                }">
+        </ng-container>
+
+        <ng-container
+            *ngTemplateOutlet="credentialSection;
+                context:{
+                    type:'degree',
+                    title:'Degree Certificates',
+                    items:degreeCertificates
+                }">
+        </ng-container>
+
+        <ng-container
+            *ngTemplateOutlet="credentialSection;
+                context:{
+                    type:'experience',
+                    title:'Experience Certificates',
+                    items:experienceCertificates
+                }">
+        </ng-container>
+
+        <ng-template
+            #credentialSection
+            let-type="type"
+            let-title="title"
+            let-items="items">
+
+            <section
+                class="l-containerxaxis l-containeryaxis"
+                *ngIf="items?.length">
+
+                <h4 class="u-text-h3-bold u-text-dark2 u-margin-top1x">
+                    {{ title }} ({{ items.length }})
+                </h4>
+
+                <table class="datatable datatable-roundheaders datatable-onlyfirstcolumn datatable-verticalalignmiddle u-margin-top2x">
+
+                    <thead class="datatable-x-head">
+
+                    <tr class="datatable-x-header">
+
+                        <th class="datatable-x-cell">
+                            Credential
+                        </th>
+
+                        <th class="datatable-x-cell">
+                            Recipient ID
+                        </th>
+
+                        <th class="datatable-x-cell">
+                            Operation
+                        </th>
+
+                        <th class="datatable-x-cell">
+                            Requested By
+                        </th>
+
+                        <th class="datatable-x-cell">
+                            Requested At
+                        </th>
+
+                        <th class="datatable-x-cell">
+                            <span class="visuallyhidden">
+                                Actions
+                            </span>
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody class="datatable-x-body">
+
+                    <tr
+                        class="datatable-x-row"
+                        *ngFor="let credential of items">
+
+                        <td class="datatable-x-cell">
+
+                            <div class="l-flex l-flex-aligncenter l-flex-1x">
+
+                                <div class="u-margin-left1x">
+
+                                    <div class="u-text">
+                                        {{ credential.achievementName }}
+                                    </div>
+
+                                    <div class="u-text-small u-text-dark3">
+                                        {{ credential.achievementType }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <td class="datatable-x-cell">
+                            {{ credential.recipientId }}
+                        </td>
+
+                        <td class="datatable-x-cell">
+
+                            <span *ngIf="credential.revocationStatus === 'pending'; else approvalOperation">
+                                Revocation
+                            </span>
+
+                            <ng-template #approvalOperation>
+                                {{ credential.approvalOperation | titlecase }}
+                            </ng-template>
+
+                        </td>
+
+                        <td class="datatable-x-cell">
+                            {{ credential.requestedBy }}
+                        </td>
+
+                        <td class="datatable-x-cell">
+
+                            <time
+                                [date]="credential.createdAt"
+                                format="medium">
+
+                            </time>
+
+                        </td>
+
+                        <td class="datatable-x-cell">
+                            <div class="l-flex l-flex-aligncenter l-flex-justifyend" style="gap: 12px;">
+                                <button
+                                    class="button button-primary button-small"
+                                    (click)="approve(type, credential)">
+                                    Approve
+                                </button>
+
+                                <button
+                                    class="button button-primary button-small"
+                                    (click)="reject(type, credential)">
+                                    Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        </ng-template>
+    </div>
+</ng-template>

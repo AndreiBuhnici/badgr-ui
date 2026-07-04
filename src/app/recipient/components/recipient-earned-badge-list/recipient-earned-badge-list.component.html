@@ -1,41 +1,47 @@
 <main>
 
 	<form-message></form-message>
+	<add-badge-dialog #addBadgeDialog></add-badge-dialog>
 
 	<div class="topbar">
-
 		<div class="l-containerxaxis topbar-x-wrap">
+			<div>
+				<h2 class="topbar-x-heading">
 
-			<h2 class="topbar-x-heading">
+					My Credentials
 
-				My Credentials
+					<span
+						class="topbar-x-internalheading"
+						*ngIf="hasCredentials()">
 
-				<span
-					class="topbar-x-internalheading"
-					*ngIf="hasCredentials()">
-
-					{{
-						filteredAcademicCertificates.length +
-						filteredDegreeCertificates.length +
-						filteredExperienceCertificates.length
-					}}
-
-					{{
-						(
+						{{
 							filteredAcademicCertificates.length +
 							filteredDegreeCertificates.length +
 							filteredExperienceCertificates.length
-						) === 1
-							? 'Credential'
-							: 'Credentials'
-					}}
+						}}
 
-				</span>
+						{{
+							(
+								filteredAcademicCertificates.length +
+								filteredDegreeCertificates.length +
+								filteredExperienceCertificates.length
+							) === 1
+								? 'Credential'
+								: 'Credentials'
+						}}
+					</span>
+				</h2>
+			</div>
 
-			</h2>
-
+			<div class="topbar-x-buttons">
+				<button
+					type="button"
+					class="button"
+					(click)="openAddBadgeDialog()">
+					Add Credential
+				</button>
+			</div>
 		</div>
-
 	</div>
 
 	<ng-template [bgAwaitPromises]="[badgesLoaded]">

@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { BadgeInstanceApiService } from './badgeinstance-api.service';
 import {
     AcademicCertificateForCreation,
-    ApiCredential,
     DegreeCertificateForCreation,
     ExperienceCertificateForCreation
 } from '../models/badgeinstance-api.model';
+import { CredentialModel } from '../../common/model/credential-model';
 
 @Injectable()
 export class BadgeInstanceManager {
@@ -38,15 +38,15 @@ export class BadgeInstanceManager {
         );
     }
 
-    listAcademicCertificates(userId?: string): Promise<ApiCredential[]> {
+    listAcademicCertificates(userId?: string): Promise<CredentialModel[]> {
         return this.badgeInstanceApiService.listAcademicCertificates(userId);
     }
 
-    listDegreeCertificates(userId?: string): Promise<ApiCredential[]> {
+    listDegreeCertificates(userId?: string): Promise<CredentialModel[]> {
         return this.badgeInstanceApiService.listDegreeCertificates(userId);
     }
 
-    listExperienceCertificates(userId?: string): Promise<ApiCredential[]> {
+    listExperienceCertificates(userId?: string): Promise<CredentialModel[]> {
         return this.badgeInstanceApiService.listExperienceCertificates(userId);
     }
 

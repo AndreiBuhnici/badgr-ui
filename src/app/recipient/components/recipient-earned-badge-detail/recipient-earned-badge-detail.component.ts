@@ -14,7 +14,7 @@ import {compareDate} from '../../../common/util/date-compare';
 import {AppConfigService} from '../../../common/app-config.service';
 import {LinkEntry} from "../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component";
 import {BadgeInstance} from '../../../issuer/models/badgeinstance.model';
-import {CredentialType} from '../../../issuer/models/badgeinstance-api.model';
+import {CredentialType} from '../../../common/model/credential-model';
 
 @Component({
 	selector: 'recipient-earned-badge-detail',
@@ -90,7 +90,7 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	}
 
 	shareBadge() {
-		this.dialogService.shareSocialDialog.openDialog(badgeShareDialogOptionsFor(this.credentialId, this.credentialType, this.credential.recipientId));
+		this.dialogService.shareSocialDialog.openDialog(badgeShareDialogOptionsFor(this.credentialId, this.credentialType, this.credential.recipientId, this.sessionService.currentUserEmail));
 	}
 
 	private get rawJsonUrl() {
@@ -107,18 +107,18 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 	}
 }
 
-export function badgeShareDialogOptionsFor(credentialId: string, credentialType: CredentialType, credentialRecipient: string): ShareSocialDialogOptions {
+export function badgeShareDialogOptionsFor(credentialId: string, credentialType: CredentialType, recipientId: string, recipientEmail: string): ShareSocialDialogOptions {
 	return badgeShareDialogOptions({
 		shareUrl: `${window.location.origin}/public/credentials/${credentialType}/${credentialId}`,
-		recipientIdentifier: credentialRecipient,
-		recipientType: 'studentId'
+		recipientEmail: recipientEmail,
+		recipientStudentId: recipientId
 	});
 }
 
 interface BadgeShareOptions {
 	shareUrl: string;
-	recipientIdentifier?: string;
-	recipientType?: string;
+	recipientEmail?: string;
+	recipientStudentId?: string;
 }
 
 export function badgeShareDialogOptions(options: BadgeShareOptions): ShareSocialDialogOptions {
@@ -127,8 +127,9 @@ export function badgeShareDialogOptions(options: BadgeShareOptions): ShareSocial
 		shareUrl: options.shareUrl,
 		shareIdUrl: options.shareUrl,
 
-		showRecipientOptions: true,
-		recipientIdentifier: options.recipientIdentifier,
-		recipientType: options.recipientType,
+		recipientEmail: options.recipientEmail,
+    	recipientStudentId: options.recipientStudentId,
+
+		showRecipientOptions: true
 	};
 }

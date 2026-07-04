@@ -4,7 +4,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTr
 import { SessionService } from '../services/session.service';
 
 @Injectable({ providedIn: 'root' })
-export class StaffPermissionGuard implements CanActivate {
+export class VerifierPermissionGuard implements CanActivate {
   constructor(private session: SessionService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {    

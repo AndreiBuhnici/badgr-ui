@@ -1,16 +1,14 @@
-import {
-    ApiCredential,
-    BadgeInstanceRef
-} from './badgeinstance-api.model';
+import { BadgeInstanceRef } from './badgeinstance-api.model';
 import { ManagedEntity } from '../../common/model/managed-entity';
 import { ApiEntityRef } from '../../common/model/entity-ref';
-import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
+import { CommonEntityManager } from '../../entity-manager/services/common-entity-manager.service';
+import { CredentialModel } from '../../common/model/credential-model';
 
-export class BadgeInstance extends ManagedEntity<ApiCredential, BadgeInstanceRef> {
+export class BadgeInstance extends ManagedEntity<CredentialModel, BadgeInstanceRef> {
 
     constructor(
         commonManager: CommonEntityManager,
-        initialEntity: ApiCredential = null
+        initialEntity: CredentialModel = null
     ) {
         super(commonManager);
 

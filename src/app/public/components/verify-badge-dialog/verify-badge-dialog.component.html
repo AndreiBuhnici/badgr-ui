@@ -2,7 +2,7 @@
 <ng-template #dialogLoading>
 	<div class="dialog-x-box o-container">
 		<div class="dialog-x-header u-background-light3">
-			<h1>Verify Badge</h1>
+			<h1>Verify Credential</h1>
 			<button class="buttonicon buttonicon-link"
 			        (click)="closeDialog()">
 				<svg class="navitem-x-icon" icon="icon_close"></svg>
@@ -12,7 +12,7 @@
 		<div class="u-padding-all3x">
 			<div class="u-text-center">
 				<div class="u-margin-xaxisauto loaderspin loaderspin-large u-margin-bottom2x"></div>
-				<div class="u-text">Verifying Badge...</div>
+				<div class="u-text">Verifying Credential...</div>
 			</div>
 		</div>
 	</div>
@@ -30,7 +30,7 @@
 	>
 
 		<div class="dialog-x-header u-background-light3">
-			<h1>Verify Badge</h1>
+			<h1>Verify Credential</h1>
 			<button class="buttonicon buttonicon-link"
 			        (click)="closeDialog()"
 			>
@@ -62,8 +62,8 @@
 							</h1>
 							<p class="u-text u-text-small u-width-small u-animate-step6">
 								{{isBadgeVerified
-									? 'This badge has been verified by the platform and all checks passed.'
-									: 'This badge has been verified by the platform and some checks are failing.'
+									? 'This credential has been verified by the platform and all checks passed.'
+									: 'This credential has been verified by the platform and some checks are failing.'
 								}}
 							</p>
 							<dl class="u-text u-margin-top2x">
@@ -78,9 +78,34 @@
 										<dd class="u-margin-bottom2x"
 										    [ngSwitch]="awardedState"
 										>
-											<ng-container *ngSwitchCase="AWARDED_STATES.MATCH"> Student with id {{identityStudent}}</ng-container>
-											<ng-container *ngSwitchCase="AWARDED_STATES.NO_MATCH"> This badge was not awarded to student with id {{identityStudent}} </ng-container>
-											<ng-container *ngSwitchCase="AWARDED_STATES.NOT_VERIFIED"> Recipient not verified </ng-container>
+											<ng-container *ngSwitchCase="AWARDED_STATES.MATCH">
+												<ng-container [ngSwitch]="credential?.credentialSubject?.identifier?.identityType">
+													<span *ngSwitchCase="'studentId'">
+														Student ID {{ identityStudentId }}
+													</span>
+													<span *ngSwitchCase="'email'">
+														Email {{ identityEmail }}
+													</span>
+													<span *ngSwitchDefault>
+														Recipient verified
+													</span>
+												</ng-container>
+											</ng-container>
+
+											<ng-container *ngSwitchCase="AWARDED_STATES.NO_MATCH">
+												<ng-container [ngSwitch]="credential?.credentialSubject?.identifier?.identityType">
+													<span *ngSwitchCase="'studentId'">
+														This credential was not awarded to the student with ID {{ identityStudentId }}
+													</span>
+													<span *ngSwitchCase="'email'">
+														This credential was not awarded to {{ identityEmail }}
+													</span>
+													<span *ngSwitchDefault>
+														Recipient does not match
+													</span>
+												</ng-container>
+											</ng-container>
+											<ng-container *ngSwitchCase="AWARDED_STATES.NOT_VERIFIED">Recipient not verified</ng-container>
 										</dd>
 									</div>
 								</div>

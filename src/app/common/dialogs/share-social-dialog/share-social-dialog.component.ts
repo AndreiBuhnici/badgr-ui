@@ -15,20 +15,24 @@ export class ShareSocialDialog extends BaseDialog {
 
     currentTabId: ShareSocialDialogTabId = "link";
 
-    includeRecipientIdentifier = false;
+    selectedRecipientType: "" | "email" | "studentId" = "";
 
     get currentShareUrl() {
         if (!this.options) {
             return "";
         }
 
-        if (!this.includeRecipientIdentifier || !this.options.recipientIdentifier) {
+        if (!this.selectedRecipientType) {
             return this.options.shareUrl;
         }
 
         const params = {};
-        params[`identity__${this.options.recipientType || "email"}`] =
-            this.options.recipientIdentifier;
+
+        if (this.selectedRecipientType === "email") {
+            params["identity__email"] = this.options.recipientEmail;
+        } else {
+            params["identity__studentId"] = this.options.recipientStudentId;
+        }
 
         return addQueryParamsToUrl(this.options.shareUrl, params);
     }
@@ -46,7 +50,7 @@ export class ShareSocialDialog extends BaseDialog {
         this.options = { ...customOptions };
 
         this.currentTabId = "link";
-        this.includeRecipientIdentifier = false;
+        this.selectedRecipientType = "";
 
         this.showModal();
 
@@ -93,8 +97,9 @@ export interface ShareSocialDialogOptions {
     shareUrl: string;
     shareIdUrl: string;
 
-    recipientIdentifier?: string;
-    recipientType?: string;
+    recipientEmail?: string;
+    recipientStudentId?: string;
+
     showRecipientOptions?: boolean;
 }
 

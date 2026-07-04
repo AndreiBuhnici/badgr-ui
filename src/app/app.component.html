@@ -34,8 +34,8 @@
 					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']" >Issuer</a>
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isAdmin"
 					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/staff/register']">Register Staff</a>
-					 <a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isVerifier"
-					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/staff/approvals']">Approve credential operations</a>
+					 <a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" *ngIf="isVerifier || isAdmin"
+					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/staff/verifyRequests']">Approve credential operations</a>
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem u-cursor-pointer" *ngIf="theme.customMenu"
 					 routerLinkActive="navitem-is-active" [bgPopupMenuTrigger]="customMenu">
 						{{ theme.customMenu.label }}
@@ -88,7 +88,7 @@
 			<a [routerLink]="['/issuer']" *ngIf="isIssuer || isAdmin || isEmployer">Issuer</a>
 
 			<a [routerLink]="['/staff/register']" *ngIf="isAdmin">Register Staff</a>
-			<a [routerLink]="['/staff/approvals']" *ngIf="isVerifier">Approve credential operations</a>
+			<a [routerLink]="['/staff/verifyRequests']" *ngIf="isVerifier || isAdmin">Approve credential operations</a>
 
 			<hr class="mobilenav-x-rule" *ngIf="theme.customMenu">
 			<p class="mobilenav-x-label" *ngIf="theme.customMenu">{{ theme.customMenu.label }}</p>

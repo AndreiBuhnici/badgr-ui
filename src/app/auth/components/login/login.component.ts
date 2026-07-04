@@ -56,7 +56,7 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 		route: ActivatedRoute
 	) {
 		super(router, route);
-		title.setTitle(`Login - ${this.configService.theme['serviceName'] || "Badgr"}`);
+		title.setTitle(`Login`);
 		this.handleQueryParamCases();
 	}
 
@@ -99,7 +99,7 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 						else if (this.sessionService.isAdmin())
 							this.router.navigate([ 'staff/register' ]);
 						else if (this.sessionService.isVerifier())
-							this.router.navigate([ 'staff/approve' ]);
+							this.router.navigate([ 'staff/verifyRequests' ]);
 						else
 							this.router.navigate([ 'recipient' ]);
 					});

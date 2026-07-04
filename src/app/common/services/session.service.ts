@@ -58,6 +58,16 @@ export class SessionService {
 		return jwtDecode<any>(token).user_role;
 	}
 
+	get currentUserEmail(): string | null {
+		const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+		if (!token) {
+			return null;
+		}
+
+		return jwtDecode<any>(token).user_email;
+	}
+
 	isStudent(): boolean {
 		return this.currentUserRole === "student";
 	}

@@ -41,7 +41,7 @@ export class ProfileComponent extends BaseAuthenticatedRoutableComponent impleme
 		private sanitizer: DomSanitizer,
 	) {
 		super(router, route, sessionService);
-		title.setTitle(`Profile - ${this.configService.theme['serviceName'] || "Badgr"}`);
+		title.setTitle(`Profile`);
 
 		this.profileLoaded = this.profileManager.userProfilePromise.then(
 			profile => {

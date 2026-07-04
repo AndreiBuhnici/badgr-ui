@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
@@ -6,9 +6,9 @@ import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-a
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { RecipientBadgeManager } from '../../services/recipient-badge-manager.service';
-import { AppConfigService } from '../../../common/app-config.service';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { BadgeInstance } from '../../../issuer/models/badgeinstance.model';
+import { AddBadgeDialogComponent } from '../add-badge-dialog/add-badge-dialog.component';
 
 type BadgeDisplay = "grid" | "list";
 
@@ -29,6 +29,9 @@ export class RecipientEarnedBadgeListComponent
             routerLink: ['/recipient/badges']
         }
     ];
+
+    @ViewChild('addBadgeDialog')
+    addBadgeDialog: AddBadgeDialogComponent;
 
     badgesLoaded: Promise<unknown>;
 
@@ -63,20 +66,24 @@ export class RecipientEarnedBadgeListComponent
         this.updateResults();
     }
 
+    openAddBadgeDialog() {
+        this.addBadgeDialog
+            .openDialog()
+            .then(() => this.reloadCredentials())
+            .catch(() => {});
+    }
+
     constructor(
         router: Router,
         route: ActivatedRoute,
         sessionService: SessionService,
         private title: Title,
         private messageService: MessageService,
-        private recipientBadgeManager: RecipientBadgeManager,
-        public configService: AppConfigService
+        private recipientBadgeManager: RecipientBadgeManager
     ) {
         super(router, route, sessionService);
 
-        this.title.setTitle(
-            `My Credentials - ${this.configService.theme['serviceName'] || 'Badgr'}`
-        );
+        this.title.setTitle(`My Credentials`);
 
         this.restoreDisplayState();
 

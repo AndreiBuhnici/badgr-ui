@@ -3,7 +3,7 @@ import {RecipientBadgeApiService} from './recipient-badges-api.service';
 import {CommonEntityManager} from '../../entity-manager/services/common-entity-manager.service';
 import {EventsService} from '../../common/services/events.service';
 import { BadgeInstance } from '../../issuer/models/badgeinstance.model';
-import { CredentialType } from '../../issuer/models/badgeinstance-api.model';
+import { CredentialType } from '../../common/model/credential-model';
 
 @Injectable()
 export class RecipientBadgeManager {
@@ -38,27 +38,20 @@ export class RecipientBadgeManager {
 			);
 	}
 
-	getCredential(
-		type: CredentialType,
-		id: string
-	): Promise<BadgeInstance> {
-
+	getCredential(type: CredentialType, id: string): Promise<BadgeInstance> {
 		switch (type) {
 			case "academic":
 				return this.recipientBadgeApiService
 					.getAcademicCertificate(id)
 					.then(c => new BadgeInstance(this.commonEntityManager, c));
-
 			case "degree":
 				return this.recipientBadgeApiService
 					.getDegreeCertificate(id)
 					.then(c => new BadgeInstance(this.commonEntityManager, c));
-
 			case "experience":
 				return this.recipientBadgeApiService
 					.getExperienceCertificate(id)
 					.then(c => new BadgeInstance(this.commonEntityManager, c));
-
 			default:
 				return Promise.reject(
 					new Error(`Unknown credential type: ${type}`)
@@ -66,9 +59,21 @@ export class RecipientBadgeManager {
 		}
 	}
 
-	createRecipientBadge(credential): Promise<string> {
-		// TODO: add import
-
-		return Promise.resolve("success");
+	createRecipientBadge(credential: any, type: CredentialType = "academic"): Promise<void> {
+		switch (type) {
+			case "academic":
+				return this.recipientBadgeApiService
+					.importAcademicCertificate(credential);
+			case "degree":
+				return this.recipientBadgeApiService
+					.importDegreeCertificate(credential);
+			case "experience":
+				return this.recipientBadgeApiService
+					.importExperienceCertificate(credential);
+			default:
+				return Promise.reject(
+					new Error(`Unknown credential type: ${type}`)
+				);
+		}
 	}
 }

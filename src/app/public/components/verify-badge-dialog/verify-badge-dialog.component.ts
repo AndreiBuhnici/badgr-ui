@@ -1,11 +1,12 @@
 import { BaseDialog } from '../../../common/dialogs/base-dialog';
 import { Component, ElementRef, EventEmitter, Output, Renderer2 } from '@angular/core';
-import { PublicApiCredential } from '../../models/public-api.model';
+import { PublicCredentialModel } from '../../models/public-api.model';
 import { QueryParametersService } from '../../../common/services/query-parameters.service';
 import { preloadImageURL } from '../../../common/util/file-util';
-import { CredentialType, PublicApiService } from '../../services/public-api.service';
+import { PublicApiService } from '../../services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
 import { VerificationResponse } from "../../../common/model/verification-response";
+import { CredentialType } from '../../../common/model/credential-model';
 
 const sha256 = require('tiny-sha256') as (email: string) => string;
 
@@ -31,7 +32,6 @@ export enum RevokedState {
 	templateUrl: './verify-badge-dialog.component.html'
 })
 export class VerifyBadgeDialog extends BaseDialog {
-
 	constructor(
 		componentElem: ElementRef,
 		public messageService: MessageService,
@@ -42,10 +42,14 @@ export class VerifyBadgeDialog extends BaseDialog {
 		super(componentElem, renderer);
 	}
 
-	@Output() verifiedBadgeAssertion: EventEmitter<PublicApiCredential> = new EventEmitter<PublicApiCredential>();
+	@Output() verifiedBadgeAssertion: EventEmitter<PublicCredentialModel> = new EventEmitter<PublicCredentialModel>();
 
-	get identityStudent(): string {
-		return this.queryParamService.queryStringValue('identity__studentId');
+	get identityStudentId(): string {
+		return this.queryParamService.queryStringValue("identity__studentId");
+	}
+
+	get identityEmail(): string {
+		return this.queryParamService.queryStringValue("identity__email");
 	}
 
 	get isBadgeVerified() {
@@ -54,7 +58,7 @@ export class VerifyBadgeDialog extends BaseDialog {
 		&& this.revokedState == RevokedState.NOT_REVOKED;
 	}
 
-	credential: PublicApiCredential;
+	credential: PublicCredentialModel;
 
 	signatureValid: boolean | null = null;
 
@@ -81,7 +85,7 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 	revokedState: RevokedState;
 
-	async openDialog(credential: PublicApiCredential, credentialId: string, credentialType: CredentialType) {
+	async openDialog(credential: PublicCredentialModel, credentialId: string, credentialType: CredentialType) {
 		this.showModal();
 
 		try {
@@ -109,7 +113,10 @@ export class VerifyBadgeDialog extends BaseDialog {
 
 		if (this.credential.credentialSubject.identifier.identityType === "studentId") {
 			this.verifyStudentId();
+		} else if (this.credential.credentialSubject.identifier.identityType === "email") {
+			this.verifyStudentEmail();
 		}
+
 		this.verifyExpiresOn();
 		this.broadcastVerifiedBadgeAssertion();
 	}
@@ -123,18 +130,37 @@ export class VerifyBadgeDialog extends BaseDialog {
 	}
 
 	private verifyStudentId() {
-		if (!this.identityStudent) {
+		if (!this.identityStudentId) {
 			this.awardedState = AwardedState.NOT_VERIFIED;
 		}
 		else if (this.credential.credentialSubject.identifier.hashed) {
-			// hashed is true
-			const hashedId = 'sha256$' + sha256(`${this.identityStudent}${this.credential.credentialSubject.identifier.salt}`);
-			this.awardedState = hashedId === this.credential.credentialSubject.identifier.identityHash
-			                    ? AwardedState.MATCH
-			                    : AwardedState.NO_MATCH;
+
+			const hashedId = "sha256$" + sha256(`${this.identityStudentId}${this.credential.credentialSubject.identifier.salt}`);
+
+			this.awardedState =
+				hashedId === this.credential.credentialSubject.identifier.identityHash
+					? AwardedState.MATCH
+					: AwardedState.NO_MATCH;
 		}
 		else {
-			// hashed is false, identity is in plain text
+			this.awardedState = AwardedState.MATCH;
+		}
+	}
+
+	private verifyStudentEmail() {
+		if (!this.identityEmail) {
+			this.awardedState = AwardedState.NOT_VERIFIED;
+		}
+		else if (this.credential.credentialSubject.identifier.hashed) {
+
+			const hashedEmail = "sha256$" + sha256(`${this.identityEmail}${this.credential.credentialSubject.identifier.salt}`);
+
+			this.awardedState =
+				hashedEmail === this.credential.credentialSubject.identifier.identityHash
+					? AwardedState.MATCH
+					: AwardedState.NO_MATCH;
+		}
+		else {
 			this.awardedState = AwardedState.MATCH;
 		}
 	}

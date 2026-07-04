@@ -7,11 +7,11 @@ import { MessageService } from '../../../common/services/message.service';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { BadgeInstanceManager } from '../../services/badgeinstance-manager.service';
 import { Issuer } from '../../models/issuer.model';
-import { ApiCredential } from '../../models/badgeinstance-api.model';
 import { Title } from '@angular/platform-browser';
 import { preloadImageURL } from '../../../common/util/file-util';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
 import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
+import { CredentialModel } from '../../../common/model/credential-model';
 
 @Component({
 	selector: 'issuer-detail',
@@ -28,9 +28,9 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 
 	issuer: Issuer;
 
-	academicCertificates: ApiCredential[] = [];
-	degreeCertificates: ApiCredential[] = [];
-	experienceCertificates: ApiCredential[] = [];
+	academicCertificates: CredentialModel[] = [];
+	degreeCertificates: CredentialModel[] = [];
+	experienceCertificates: CredentialModel[] = [];
 
 	issuerLoaded: Promise<unknown>;
 
@@ -50,7 +50,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 	) {
 		super(router, route, loginService);
 
-		title.setTitle('Issuer Detail');
+		this.title.setTitle('Issuer Detail');
 	}
 
 	ngOnInit() {
@@ -61,7 +61,7 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 				this.issuer = issuer;
 
 				this.title.setTitle(
-					`Issuer - University ${this.issuer.id}`
+					`Issuer - University ${this.issuer.name}`
 				);
 
 				// Load all credentials
@@ -89,17 +89,11 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 		);
 	}
 
-	revokeCredential(type: string, credential: ApiCredential) {
-		if (
-			(type === "academic" || type === "degree") &&
-			!(this.isAdmin || this.isIssuer)
-		) {
+	revokeCredential(type: string, credential: CredentialModel) {
+		if ((type === "academic" || type === "degree") && !(this.isAdmin || this.isIssuer)) {
 			return;
 		}
-		if (
-			type === "experience" &&
-			!(this.isAdmin || this.isEmployer)
-		) {
+		if (type === "experience" && !(this.isAdmin || this.isEmployer)) {
 			return;
 		}
 		let request: Promise<any>;
@@ -123,17 +117,16 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 			default:
 				return;
 		}
-		request
-			.then(() => {
+		request.then(() => {
 				this.messageService.setMessage(
-					"Credential revoked successfully.",
+					"Credential submitted for revocation.",
 					"success"
 				);
 				return this.reloadCredentials();
 			})
 			.catch(error => {
 				this.messageService.reportAndThrowError(
-					"Unable to revoke credential.",
+					"Unable to submit credential for revocation.",
 					error
 				);
 			});

@@ -1,24 +1,23 @@
-import { FormBuilder, ValidationErrors, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StaffService } from '../../services/staff.service';
 import { SessionService } from '../../../common/services/session.service';
-import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
 import { MessageService } from '../../../common/services/message.service';
 import { EmailValidator } from '../../../common/validators/email.validator';
 import { DomSanitizer, Title } from '@angular/platform-browser';
 import { AppConfigService } from '../../../common/app-config.service';
-import { OAuthManager } from '../../../common/services/oauth-manager.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { typedFormGroup } from '../../../common/util/typed-forms';
 import { BadgrApiFailure } from '../../../common/services/api-failure';
-import { RegisterStaffModel } from '../../models/registerStaff-model.type';
+import { RegisterStaffModel } from '../../models/register-staff-model.type';
+import { StaffManager } from '../../services/staff-manager.service';
+import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 
 @Component({
-	selector: 'registerStaff',
-	templateUrl: './registerStaff.component.html',
+	selector: 'register-staff',
+	templateUrl: './register-staff.component.html',
 })
-export class RegisterStaffComponent extends BaseRoutableComponent implements OnInit {
+export class RegisterStaffComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
 	signupForm = typedFormGroup()
 		.addControl('email', '', [
 			Validators.required,
@@ -43,19 +42,17 @@ export class RegisterStaffComponent extends BaseRoutableComponent implements OnI
 	};
 
 	constructor(
-		fb: FormBuilder,
-		private title: Title,
-		public messageService: MessageService,
-		private configService: AppConfigService,
-		public sessionService: SessionService,
-		public staffService: StaffService,
-		public oAuthManager: OAuthManager,
-		private sanitizer: DomSanitizer,
+		protected title: Title,
+		protected messageService: MessageService,
+		protected configService: AppConfigService,
+		protected sessionService: SessionService,
+		protected staffManager: StaffManager,
+		protected sanitizer: DomSanitizer,
 		router: Router,
 		route: ActivatedRoute
 	) {
-		super(router, route);
-		title.setTitle(`Register staff`);
+		super(router, route, sessionService);
+		this.title.setTitle(`Register staff`);
 	}
 
 	sanitize(url:string){
@@ -80,7 +77,7 @@ export class RegisterStaffComponent extends BaseRoutableComponent implements OnI
 			formState.role
 		);
 
-		this.signupFinished = this.staffService.submitStaffRegistration(signupUser)
+		this.signupFinished = this.staffManager.submitStaffRegistration(signupUser)
 			.then(() => {
 				this.messageService.setMessage(
 					"Account created successfully.",

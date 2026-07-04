@@ -3,11 +3,11 @@ import { BaseHttpApiService } from '../../common/services/base-http-api.service'
 import { SessionService } from '../../common/services/session.service';
 import { AppConfigService } from '../../common/app-config.service';
 import { MessageService } from '../../common/services/message.service';
-import {PublicApiCredential} from '../models/public-api.model';
+import {PublicCredentialModel} from '../models/public-api.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {VerificationResponse} from "../../common/model/verification-response";
+import { CredentialType } from '../../common/model/credential-model';
 
-export type CredentialType = "academic" | "degree" | "experience";
 @Injectable()
 export class PublicApiService extends BaseHttpApiService {
 	constructor(
@@ -19,7 +19,7 @@ export class PublicApiService extends BaseHttpApiService {
 		super(loginService, http, configService, messageService);
 	}
 
-	getCredential(credentialType: CredentialType, credentialId: string): Promise<PublicApiCredential> {
+	getCredential(credentialType: CredentialType, credentialId: string): Promise<PublicCredentialModel> {
 		let endpoint: string;
 
 		switch (credentialType) {
@@ -42,7 +42,7 @@ export class PublicApiService extends BaseHttpApiService {
 		}
 
 		return this
-			.get<PublicApiCredential>(endpoint, null, false, false)
+			.get<PublicCredentialModel>(endpoint, null, false, false)
 			.then(r => r.body);
 	}
 
@@ -54,15 +54,15 @@ export class PublicApiService extends BaseHttpApiService {
 
 		switch (credentialType) {
 			case "academic":
-				endpoint = "/verify-academic-certificate";
+				endpoint = "/academicCertificates/verify";
 				break;
 
 			case "degree":
-				endpoint = "/verify-degree-certificate";
+				endpoint = "/degreeCertificates/verify";
 				break;
 
 			case "experience":
-				endpoint = "/verify-experience-certificate";
+				endpoint = "/experienceCertificates/verify";
 				break;
 
 			default:

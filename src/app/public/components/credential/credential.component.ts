@@ -1,14 +1,15 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { preloadImageURL } from '../../../common/util/file-util';
-import { CredentialType, PublicApiService } from '../../services/public-api.service';
+import { PublicApiService } from '../../services/public-api.service';
 import { LoadedRouteParam } from '../../../common/util/loaded-route-param';
-import { PublicApiCredential } from '../../models/public-api.model';
+import { PublicCredentialModel } from '../../models/public-api.model';
 import { QueryParametersService } from '../../../common/services/query-parameters.service';
 import { MessageService } from '../../../common/services/message.service';
 import { AppConfigService } from '../../../common/app-config.service';
 import { Title } from '@angular/platform-browser';
 import { VerifyBadgeDialog } from '../verify-badge-dialog/verify-badge-dialog.component';
+import { CredentialType } from '../../../common/model/credential-model';
 
 @Component({
 	templateUrl: './credential.component.html'
@@ -23,7 +24,7 @@ export class PublicCredentialComponent {
 		private title: Title
 
 	) {
-		title.setTitle(`Credential - ${this.configService.theme['serviceName'] || "Badgr"}`);
+		title.setTitle(`Credential`);
 		this.credentialIdParam = this.createLoadedRouteParam();
 	}
 
@@ -36,7 +37,7 @@ export class PublicCredentialComponent {
 	@ViewChild('verifyBadgeDialog')
 	verifyBadgeDialog: VerifyBadgeDialog;
 
-	credentialIdParam: LoadedRouteParam<PublicApiCredential>;
+	credentialIdParam: LoadedRouteParam<PublicCredentialModel>;
 
 	credentialId: string;
 
@@ -49,7 +50,7 @@ export class PublicCredentialComponent {
 		},
 	};
 
-	get credential(): PublicApiCredential {
+	get credential(): PublicCredentialModel {
 		return this.credentialIdParam.value;
 	}
 

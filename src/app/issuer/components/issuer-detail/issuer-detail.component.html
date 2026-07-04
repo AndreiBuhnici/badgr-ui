@@ -169,7 +169,9 @@
 
 									<div class="u-margin-left1x">
 										<div class="u-text">
-											{{ credential.achievementName }}
+											<a [routerLink]="['/public', 'credentials', type, credential.credentialId]">
+												{{ credential.achievementName }}
+											</a>
 										</div>
 
 										<div class="u-text-small u-text-dark3">
