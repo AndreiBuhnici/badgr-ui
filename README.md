@@ -26,13 +26,6 @@ Ensure it is communicating with the correct API (The port `badgr-server` is runn
 localStorage.setItem('config', JSON.stringify({api:{baseUrl:"http://localhost:8000"}}))
 ```
 
-### Run Tests
-
-Run the test suite with `npm run test:debug`
-
-Run the e2e tests with `npm run e2e`
-
-
 ## Build Instructions (for deployment)
 
 ### Configuration

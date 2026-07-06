@@ -155,7 +155,6 @@
 										class="l-flex-x-shrink0 badgeimage badgeimage-small"
 										[src]="credential.achievementImage"
 										width="40">
-
 									<div class="u-margin-left1x">
 										<div class="u-text">
 											<a [routerLink]="['/public', 'credentials', type, credential.credentialId]">
@@ -167,7 +166,6 @@
 											{{ credential.achievementType }}
 										</div>
 									</div>
-
 								</div>
 							</td>
 
@@ -204,13 +202,10 @@
 								*ngIf="canRevoke">
 
 								<div class="l-flex l-flex-aligncenter l-flex-justifyend">
-
 									<button
 										class="button button-primary button-small"
 										(click)="revokeCredential(type, credential)">
-
 										Revoke
-
 									</button>
 								</div>
 							</td>
