@@ -58,6 +58,26 @@ export class SessionService {
 		this.enabledExternalAuthProviders = configService.featuresConfig.externalAuthProviders || [];
 	}
 
+	private hasScope(requiredScope: string): boolean {
+		const token = this.currentAuthToken;
+
+		if (!token || !token.scope) {
+			return false;
+		}
+
+		return token.scope
+			.split(/\s+/)
+			.includes(requiredScope);
+	}
+
+	get isAuthorizedIssuer(): boolean {
+		return this.hasScope('rw:issuer');
+	}
+
+	get isApprover(): boolean {
+		return this.hasScope('rw:approve');
+	}
+
 	login(credential: UserCredential, sessionOnlyStorage = false): Promise<AuthorizationToken> {
 		const endpoint = this.baseUrl + '/o/token';
 		const scope = "rw:profile r:issuer rw:backpack";

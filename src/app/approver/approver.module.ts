@@ -5,18 +5,21 @@ import {BadgrCommonModule, COMMON_IMPORTS} from '../common/badgr-common.module';
 import {ApproverListComponent} from './components/badgeclass-approve/approver-list.component'
 import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module';
 import { ApproverApiService } from './services/approver-api.service';
+import { ApproverPermissionGuard } from '../common/guards/approver-permission.guard';
 
 
 const routes = [
     /* Approver */
     {
         path: "",
-        component: ApproverListComponent
+        component: ApproverListComponent,
+        canActivate: [ApproverPermissionGuard]
     },
 
     {
         path: "**",
-        component: ApproverListComponent
+        component: ApproverListComponent,
+        canActivate: [ApproverPermissionGuard]
     }
 ];
 

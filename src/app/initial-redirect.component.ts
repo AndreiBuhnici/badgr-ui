@@ -4,12 +4,8 @@ import {SessionService} from './common/services/session.service';
 
 import '../thirdparty/scopedQuerySelectorShim';
 
-// Shim in support for the :scope attribute
-// See https://github.com/lazd/scopedQuerySelectorShim and
-// https://stackoverflow.com/questions/3680876/using-queryselectorall-to-retrieve-direct-children/21126966#21126966
-
 @Component({
-	selector: "initial-redirect",
+	selector: 'initial-redirect',
 	template: ``
 })
 export class InitialRedirectComponent {
@@ -17,10 +13,38 @@ export class InitialRedirectComponent {
 		private sessionService: SessionService,
 		private router: Router
 	) {
-		if (sessionService.isLoggedIn) {
-			router.navigate(['/recipient/badges'], { replaceUrl: true });
-		} else {
-			router.navigate(['/auth/login'], { replaceUrl: true });
+		this.redirectUser();
+	}
+
+	private redirectUser(): void {
+		if (!this.sessionService.isLoggedIn) {
+			this.router.navigate(
+				['/auth/login'],
+				{replaceUrl: true}
+			);
+			return;
 		}
+
+		// Issuer takes priority if the user has both roles.
+		if (this.sessionService.isAuthorizedIssuer) {
+			this.router.navigate(
+				['/issuer'],
+				{replaceUrl: true}
+			);
+			return;
+		}
+
+		if (this.sessionService.isApprover) {
+			this.router.navigate(
+				['/approver'],
+				{replaceUrl: true}
+			);
+			return;
+		}
+
+		this.router.navigate(
+			['/recipient/badges'],
+			{replaceUrl: true}
+		);
 	}
 }

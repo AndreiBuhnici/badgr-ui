@@ -10,7 +10,6 @@ import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module
 import {ResetPasswordComponent} from './components/reset-password/reset-password.component';
 import {OAuth2AuthorizeComponent} from './components/oauth2-authorize/oauth2-authorize.component';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { WelcomeComponent } from './components/welcome/welcome.component';
 
 const routes = [
 	{
@@ -63,10 +62,6 @@ const routes = [
 		component: ResetPasswordComponent
 	},
 	{
-		path: "welcome",
-		component: WelcomeComponent
-	},
-	{
 		path: "**",
 		redirectTo: "login",
 	},
@@ -85,8 +80,7 @@ const routes = [
 		ResetPasswordSent,
 		ResetPasswordComponent,
 		LogoutComponent,
-		OAuth2AuthorizeComponent,
-		WelcomeComponent
+		OAuth2AuthorizeComponent
 	],
 	exports: [],
 	providers: []

@@ -4,15 +4,11 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTr
 import { SessionService } from '../services/session.service';
 
 @Injectable({ providedIn: 'root' })
-export class ApprovePermissionGuard implements CanActivate {
+export class StudentPermissionGuard implements CanActivate {
   constructor(private session: SessionService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {    
-    const token = this.session.currentAuthToken;
-    const scope = token && token.scope ? String(token.scope) : '';
-    const hasApproveScope = scope.includes('rw:approve');
-
-    if (!hasApproveScope) {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    if (this.session.isAuthorizedIssuer || this.session.isApprover || !this.session.isLoggedIn) {
       return this.router.parseUrl('/');
     }
 

@@ -110,7 +110,7 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 										return false;
 									} else {
 										// first time only do welcome
-										this.router.navigate([ (localStorage.signup) ?'auth/welcome' :'recipient' ]);
+										this.router.navigate([ (localStorage.signup) ?'recipient/badges' :'recipient' ]);
 									}
 								}
 							} else {

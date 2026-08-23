@@ -1,3 +1,17 @@
+export type ApprovalOperation = 'ISSUE' | 'REVOKE';
+
+export type ApprovalStatus =
+    | 'PENDING'
+    | 'ACCEPTED'
+    | 'REJECTED';
+
+export type ExecutionStatus =
+    | 'NOT_STARTED'
+    | 'PENDING'
+    | 'PROCESSING'
+    | 'COMPLETED'
+    | 'SYNC_FAILED';
+
 export interface ApiApprovalRecipient {
     identity: string;
     hashed: boolean;
@@ -6,12 +20,46 @@ export interface ApiApprovalRecipient {
     salt?: string;
 }
 
+export interface ApiApprovalReviewer {
+    entityId?: string;
+    firstName: string;
+    lastName: string;
+    emails: unknown[];
+    url: string[];
+    telephone: string[];
+    badgrDomain?: string;
+}
+
 export interface ApiApprovalBadgeInstance {
     entityId: string;
     entityType: string;
 
     acceptance: string;
-    approval_status: string;
+
+    approvalOperation: ApprovalOperation;
+    approvalOperationLabel: string;
+
+    approvalStatus: ApprovalStatus;
+    approvalStatusLabel: string;
+
+    executionStatus: ExecutionStatus;
+    executionStatusLabel: string;
+
+    reviewedBy: ApiApprovalReviewer | null;
+    reviewedAt: string | null;
+
+    registryCredentialHash: string | null;
+
+    registryIssuanceSynced: boolean;
+    registryIssuanceError: string | null;
+
+    registryRevocationSynced: boolean;
+    registryRevocationError: string | null;
+
+    registryConsistent: boolean;
+    requiresRegistryRetry: boolean;
+    canRetryIssuance: boolean;
+    canRetryRevocation: boolean;
 
     badgeclass: string;
     badgeclassOpenBadgeId: string;
@@ -25,20 +73,20 @@ export interface ApiApprovalBadgeInstance {
     createdBy: string;
 
     validFrom: string;
-    validUntil?: string;
+    validUntil: string | null;
 
     image: string;
     openBadgeId: string;
 
     revoked: boolean;
-    revocationReason?: string;
+    revocationReason: string | null;
 
-    narrative?: string;
-
-    reviewed_by?: string;
-    reviewed_at?: string;
+    narrative: string | null;
 
     recipient: ApiApprovalRecipient;
+    evidence: unknown[];
+}
 
-    evidence: any[];
+export interface ApiRegistryRetryRequest {
+    retryRegistryOperation: ApprovalOperation;
 }

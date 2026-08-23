@@ -18,6 +18,7 @@ import {CommonEntityManagerModule} from '../entity-manager/entity-manager.module
 import { RecipientBadgeCollectionSelectionDialogComponent } from "./components/recipient-badge-collection-selection-dialog/recipient-badge-collection-selection-dialog.component";
 import { RecipientBadgeSelectionDialog } from "./components/recipient-badge-selection-dialog/recipient-badge-selection-dialog.component";
 import { MozzTransitionModule } from "../mozz-transition/mozz-transition.module";
+import { StudentPermissionGuard } from '../common/guards/student-permission.guard';
 
 const routes = [
 	/* Recipient Badges */
@@ -27,30 +28,35 @@ const routes = [
 	},
 	{
 		path: "badges",
-		component: RecipientEarnedBadgeListComponent
+		component: RecipientEarnedBadgeListComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "badges/import",
-		component: RecipientEarnedBadgeListComponent
-
+		component: RecipientEarnedBadgeListComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "earned-badge/:badgeSlug",
-		component: RecipientEarnedBadgeDetailComponent
+		component: RecipientEarnedBadgeDetailComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 
 	/* Recipient Badge Collections */
 	{
 		path: "badge-collections",
-		component: RecipientBadgeCollectionListComponent
+		component: RecipientBadgeCollectionListComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "badge-collections/create",
 		component: RecipientBadgeCollectionCreateComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "badge-collections/collection/:collectionSlug",
-		component: RecipientBadgeCollectionDetailComponent
+		component: RecipientBadgeCollectionDetailComponent,
+		canActivate: [StudentPermissionGuard]
 	},
 	{
 		path: "**",

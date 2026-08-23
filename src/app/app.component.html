@@ -29,9 +29,9 @@
 			<nav class="navbar-x-items" role="menubar">
 				<div class="navbar-x-navitems">
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
-					 [routerLink]="['/recipient/badges']">Backpack</a>
+					 [routerLink]="['/recipient/badges']" *ngIf="!isApprover && !isAuthorizedIssuer">Backpack</a>
 					<a role="menuitem" [class.navitem-light]="!theme.useColorNavbar" class="navitem" routerLinkActive="navitem-is-active"
-					 [routerLink]="['/recipient/badge-collections']">Collections</a>
+					 [routerLink]="['/recipient/badge-collections']" *ngIf="!isApprover && !isAuthorizedIssuer">Collections</a>
 					<a role="menuitem" *ngIf="showIssuersTab" [class.navitem-light]="!theme.useColorNavbar"
 					 class="navitem" routerLinkActive="navitem-is-active" [routerLink]="['/issuer']">Issuers</a>
 					<a role="menuitem" *ngIf="isApprover" [class.navitem-light]="!theme.useColorNavbar"
@@ -78,8 +78,6 @@
 
 	<bg-popup-menu #accountMenu>
 		<a class="menuitem" routerLinkActive="menuitem-is-active" [routerLink]="['/profile/profile']"><svg icon="icon_member"></svg>Profile</a>
-		<a class="menuitem" routerLinkActive="menuitem-is-active" [routerLink]="['/profile/app-integrations']"><svg icon="icon_compare"></svg>App
-			Integrations</a>
 		<a class="menuitem" routerLinkActive="menuitem-is-active" [routerLink]="['/auth/logout']"><svg icon="icon_exit_to_app"></svg>Sign
 			Out</a>
 	</bg-popup-menu>
@@ -115,7 +113,6 @@
 			<hr class="mobilenav-x-rule">
 			<p class="mobilenav-x-label">Account</p>
 			<a [routerLink]="['/profile/profile']">Profile</a>
-			<a [routerLink]="['/profile/app-integrations']">App Integrations</a>
 			<a [routerLink]="['/auth/logout']">Sign Out</a>
 		</div>
 	</nav>
@@ -152,18 +149,16 @@
 		<div class="footer l-stickyfooter-x-footer">
 
 			<ul class="footer-x-leftlinks">
-				<li *ngIf="theme.showPoweredByBadgr === undefined || theme.showPoweredByBadgr">Powered by <a href="https://badgr.io">Badgr</a></li>
-				<li *ngIf="theme.providedBy">Provided by <a href="{{ theme.providedBy.url}}" target="_blank">{{
-						theme.providedBy.name }}</a></li>
+				<li>Powered by <a href="https://www.upb.ro">UPB</a></li>
 			</ul>
 
-			<ul class="footer-x-links">
+			<!-- <ul class="footer-x-links">
 				<li><a [href]="theme.termsOfServiceLink || 'https://badgr.org/missing-terms'" target="_blank">Terms of Service</a></li>
 				<li><a [href]="theme.privacyPolicyLink || 'https://badgr.org/missing-privacy-policy'" target="_blank">Privacy
 						Policy</a></li>
 				<li *ngIf="theme.showApiDocsLink === undefined || theme.showApiDocsLink"><a href="https://support.badgr.io/docs/"
 					 target="_blank">Documentation</a></li>
-			</ul>
+			</ul> -->
 
 		</div>
 	</div>

@@ -33,18 +33,29 @@ export class RecipientBadgeManager {
 	createRecipientBadge(
 		badgeInfo: RecipientBadgeInstanceCreationInfo
 	): Promise<RecipientBadgeInstance> {
-		// Ensure there aren't any null or undefined values in the request, despite not being needed, they cause validation
-		// errors in the API.
-		const payload: RecipientBadgeInstanceCreationInfo = Object.assign({}, badgeInfo);
+		const payload: RecipientBadgeInstanceCreationInfo = Object.assign(
+			{},
+			badgeInfo
+		);
+
 		Object.keys(payload).forEach(key => {
-			if (payload[key] === null || payload[key] === undefined || payload[key] === "") {
+			if (
+				payload[key] === null ||
+				payload[key] === undefined ||
+				payload[key] === ''
+			) {
 				delete payload[key];
 			}
 		});
 
-
 		return this.recipientBadgeApiService
-			.addRecipientBadge(payload);
+			.addRecipientBadge(payload)
+			.then(
+				apiModel => new RecipientBadgeInstance(
+					this.commonEntityManager,
+					apiModel
+				)
+			);
 	}
 
 	deleteRecipientBadge(badge: RecipientBadgeInstance) {
