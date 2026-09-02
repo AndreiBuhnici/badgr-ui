@@ -6,6 +6,10 @@ export type BadgeInstanceSlug = string;
 export type BadgeInstanceUrl = string;
 export interface BadgeInstanceRef extends ApiEntityRef {}
 
+export type ApprovalStatus =
+    | 'PENDING'
+    | 'ACCEPTED'
+    | 'REJECTED';
 
 export interface ApiBadgeInstanceJsonld {
 	'@context': string;
@@ -62,7 +66,12 @@ export interface ApiBadgeInstance {
 	created_at: string;
 	created_by: string;
 
-	approval_status: string;
+	approval_status: ApprovalStatus;
+
+	canRetryIssuance: boolean;
+	canRetryRevocation: boolean;
+	requiresRegistryRetry?: boolean;
+
 	reviewed_by: string;
 	reviewed_at: string;
 	

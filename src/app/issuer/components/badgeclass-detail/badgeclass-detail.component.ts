@@ -172,7 +172,7 @@ export class BadgeClassDetailComponent extends BaseAuthenticatedRoutableComponen
 						this.updateResults();
 					},
 					(error) =>
-						this.messageService.reportAndThrowError(`Failed to revoke badge instance to ${instance.recipientIdentifier}`)
+						this.messageService.reportAndThrowError(`Failed to revoke badge instance to ${instance.recipientIdentifier}: ${error}`)
 				);
 			},
 			() => void 0 // Cancel
@@ -200,6 +200,46 @@ export class BadgeClassDetailComponent extends BaseAuthenticatedRoutableComponen
 				);
 			},
 			() => void 0 // Cancel
+		);
+	}
+
+	retryIssuance(instance: BadgeInstance) {
+		instance.retryIssuance().then(
+			() => {
+				this.messageService.reportMinorSuccess(
+					`Retried issuance sync for ${instance.recipientIdentifier}`
+				);
+
+				this.loadInstances(
+					this.searchQuery
+						? encodeURIComponent(this.searchQuery)
+						: undefined
+				);
+			},
+			() =>
+				this.messageService.reportAndThrowError(
+					`Failed to retry issuance sync for ${instance.recipientIdentifier}`
+				)
+		);
+	}
+
+	retryRevocation(instance: BadgeInstance) {
+		instance.retryRevocation().then(
+			() => {
+				this.messageService.reportMinorSuccess(
+					`Retried revocation sync for ${instance.recipientIdentifier}`
+				);
+
+				this.loadInstances(
+					this.searchQuery
+						? encodeURIComponent(this.searchQuery)
+						: undefined
+				);
+			},
+			() =>
+				this.messageService.reportAndThrowError(
+					`Failed to retry revocation sync for ${instance.recipientIdentifier}`
+				)
 		);
 	}
 

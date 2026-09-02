@@ -117,7 +117,7 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit {
 	}
 
 	sendSignupConfirmation(email) {
-		this.router.navigate(['signup/success', encodeURIComponent(btoa(email))]);
+		this.router.navigate(['signup/success', encodeURIComponent(email)]);
 	}
 
 	get showMarketingOptIn() {

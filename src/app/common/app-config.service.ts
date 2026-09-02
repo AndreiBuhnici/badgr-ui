@@ -126,20 +126,20 @@ export const defaultConfig: BadgrConfig = {
 		alternateLandingRedirect: false
 	},
 	help: {
-		email: "support@badgr.io"
+		email: "relatii.publice@upb.ro"
 	},
 	googleAnalytics: {
 		trackingId: null
 	},
 	theme: {
-		serviceName: "Badgr",
+		serviceName: "UPB Digital Credentials Management Service",
 		welcomeMessage: `### Welcome!`,
 		alternateLandingUrl: null,
 		showPoweredByBadgr: false,
 		showApiDocsLink: true,
-		termsOfServiceLink: null,
-		termsHelpLink: null,
-		privacyPolicyLink: null,
+		termsOfServiceLink: "",
+		termsHelpLink: "",
+		privacyPolicyLink: "https://upb.ro/prelucrarea-datelor-cu-caracter-personal-in-cadrul-universitatii-politehnica-din-bucuresti",
 		providedBy: null,
 		logoImg: {
 			small: require("../../breakdown/static/images/upb_logo.png") as string,

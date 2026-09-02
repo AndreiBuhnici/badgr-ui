@@ -147,6 +147,11 @@ export class BadgeInstance extends ManagedEntity<ApiBadgeInstance, BadgeInstance
 
 	get evidenceItems(): ApiBadgeInstanceEvidenceItem[] { return this.apiModel.evidence_items; }
 
+	// --- v2-only registry sync state (undefined if this instance was loaded via a v1 endpoint) ---
+	get canRetryIssuance(): boolean { return !!this.apiModel.canRetryIssuance; }
+	get canRetryRevocation(): boolean { return !!this.apiModel.canRetryRevocation; }
+	get requiresRegistryRetry(): boolean { return !!this.apiModel.requiresRegistryRetry; }
+
 	revokeBadgeInstance(revocationReason: string): Promise<BadgeClassInstances> {
 		return this.badgeInstanceManager.badgeInstanceApiService.revokeBadgeInstance(
 			this.issuerSlug,
@@ -168,6 +173,24 @@ export class BadgeInstance extends ManagedEntity<ApiBadgeInstance, BadgeInstance
 		).then(() => {
 			this.badgeClassInstances.remove(this);
 			return this.badgeClassInstances;
+		});
+	}
+
+	retryIssuance(): Promise<BadgeInstance> {
+		return this.badgeInstanceManager.badgeInstanceApiService.retryBadgeInstanceIssuance(
+			this.slug
+		).then((updatedApiInstance) => {
+			this.applyApiModel(Object.assign({}, this.apiModel, updatedApiInstance));
+			return this;
+		});
+	}
+
+	retryRevocation(): Promise<BadgeInstance> {
+		return this.badgeInstanceManager.badgeInstanceApiService.retryBadgeInstanceRevocation(
+			this.slug
+		).then((updatedApiInstance) => {
+			this.applyApiModel(Object.assign({}, this.apiModel, updatedApiInstance));
+			return this;
 		});
 	}
 

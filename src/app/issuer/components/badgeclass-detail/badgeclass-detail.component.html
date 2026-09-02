@@ -210,6 +210,14 @@
 									<div *ngIf="instance.reviewedAt" class="u-text-small">
 										At: {{ instance.reviewedAt }}
 									</div>
+
+									<div
+										*ngIf="instance.requiresRegistryRetry"
+										class="u-text-small"
+										style="color: red;"
+									>
+										Registry sync failed
+									</div>
 								</td>
 								<td class="datatable-x-cell">
 									<div class="l-flex l-flex-justifyend l-flex-aligncenter l-flex-1x">
@@ -238,6 +246,14 @@
 						<button type="button" class="menuitem"
 										(click)="deleteInstance(popInstance)"
 						><svg icon="icon_remove"></svg>Delete (for testing)</button>
+						<button type="button" class="menuitem"
+										*ngIf="popInstance?.canRetryIssuance"
+										(click)="retryIssuance(popInstance)"
+						><svg icon="icon_refresh"></svg>Retry Issuance Sync</button>
+						<button type="button" class="menuitem"
+										*ngIf="popInstance?.canRetryRevocation"
+										(click)="retryRevocation(popInstance)"
+						><svg icon="icon_refresh"></svg>Retry Revocation Sync</button>
 						<ng-container *ngIf="launchpoints">
 							<button class="menuitem" type="button"
 									*ngFor="let lp of launchpoints"
@@ -259,6 +275,14 @@
 						<button type="button" class="menuitem"
 										(click)="deleteInstance(popInstance)"
 						><svg icon="icon_remove"></svg>Delete (for testing)</button>
+						<button type="button" class="menuitem"
+										*ngIf="popInstance?.canRetryIssuance"
+										(click)="retryIssuance(popInstance)"
+						><svg icon="icon_refresh"></svg>Retry Issuance Sync</button>
+						<button type="button" class="menuitem"
+										*ngIf="popInstance?.canRetryRevocation"
+										(click)="retryRevocation(popInstance)"
+						><svg icon="icon_refresh"></svg>Retry Revocation Sync</button>
 						<ng-container *ngIf="launchpoints">
 							<button class="menuitem" type="button"
 									*ngFor="let lp of launchpoints"

@@ -25,7 +25,7 @@ constructor(
 
 	ngOnInit() {
 		this.sessionService.logout();
-		this.email = decodeURIComponent(atob(this.routeParams.snapshot.params[ 'email' ]));
+		this.email = decodeURIComponent(this.routeParams.snapshot.params[ 'email' ]);
 	}
 
 	get helpEmailUrl() {

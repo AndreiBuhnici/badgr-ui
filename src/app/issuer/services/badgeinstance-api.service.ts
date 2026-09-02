@@ -113,6 +113,20 @@ export class BadgeInstanceApiService extends BaseHttpApiService {
 		);
 	}
 
+	retryBadgeInstanceIssuance(badgeInstanceSlug: string) {
+        return this.post<ApiBadgeInstance>(
+            `/v2/issuer/assertions/${badgeInstanceSlug}/retry-issuance`,
+            {}
+        ).then(r => r.body);
+    }
+
+    retryBadgeInstanceRevocation(badgeInstanceSlug: string) {
+        return this.post<ApiBadgeInstance>(
+            `/v2/issuer/assertions/${badgeInstanceSlug}/retry-revocation`,
+            {}
+        ).then(r => r.body);
+    }
+
 	private handleAssertionResult = (r: HttpResponse<ApiBadgeInstance[]>) => {
 			const resultset = new BadgeInstanceResultSet();
 
